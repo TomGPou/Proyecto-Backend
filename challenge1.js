@@ -1,7 +1,6 @@
 class ProductManager {
   constructor() {
     this.products = [];
-    this.id = 1;
   }
 
   addProduct(title, description, price, thumbnail, code, stock) {
@@ -17,7 +16,7 @@ class ProductManager {
 
     // Agregando producto
     const newProduct = {
-      id: this.id++,
+      id: this.products.length + 1,
       title,
       description,
       price,
@@ -27,12 +26,12 @@ class ProductManager {
     };
     this.products.push(newProduct);
 
-    return console.log("Se agrego el producto: ", newProduct);
+    return newProduct;
   }
 
   // Obtener lista de productos
   getProducts() {
-    return console.log(this.products);
+    return this.products;
   }
 
   //  Buscar un producto por su id
@@ -40,9 +39,8 @@ class ProductManager {
     const product = this.products.find((p) => p.id == id);
     if (!product) {
       throw new Error("NOT FOUND");
-    } else {
-      return console.log(product);
     }
+    return product;
   }
 }
 
@@ -70,6 +68,7 @@ productManager.addProduct(
 
 // ver productos
 const productsList = productManager.getProducts();
+console.log(productsList);
 
 //  buscar producto por ID
-const productId = productManager.getProductById(3);
+// const productId = productManager.getProductById(1);
