@@ -23,7 +23,9 @@ app.get("/products", async (req, res) => {
 app.get("/products/:id", async (req, res) => {
   const id = req.params.id;
   const product = await productManager.getProductById(id);
-
+  if (!product) {
+    res.send({ status: 0, error: "Producto no encontrado" });
+  }
   res.send({ status: 1, payload: product });
 });
 
