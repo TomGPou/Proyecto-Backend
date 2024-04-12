@@ -1,9 +1,9 @@
 import fs from "fs";
 
-class ProductManager {
+export default class ProductManager {
   constructor() {
     this.products = [];
-    this.path = "./products.json";
+    this.path = "./src/products.json";
   }
 
   async readFile() {
@@ -103,26 +103,26 @@ class ProductManager {
 }
 
 // TESTING
-const productManager = new ProductManager();
+// const productManager = new ProductManager();
 
 //  Agregar productos
-productManager.addProduct(
-  "Producto Prueba",
-  "prueba",
-  200,
-  "sin imagen",
-  "abc123",
-  25
-);
+// productManager.addProduct(
+//   "Producto Prueba",
+//   "prueba",
+//   200,
+//   "sin imagen",
+//   "abc123",
+//   25
+// );
 
-productManager.addProduct(
-  "Producto Prueba2",
-  "prueba2",
-  200,
-  "sin imagen",
-  "abc124",
-  25
-);
+// productManager.addProduct(
+//   "Producto Prueba2",
+//   "prueba2",
+//   200,
+//   "sin imagen",
+//   "abc124",
+//   25
+// );
 
 // ver productos
 // const productsList = productManager.getProducts();

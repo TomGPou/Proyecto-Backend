@@ -1,0 +1,92 @@
+[
+  {
+    "id": "1",
+    "title": "Catan",
+    "description": "Juego de estrategia en el que los jugadores tratan de colonizar una isla",
+    "price": "50",
+    "thumbnail": "https://example.com/catan.jpg",
+    "code": "S001",
+    "stock": "10"
+  },
+  {
+    "id": "2",
+    "title": "Risk",
+    "description": "Juego de conquista mundial en el que los jugadores deben planificar sus movimientos con cuidado",
+    "price": "40",
+    "thumbnail": "https://example.com/risk.jpg",
+    "code": "S002",
+    "stock": "10"
+  },
+  {
+    "id": "3",
+    "title": "Agricola",
+    "description": "Juego de gestión de recursos en el que los jugadores administran una granja",
+    "price": "60",
+    "thumbnail": "https://example.com/agricola.jpg",
+    "code": "S003",
+    "stock": "10"
+  },
+  {
+    "id": "4",
+    "title": "Twilight Struggle",
+    "description": "Juego de la Guerra Fría en el que los jugadores representan a las superpotencias",
+    "price": "55",
+    "thumbnail": "https://example.com/twilightstruggle.jpg",
+    "code": "S004",
+    "stock": "10"
+  },
+  {
+    "id": "5",
+    "title": "Terraforming Mars",
+    "description": "Juego de colonización de Marte en el que los jugadores deben transformar el planeta",
+    "price": "70",
+    "thumbnail": "https://example.com/terraformingmars.jpg",
+    "code": "S005",
+    "stock": "10"
+  },
+  {
+    "id": "6",
+    "title": "Puerto Rico",
+    "description": "Juego de construcción y comercio en el que los jugadores desarrollan la isla de Puerto Rico",
+    "price": "45",
+    "thumbnail": "https://example.com/puertorico.jpg",
+    "code": "S006",
+    "stock": "10"
+  },
+  {
+    "id": "7",
+    "title": "Through the Ages",
+    "description": "Juego de civilizaciones en el que los jugadores guían a su pueblo a través de la historia",
+    "price": "65",
+    "thumbnail": "https://example.com/throughtheages.jpg",
+    "code": "S007",
+    "stock": "10"
+  },
+  {
+    "id": "8",
+    "title": "Scythe",
+    "description": "Juego de conquista y construcción en una realidad alternativa de los años 20",
+    "price": "75",
+    "thumbnail": "https://example.com/scythe.jpg",
+    "code": "S008",
+    "stock": "10"
+  },
+  {
+    "id": "9",
+    "title": "7 Wonders",
+    "description": "Juego de construcción de civilizaciones en el que los jugadores compiten por la supremacía",
+    "price": "30",
+    "thumbnail": "https://example.com/7wonders.jpg",
+    "code": "S009",
+    "stock": "10"
+  },
+  {
+    "id": "10",
+    "title": "Dominion",
+    "description": "Juego de construcción de mazos en el que los jugadores deben acumular puntos de victoria",
+    "price": "35",
+    "thumbnail": "https://example.com/dominion.jpg",
+    "code": "S010",
+    "stock": "10"
+  }
+]
