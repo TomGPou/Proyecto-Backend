@@ -19,9 +19,16 @@ export default class ProductManager {
     );
   }
 
-  async addProduct(title, description, price, thumbnail, code, stock) {
+  async addProduct(newProduct) {
     // Validar la carga de datos
-    if (!title || !description || !price || !thumbnail || !code || !stock)
+    if (
+      !newProduct.title ||
+      !newProduct.description ||
+      !newProduct.price ||
+      !newProduct.thumbnail ||
+      !newProduct.code ||
+      !newProduct.stock
+    )
       throw new Error("Falta completar datos del producto");
 
     // Validar productos duplicados
