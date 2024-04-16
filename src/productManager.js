@@ -56,11 +56,8 @@ export default class ProductManager {
   async getProductById(id) {
     const productsList = await this.getProducts();
     const product = productsList.find((p) => p.id === id);
-    if (!product) {
-      // throw new Error("NOT FOUND");
-      console.log("producto no encontrado");
-    }
-    return product;
+
+    return product || null;
   }
 
   // Actualizar producto
