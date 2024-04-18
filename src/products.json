@@ -1,92 +1,202 @@
 [
   {
-    "id": "1",
+    "pid": "1",
     "title": "Catan",
-    "description": "Juego de estrategia en el que los jugadores tratan de colonizar una isla",
+    "description": "Un juego de estrategia donde los jugadores tratan de colonizar una isla ficticia",
+    "category": "Estrategia",
+    "code": "E001",
     "price": "50",
-    "thumbnail": "https://example.com/catan.jpg",
-    "code": "S001",
-    "stock": "10"
+    "status": "true",
+    "thumbnail": "/images/catan.jpg"
   },
   {
-    "id": "2",
+    "pid": "2",
     "title": "Risk",
-    "description": "Juego de conquista mundial en el que los jugadores deben planificar sus movimientos con cuidado",
-    "price": "40",
-    "thumbnail": "https://example.com/risk.jpg",
-    "code": "S002",
-    "stock": "10"
-  },
-  {
-    "id": "3",
-    "title": "Agricola",
-    "description": "Juego de gestión de recursos en el que los jugadores administran una granja",
-    "price": "60",
-    "thumbnail": "https://example.com/agricola.jpg",
-    "code": "S003",
-    "stock": "10"
-  },
-  {
-    "id": "4",
-    "title": "Twilight Struggle",
-    "description": "Juego de la Guerra Fría en el que los jugadores representan a las superpotencias",
-    "price": "55",
-    "thumbnail": "https://example.com/twilightstruggle.jpg",
-    "code": "S004",
-    "stock": "10"
-  },
-  {
-    "id": "5",
-    "title": "Terraforming Mars",
-    "description": "Juego de colonización de Marte en el que los jugadores deben transformar el planeta",
-    "price": "70",
-    "thumbnail": "https://example.com/terraformingmars.jpg",
-    "code": "S005",
-    "stock": "10"
-  },
-  {
-    "id": "6",
-    "title": "Puerto Rico",
-    "description": "Juego de construcción y comercio en el que los jugadores desarrollan la isla de Puerto Rico",
+    "description": "Un juego de estrategia basado en la conquista de territorios",
+    "category": "Estrategia",
+    "code": "E002",
     "price": "45",
-    "thumbnail": "https://example.com/puertorico.jpg",
-    "code": "S006",
-    "stock": "10"
+    "status": "true",
+    "thumbnail": "/images/risk.jpg"
   },
   {
-    "id": "7",
-    "title": "Through the Ages",
-    "description": "Juego de civilizaciones en el que los jugadores guían a su pueblo a través de la historia",
-    "price": "65",
-    "thumbnail": "https://example.com/throughtheages.jpg",
-    "code": "S007",
-    "stock": "10"
+    "pid": "3",
+    "title": "Dungeons & Dragons",
+    "description": "Un juego de rol en el que los jugadores crean personajes y exploran mundos imaginarios",
+    "category": "Rol",
+    "code": "R001",
+    "price": "60",
+    "status": "true",
+    "thumbnail": "/images/dnd.jpg"
   },
   {
-    "id": "8",
-    "title": "Scythe",
-    "description": "Juego de conquista y construcción en una realidad alternativa de los años 20",
-    "price": "75",
-    "thumbnail": "https://example.com/scythe.jpg",
-    "code": "S008",
-    "stock": "10"
+    "pid": "4",
+    "title": "Warhammer 40,000",
+    "description": "Un juego de estrategia en un universo de ciencia ficción",
+    "category": "Estrategia",
+    "code": "E003",
+    "price": "80",
+    "status": "true",
+    "thumbnail": "/images/warhammer.jpg"
   },
   {
-    "id": "9",
-    "title": "7 Wonders",
-    "description": "Juego de construcción de civilizaciones en el que los jugadores compiten por la supremacía",
+    "pid": "5",
+    "title": "Pathfinder",
+    "description": "Un juego de rol basado en el sistema de Dungeons & Dragons",
+    "category": "Rol",
+    "code": "R002",
+    "price": "55",
+    "status": "true",
+    "thumbnail": "/images/pathfinder.jpg"
+  },
+  {
+    "pid": "6",
+    "title": "Carcassonne",
+    "description": "Un juego de estrategia donde los jugadores construyen un paisaje medieval",
+    "category": "Estrategia",
+    "code": "E004",
     "price": "30",
-    "thumbnail": "https://example.com/7wonders.jpg",
-    "code": "S009",
-    "stock": "10"
+    "status": "true",
+    "thumbnail": "/images/carcassonne.jpg"
   },
   {
-    "id": "10",
-    "title": "Dominion",
-    "description": "Juego de construcción de mazos en el que los jugadores deben acumular puntos de victoria",
+    "pid": "7",
+    "title": "Vampiro: La Mascarada",
+    "description": "Un juego de rol en el que los jugadores interpretan a vampiros en un mundo de oscuridad",
+    "category": "Rol",
+    "code": "R003",
+    "price": "65",
+    "status": "true",
+    "thumbnail": "/images/vampiro.jpg"
+  },
+  {
+    "pid": "8",
+    "title": "Agricola",
+    "description": "Un juego de estrategia donde los jugadores administran una granja",
+    "category": "Estrategia",
+    "code": "E005",
+    "price": "55",
+    "status": "true",
+    "thumbnail": "/images/agricola.jpg"
+  },
+  {
+    "pid": "9",
+    "title": "Shadowrun",
+    "description": "Un juego de rol en un mundo de ciencia ficción donde la magia y la tecnología coexisten",
+    "category": "Rol",
+    "code": "R004",
+    "price": "70",
+    "status": "true",
+    "thumbnail": "/images/shadowrun.jpg"
+  },
+  {
+    "pid": "10",
+    "title": "Colonos del Imperio",
+    "description": "Un juego de estrategia donde los jugadores construyen un imperio en la era de los descubrimientos",
+    "category": "Estrategia",
+    "code": "E006",
+    "price": "40",
+    "status": "true",
+    "thumbnail": "/images/colonos.jpg"
+  },
+  {
+    "pid": "11",
+    "title": "Call of Cthulhu",
+    "description": "Un juego de rol basado en las obras de H.P. Lovecraft",
+    "category": "Rol",
+    "code": "R005",
+    "price": "60",
+    "status": "true",
+    "thumbnail": "/images/cthulhu.jpg"
+  },
+  {
+    "pid": "12",
+    "title": "Scythe",
+    "description": "Un juego de estrategia ambientado en una Europa alternativa de los años 20",
+    "category": "Estrategia",
+    "code": "E007",
+    "price": "75",
+    "status": "true",
+    "thumbnail": "/images/scythe.jpg"
+  },
+  {
+    "pid": "13",
+    "title": "GURPS",
+    "description": "Un sistema genérico para juegos de rol que permite adaptarse a cualquier ambientación",
+    "category": "Rol",
+    "code": "R006",
+    "price": "50",
+    "status": "true",
+    "thumbnail": "/images/gurps.jpg"
+  },
+  {
+    "pid": "14",
+    "title": "Pandemic",
+    "description": "Un juego de estrategia cooperativo donde los jugadores tratan de erradicar enfermedades",
+    "category": "Estrategia",
+    "code": "E008",
     "price": "35",
-    "thumbnail": "https://example.com/dominion.jpg",
-    "code": "S010",
-    "stock": "10"
+    "status": "true",
+    "thumbnail": "/images/pandemic.jpg"
+  },
+  {
+    "pid": "15",
+    "title": "Anima: Beyond Fantasy",
+    "description": "Un juego de rol en un mundo de fantasía donde conviven diversas razas y magia",
+    "category": "Rol",
+    "code": "R007",
+    "price": "55",
+    "status": "true",
+    "thumbnail": "/images/anima.jpg"
+  },
+  {
+    "pid": "16",
+    "title": "Terraforming Mars",
+    "description": "Un juego de estrategia donde los jugadores intentan terraformar el planeta rojo",
+    "category": "Estrategia",
+    "code": "E009",
+    "price": "70",
+    "status": "true",
+    "thumbnail": "/images/terraforming.jpg"
+  },
+  {
+    "pid": "17",
+    "title": "Dungeon World",
+    "description": "Un juego de rol que busca emular las historias clásicas de exploración de mazmorras",
+    "category": "Rol",
+    "code": "R008",
+    "price": "45",
+    "status": "true",
+    "thumbnail": "/images/dungeonworld.jpg"
+  },
+  {
+    "pid": "18",
+    "title": "7 Wonders",
+    "description": "Un juego de estrategia donde los jugadores construyen una civilización en 3 eras",
+    "category": "Estrategia",
+    "code": "E010",
+    "price": "40",
+    "status": "true",
+    "thumbnail": "/images/7wonders.jpg"
+  },
+  {
+    "pid": "19",
+    "title": "Vampire: The Requiem",
+    "description": "Un juego de rol en el que los jugadores interpretan a vampiros en un mundo moderno",
+    "category": "Rol",
+    "code": "R009",
+    "price": "60",
+    "status": "true",
+    "thumbnail": "/images/vampire.jpg"
+  },
+  {
+    "pid": "20",
+    "title": "Terra Mystica",
+    "description": "Un juego de estrategia donde los jugadores representan diferentes facciones en un mundo de fantasía",
+    "category": "Estrategia",
+    "code": "E011",
+    "price": "65",
+    "status": "true",
+    "thumbnail": "/images/terra.jpg"
   }
 ]

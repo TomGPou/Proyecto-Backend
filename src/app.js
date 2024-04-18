@@ -9,7 +9,7 @@ const productManager = new ProductManager();
 
 // ENDPOINTS
 app.get("/products", async (req, res) => {
-  const limit = req.query.limit;
+  const limit = +req.query.limit;
 
   try {
     const products = await productManager.getProducts();
@@ -26,17 +26,14 @@ app.get("/products", async (req, res) => {
   }
 });
 
-app.get("/products/:id", async (req, res) => {
-  const id = req.params.id;
+app.get("/products/:pid", async (req, res) => {
+  const pid = req.params.pid;
 
   try {
-    const product = await productManager.getProductById(id);
-    if (product) {
-      res.send({ status: 1, payload: product });
-    } else {
-      console.log(`Producto de ID ${id} no encontrado`);
-      res.status(404).send({ error: `Producto de ID ${id} no encontrado` });
-    }
+    const product = await productManager.getProductById(pid);
+    product
+      ? res.send({ status: 1, payload: product })
+      : res.status(404).send({ error: `Producto de ID ${pid} no encontrado` });
   } catch (error) {
     console.log(error);
     res.status(500).send({ error: "Internal Server Error" });

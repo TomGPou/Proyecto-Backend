@@ -7,71 +7,80 @@ export default class ProductManager {
   }
 
   async readFile() {
-    const data = await fs.promises.readFile(this.path);
-    this.products = JSON.parse(data);
+    try {
+      const data = await fs.promises.readFile(this.path);
+      this.carts = JSON.parse(data);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   }
 
   async writeFile() {
-    await fs.promises.writeFile(
-      this.path,
-      JSON.stringify(this.products),
-      "utf-8"
-    );
+    try {
+      await fs.promises.writeFile(
+        this.path,
+        JSON.stringify(this.carts),
+        "utf-8"
+      );
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   }
 
-  async addProduct(title, description, price, thumbnail, code, stock) {
+  // AGREGAR PRODUCTO
+  async addProduct(newProduct) {
     // Validar la carga de datos
-    if (!title || !description || !price || !thumbnail || !code || !stock)
+    if (
+      !newProduct.title ||
+      !newProduct.description ||
+      !newProduct.price ||
+      !newProduct.thumbnail ||
+      !newProduct.code ||
+      !newProduct.stock
+    )
       throw new Error("Falta completar datos del producto");
 
     // Validar productos duplicados
-    const isDuplicated = this.products.some((product) => product.code === code);
+    const isDuplicated = this.products.some((p) => p.code === newProduct.code);
 
     if (isDuplicated)
       throw new Error("El código debe ser único para cada producto");
 
-    // Agregando producto
-    const newProduct = {
-      id: this.products.length + 1,
-      title,
-      description,
-      price,
-      thumbnail,
-      code,
-      stock,
-    };
-
+    // Cargar al array
+    newProduct.pid = this.products.length + 1;
     this.products.push(newProduct);
     await this.writeFile();
     return newProduct;
   }
 
-  // Obtener lista de productos
+  // OBTENER TODOS LOS PRODUCTOS
   async getProducts() {
     if (!this.products.length) await this.readFile();
     return this.products;
   }
 
-  //  Buscar un producto por su id
-  async getProductById(id) {
+  //  BUSCAR PRODUCTO POR ID
+  async getProductById(pid) {
     const productsList = await this.getProducts();
-    const product = productsList.find((p) => p.id === id);
+    const product = productsList.find((p) => p.pid === pid);
 
     return product || null;
   }
 
-  // Actualizar producto
-  async updateProduct(id, data) {
+  // ACTUALIZAR PRODUCTO
+  async updateProduct(pid, data) {
     const productsList = await this.getProducts();
 
-    const i = productsList.findIndex((item) => item.id === id);
+    const i = productsList.findIndex((item) => item.pid === pid);
     // verificar que exista el ID
     if (i < 0) {
       throw new Error(`NOT FOUND`);
     } else {
       // verificar que no elimine el ID
-      if ("id" in data) {
-        delete data.id;
+      if ("pid" in data) {
+        delete data.pid;
       }
       // modificar producto y actualizar DB
       this.products[i] = { ...this.products[i], ...data };
@@ -81,11 +90,11 @@ export default class ProductManager {
     }
   }
 
-  // Borrar producto
-  async deleteProduct(id) {
+  // BORRAR PRODUCTO
+  async deleteProductp(pid) {
     const productsList = await this.getProducts();
 
-    const i = productsList.findIndex((item) => item.id === id);
+    const i = productsList.findIndex((item) => item.pid === pid);
     // verificar que exista el ID
     if (i < 0) {
       throw new Error(`NOT FOUND`);
