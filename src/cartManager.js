@@ -1,4 +1,9 @@
 import fs from "fs";
+import ProductManager from "./productManager.js";
+
+const productManager = new ProductManager();
+
+// MANAGER DE CARRITO
 
 export default class CartManager {
   constructor() {
@@ -71,16 +76,22 @@ export default class CartManager {
         throw new Error(`Carrito con ID: ${cid} no encontrado`);
       } else {
         const cart = this.carts[cartIndex];
-        // buscar id de producto en el carrito
-        const productIndex = cart.products.findIndex(
-          (item) => item.product === pid
-        );
-        // si no existe, agregarlo
-        if (productIndex < 0) {
-          cart.products.push({ product: pid, quantity: 1 });
+        // buscar si existe el id del producto
+        const product = await productManager.getProductById(pid);
+        if (!product) {
+          throw new Error(`Producto con ID: ${pid} no encontrado`);
         } else {
-          // si existe, incrementar cantidad
-          cart.products[productIndex].quantity++;
+          // buscar id de producto en el carrito
+          const productIndex = cart.products.findIndex(
+            (item) => item.product === pid
+          );
+          // si no existe, agregarlo
+          if (productIndex < 0) {
+            cart.products.push({ product: pid, quantity: 1 });
+          } else {
+            // si existe, incrementar cantidad
+            cart.products[productIndex].quantity++;
+          }
         }
 
         await this.writeFile();

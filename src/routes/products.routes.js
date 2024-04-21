@@ -44,10 +44,11 @@ router.post("/", async (req, res) => {
   const newProduct = req.body;
   try {
     const product = await productManager.addProduct(newProduct);
+    console.log(product);
     res.status(200).send({ payload: product });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ error: "Internal Server Error" });
+    res.status(400).send({ error: error.message });
   }
 });
 
@@ -60,7 +61,7 @@ router.put("/:pid", async (req, res) => {
     res.status(200).send({ payload: product });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ error: "Internal Server Error" });
+    res.status(400).send({ error: error.message });
   }
 });
 
@@ -72,7 +73,7 @@ router.delete("/:pid", async (req, res) => {
     res.status(200).send({ payload: `Producto de ID: ${pid} eliminado` });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ error: "Internal Server Error" });
+    res.status(400).send({ error: error.message });
   }
 });
 

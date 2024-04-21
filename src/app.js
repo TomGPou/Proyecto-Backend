@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/products", productsRoutes);
 app.use("/api/carts", cartsRoutes);
+app.use("/static", express.static(`${config.DIRNAME}/public`));
 
 // SERVER
 app.listen(config.PORT, () => {

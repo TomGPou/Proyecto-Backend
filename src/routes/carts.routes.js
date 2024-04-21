@@ -12,7 +12,8 @@ router.post("/", async (req, res) => {
     const newCart = await cartManager.createCart();
     res.status(200).send({ payload: newCart });
   } catch (error) {
-    res.status(500).send({ error: "Internal Server Error" });
+    console.log(error);
+    res.status(400).send({ error: error.message });
   }
 });
 
@@ -23,7 +24,8 @@ router.get("/:cid", async (req, res) => {
     const cart = await cartManager.getCartById(cid);
     res.status(200).send({ payload: cart.products });
   } catch (error) {
-    res.status(500).send({ error: "Internal Server Error" });
+    console.log(error);
+    res.status(400).send({ error: error.message });
   }
 });
 
@@ -35,7 +37,8 @@ router.post("/:cid/product/:pid", async (req, res) => {
     const cart = await cartManager.addProductToCart(cid, pid);
     res.status(200).send({ payload: cart });
   } catch (error) {
-    res.status(500).send({ error: "Internal Server Error" });
+    console.log(error);
+    res.status(400).send({ error: error.message });
   }
 });
 
