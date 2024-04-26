@@ -41,11 +41,13 @@ router.get("/:pid", async (req, res) => {
 
 // Agregar producto
 router.post("/", async (req, res) => {
+  // const socketServer = req.app.get('socketServer')
   const newProduct = req.body;
   try {
     const product = await productManager.addProduct(newProduct);
     console.log(product);
     res.status(200).send({ payload: product });
+    // socketServer.broadcast.emit('message', 'producto agregado')
   } catch (error) {
     console.log(error);
     res.status(400).send({ error: error.message });

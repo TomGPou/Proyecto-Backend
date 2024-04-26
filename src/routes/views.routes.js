@@ -7,9 +7,14 @@ const productManager = new ProductManager();
 
 //* ENDPOINTS
 // Lista de productos
-router.get("/products", async (req, res) => {
+router.get("/", async (req, res) => {
   const products = { products: await productManager.getProducts() };
-  res.render("index", products);
+  res.render("home", products);
+});
+
+router.get("/realtimeproducts", async (req, res) => {
+  const products = { products: await productManager.getProducts() };
+  res.render("realtimeproducts", products);
 });
 
 export default router;

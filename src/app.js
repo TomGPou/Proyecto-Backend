@@ -1,6 +1,8 @@
 //* IMPORTS
 import express from "express";
 import handlebars from "express-handlebars";
+import { Server } from "socket.io";
+// IMPORTS FILES
 import config from "./config.js";
 import productsRoutes from "./routes/products.routes.js";
 import cartsRoutes from "./routes/carts.routes.js";
@@ -21,6 +23,16 @@ app.use("/", viewsRoutes);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
 
 //* SERVER
-app.listen(config.PORT, () => {
+const httpServer = app.listen(config.PORT, () => {
   console.log(`Servidor activo en el puerto ${config.PORT}`);
+});
+
+//SOCKET
+const socketServer = new Server(httpServer);
+app.set("socketServer", socketServer);
+
+socketServer.on("connection", async (socket) => {
+  await console.log(
+    `Cliente conectado, id ${socket.id} desde ${socket.handshake.address}`
+  );
 });
