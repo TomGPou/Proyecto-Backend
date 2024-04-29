@@ -28,11 +28,11 @@ const httpServer = app.listen(config.PORT, () => {
 });
 
 //SOCKET
-const socketServer = new Server(httpServer);
-app.set("socketServer", socketServer);
+const io = new Server(httpServer);
+app.set("socketServer", io);
 
-socketServer.on("connection", async (socket) => {
-  await console.log(
+io.on("connection", (socket) => {
+  console.log(
     `Cliente conectado, id ${socket.id} desde ${socket.handshake.address}`
   );
 });
