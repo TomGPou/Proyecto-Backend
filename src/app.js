@@ -29,7 +29,7 @@ const httpServer = app.listen(config.PORT, () => {
 
 //SOCKET
 const io = new Server(httpServer);
-app.set("socketServer", io);
+app.set("io", io);
 
 io.on("connection", (socket) => {
   console.log(
