@@ -9,7 +9,11 @@
 </div>
 
 <div>
-    <p id="chatList"></p>
+    <p id="chatList">
+        {{#each messages}}
+            {{user}}: {{message}}<br />
+        {{/each}}
+    </p>
 </div>
 
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
@@ -23,26 +27,16 @@
     const sendButton = document.getElementById('sendButton');
     let user;
 
-    socketClient.on('newClientConnected', data => {
-        console.log(data);
+    socketClient.on('newMessage', data => {
+        chatList.innerHTML += `[${data.user}]: ${data.message}<br />`;
     });
 
-    socketClient.on('chatLog', data => {
-        for (let i = 0; i < data.length; i++) {
-            chatList.innerHTML += `<br />[${data[i].user}]: ${data[i].message}`;
-        }
-    });
-
-    socketClient.on('addMessage', data => {
-        chatList.innerHTML += `<br />[${data.user}]: ${data.message}`;
-    });
-
-    const sendMessage = () => {
+    {{!-- const sendMessage = () => {
         if (chatBox.value !== '') {
             socketClient.emit('newMessage', { user: user, message: chatBox.value });
             chatBox.value = '';
         }
-    }
+    } --}}
 
     const askForUser = async () => {
         const result = await Swal.fire({

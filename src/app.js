@@ -6,6 +6,7 @@ import config from "./config.js";
 import productsRoutes from "./routes/products.routes.js";
 import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
+import messagesRoutes from "./routes/messages.routes.js"
 import socket from "./socket.js";
 
 //* INIT AND CONFIG
@@ -20,6 +21,7 @@ app.set("view engine", "handlebars");
 app.use("/api/products", productsRoutes);
 app.use("/api/carts", cartsRoutes);
 app.use("/", viewsRoutes);
+app.use("/chat", messagesRoutes);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
 
 //* SERVER

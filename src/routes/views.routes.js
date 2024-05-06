@@ -1,9 +1,11 @@
 import { Router } from "express";
-import ProductManager from "../managers/productManager.js";
+import ProductManager from "../utils/productManager.js";
+import ChatManager from "../utils/chatManager.js";
 
 //* INIT
 const router = Router();
 const productManager = new ProductManager();
+const chatManager = new ChatManager
 
 //* ENDPOINTS
 // Lista de productos
@@ -28,7 +30,13 @@ router.get("/realtimeproducts", async (req, res) => {
 });
 
 router.get('/chat', (req, res) => {
-  res.render('chat', {});
+  try {
+    const messages = { messages: await chatManager.getMessages() };
+    res.status(200).render("chat", messages);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
 });
 
 export default router;
