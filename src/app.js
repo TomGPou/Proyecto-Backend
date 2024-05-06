@@ -1,12 +1,12 @@
 //* IMPORTS
 import express from "express";
 import handlebars from "express-handlebars";
-import { Server } from "socket.io";
 // IMPORTS FILES
 import config from "./config.js";
 import productsRoutes from "./routes/products.routes.js";
 import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
+import socket from "./socket.js";
 
 //* INIT AND CONFIG
 const app = express();
@@ -28,11 +28,5 @@ const httpServer = app.listen(config.PORT, () => {
 });
 
 //SOCKET
-const io = new Server(httpServer);
+const io = socket(httpServer)
 app.set("io", io);
-
-io.on("connection", (socket) => {
-  console.log(
-    `Cliente conectado, id ${socket.id} desde ${socket.handshake.address}`
-  );
-});

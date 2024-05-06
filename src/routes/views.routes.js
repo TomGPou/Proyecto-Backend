@@ -1,5 +1,5 @@
 import { Router } from "express";
-import ProductManager from "../productManager.js";
+import ProductManager from "../managers/productManager.js";
 
 //* INIT
 const router = Router();
@@ -25,6 +25,10 @@ router.get("/realtimeproducts", async (req, res) => {
     console.log(error);
     res.status(500).send({ error: "Internal Server Error" });
   }
+});
+
+router.get('/chat', (req, res) => {
+  res.render('chat', {});
 });
 
 export default router;
