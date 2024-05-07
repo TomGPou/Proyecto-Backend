@@ -1,20 +1,20 @@
 import { Server } from 'socket.io'
 
 const socket = (httpServer) => {
-  let messages = [];
+  // let messages = [];
 
   const io = new Server (httpServer)
 
   io.on('connection', client => {
-    client.emit('chatLog', messages);
+    // client.emit('chatLog', messages);
     console.log(`Cliente conectado, id ${client.id} desde ${client.handshake.address}`);
 
-    client.on('newMessage', data => {
-        messages.push(data);
-        console.log(`Mensaje recibido desde ${client.id}: ${data.user}: ${data.message}`);
+    // client.on('newMessage', data => {
+    //     messages.push(data);
+    //     console.log(`Mensaje recibido desde ${client.id}: ${data.user}: ${data.message}`);
 
-        io.emit('addMessage', data);
-    });
+    //     io.emit('addMessage', data);
+    // });
 });
 
 return io;
