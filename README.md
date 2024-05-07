@@ -23,3 +23,6 @@
 </div>
 
 ###
+
+<p align="center">Inicio del servidor</p>
+<p align="center">`npm start`</p>

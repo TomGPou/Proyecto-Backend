@@ -6,8 +6,8 @@ import config from "./config.js";
 import productsRoutes from "./routes/products.routes.js";
 import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
-import messagesRoutes from "./routes/messages.routes.js"
-import socket from "./socket.js";
+import messagesRoutes from "./routes/messages.routes.js";
+import { Server } from 'socket.io';
 
 //* INIT AND CONFIG
 const app = express();
@@ -30,5 +30,9 @@ const httpServer = app.listen(config.PORT, () => {
 });
 
 //SOCKET
-const io = socket(httpServer)
+const io = new Server(httpServer)
 app.set("io", io);
+
+io.on('connection', client => {
+  console.log(`Cliente conectado, id ${client.id} desde ${client.handshake.address}`);
+})
