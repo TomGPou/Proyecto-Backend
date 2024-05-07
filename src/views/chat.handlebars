@@ -2,11 +2,11 @@
 
 <h1>Chat</h1>
 
-<div>
-    <input type="text" id="chatBox" placeholder="Ingresar mensaje" style="width: 300px;">
+<form id="chatForm">
+    <input type="text" id="message" name="message" placeholder="Ingresar mensaje" style="width: 300px;">
     <br /><br />
-    <button id="sendButton">Enviar</button>
-</div>
+    <button type="submit">Enviar</button>
+</form>
 
 <div>
     <p id="chatList">
@@ -22,7 +22,7 @@
 <script type="module">
     const serverAddress = 'ws://localhost:8080';
     const socketClient = io(serverAddress);
-    const chatBox = document.getElementById('chatBox');
+    const chatForm = document.getElementById('chatForm');
     const chatList = document.getElementById('chatList');
     const sendButton = document.getElementById('sendButton');
     let user;
@@ -30,13 +30,6 @@
     socketClient.on('newMessage', data => {
         chatList.innerHTML += `[${data.user}]: ${data.message}<br />`;
     });
-
-    {{!-- const sendMessage = () => {
-        if (chatBox.value !== '') {
-            socketClient.emit('newMessage', { user: user, message: chatBox.value });
-            chatBox.value = '';
-        }
-    } --}}
 
     const askForUser = async () => {
         const result = await Swal.fire({
@@ -51,15 +44,18 @@
         console.log(user);
     }
 
-    chatBox.addEventListener('keyup', (evt) => {
-        if (evt.key === 'Enter') sendMessage()
+
+   chatForm.addEventListener('submit', async (evt) => {
+    evt.preventDefault();
+
+    const message = document.getElementById('message').value;
+
+    const process = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({user: user, message: message})
     });
-
-
-    sendButton.addEventListener('click', (evt) => {
-        sendMessage();
-    });
-
+   })
 
     // Flujo principal
     await askForUser();

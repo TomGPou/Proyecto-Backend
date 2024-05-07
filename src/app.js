@@ -20,8 +20,8 @@ app.set("view engine", "handlebars");
 //* ROUTES
 app.use("/api/products", productsRoutes);
 app.use("/api/carts", cartsRoutes);
+app.use("/api/chat", messagesRoutes);
 app.use("/", viewsRoutes);
-app.use("/chat", messagesRoutes);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
 
 //* SERVER
