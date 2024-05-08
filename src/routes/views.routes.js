@@ -7,7 +7,7 @@ const router = Router();
 const productManager = new ProductManager();
 const chatManager = new ChatManager
 
-//* ENDPOINTS
+//* ENDPOINTS (/)
 // Lista de productos
 router.get("/", async (req, res) => {
   try {
@@ -19,6 +19,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Lista de productos con socket
 router.get("/realtimeproducts", async (req, res) => {
   try {
     const products = { products: await productManager.getProducts() };
@@ -29,7 +30,8 @@ router.get("/realtimeproducts", async (req, res) => {
   }
 });
 
-router.get('/chat', (req, res) => {
+// Chat
+router.get('/chat', async (req, res) => {
   try {
     const messages = { messages: await chatManager.getMessages() };
     res.status(200).render("chat", messages);

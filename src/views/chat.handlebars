@@ -31,22 +31,24 @@
     let user;
 
     {{!-- socket --}}
-    socketClient.on('newMessage', data => {
+    socketClient.on('newMessage',  data => {
         chatList.innerHTML += `[${data.user}]: ${data.message}<br />`;
     });
 
     {{!-- ingreso de usuario --}}
     const askForUser = async () => {
-        const result = await Swal.fire({
+        const {value: result} = await Swal.fire({
             title: "Usuario",
             input: "email",
             inputLabel: "Tú dirección de email",
             inputPlaceholder: "Ingresa tu dirección de email"
+            allowOutsideClick: false
+
         });
-        if (email) {
-            Swal.fire(`Entered email: ${result.value}`);
+        if (result) {
+            Swal.fire(`Entered email: ${result}`);
         }
-        user = result.value;
+        user = result;
     }
 
     {{!-- posteo de mensajes --}}
@@ -58,7 +60,7 @@
         const process = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user: user, message: message })
+            body: JSON.stringify({user: user, message: message})
         });
     })
 

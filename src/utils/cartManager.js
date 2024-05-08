@@ -7,7 +7,7 @@ const productManager = new ProductManager();
 
 export default class CartManager {
   constructor() {
-    this.path = "./src/carts.json";
+    this.path = './src/utils/carts.json',
     this.carts = [];
   }
 

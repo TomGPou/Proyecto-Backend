@@ -2,7 +2,7 @@ import fs from 'fs'
 
 export default class ChatManager {
     constructor() {
-        this.path = 'src/chatLog.json',
+        this.path = './src/utils/chatLog.json',
         this.messages = []
     }
 

@@ -1,12 +1,12 @@
 import { Router } from "express";
 import ProductManager from "../utils/productManager.js";
 
-// INIT
+//* INIT
 const router = Router();
 const productManager = new ProductManager();
 
-// ENDPOINTS
-// obtener todos los productos con limite
+//* ENDPOINTS (/api/products)
+// Obtener todos los productos con limite
 router.get("/", async (req, res) => {
   const limit = +req.query.limit;
 

@@ -1,11 +1,11 @@
 import { Router } from "express";
-import CartManager from "../utils/cartManager";
+import CartManager from "../utils/cartManager.js";
 
-// INIT
+//* INIT
 const router = Router();
 const cartManager = new CartManager();
 
-// ENDPOINTS
+//* ENDPOINTS (/api/carts)
 // Crear carrito
 router.post("/", async (req, res) => {
   try {
