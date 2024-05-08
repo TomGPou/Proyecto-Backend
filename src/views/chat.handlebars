@@ -32,7 +32,13 @@
 
     {{!-- socket --}}
     socketClient.on('newMessage',  data => {
-        chatList.innerHTML += `[${data.user}]: ${data.message}<br />`;
+        const chatLog = data.messages
+
+        chatList.innerHTML = "";
+
+        chatLog.forEach((message) => {
+            chatList.innerHTML += `${message.user}: ${message.message} <br />`;
+        })
     });
 
     {{!-- ingreso de usuario --}}

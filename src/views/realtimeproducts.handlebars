@@ -25,7 +25,6 @@
   const socketClient = io();
   socketClient.on("products", data => {
   const productsList = document.getElementById("productsList");
-  console.log(data.message);
   const products = data.products;
 
   productsList.innerHTML = "";

@@ -25,8 +25,8 @@ router.post("/", async (req, res) => {
       const message = await chatManager.addMessage(newMessage);
       res.status(200).send({ payload: message });
   
-    //   const messages = await chatManager.getMessages();
-      io.emit("newMessage", { message: message });
+      const messages = await chatManager.getMessages();
+      io.emit("newMessage", { messages: messages });
     } catch (error) {
       console.log(error);
       res.status(400).send({ error: error.message });
