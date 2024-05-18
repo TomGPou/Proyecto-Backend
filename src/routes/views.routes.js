@@ -1,6 +1,6 @@
 import { Router } from "express";
-import ProductManager from "../utils/productManager.js";
-import ChatManager from "../utils/chatManager.js";
+import ProductManager from "../dao/managersFS/productManager.js";
+import ChatManager from "../dao/managersFS/messagesManager.js";
 
 //* INIT
 const router = Router();

@@ -1,5 +1,5 @@
 import { Router } from "express"
-import ChatManager from "../utils/chatManager.js";
+import ChatManager from "../dao/managersFS/messagesManager.js";
 
 //* INIT
 const router = Router();

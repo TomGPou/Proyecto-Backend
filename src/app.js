@@ -1,6 +1,7 @@
 //* IMPORTS
 import express from "express";
 import handlebars from "express-handlebars";
+import mongoose from "mongoose";
 // IMPORTS FILES
 import config from "./config.js";
 import productsRoutes from "./routes/products.routes.js";
@@ -25,11 +26,13 @@ app.use("/", viewsRoutes);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
 
 //* SERVER
-const httpServer = app.listen(config.PORT, () => {
-  console.log(`Servidor activo en el puerto ${config.PORT}`);
+const httpServer = app.listen(config.PORT, async () => {
+  await mongoose.connect(config.MONGODB_URI)
+
+  console.log(`Servidor activo en el puerto ${config.PORT} conectado a DB`);
 });
 
-//SOCKET
+// SOCKET
 const io = new Server(httpServer)
 app.set("io", io);
 
