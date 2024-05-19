@@ -1,13 +1,16 @@
-import { Router } from "express"
-import ChatManager from "../dao/managersFS/messagesManager.js";
+import { Router } from "express";
+// Managers FS
+// import ChatManager from "../dao/managersFS/messagesManager.js";
+// Managers MongoDB
+import ChatManager from "../dao/managersDB/messagesManagerDB.js";
 
 //* INIT
 const router = Router();
-const chatManager = new ChatManager()
+const chatManager = new ChatManager();
 
 //* ENDPOINTS (/api/chat)
 // Obtener mensajes
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const messages = { messages: await chatManager.getMessages() };
     res.status(200).send({ payload: messages });
@@ -19,18 +22,18 @@ router.get('/', async (req, res) => {
 
 // Agregar mensaje
 router.post("/", async (req, res) => {
-    const io = req.app.get("io");
-    const newMessage = req.body;
-    try {
-      const message = await chatManager.addMessage(newMessage);
-      res.status(200).send({ payload: message });
-  
-      const messages = await chatManager.getMessages();
-      io.emit("newMessage", { messages: messages });
-    } catch (error) {
-      console.log(error);
-      res.status(400).send({ error: error.message });
-    }
-  });
+  const io = req.app.get("io");
+  const newMessage = req.body;
+  try {
+    const message = await chatManager.addMessage(newMessage);
+    res.status(200).send({ payload: message });
 
-export default router
+    const messages = await chatManager.getMessages();
+    io.emit("newMessage", { messages: messages });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ error: error.message });
+  }
+});
+
+export default router;

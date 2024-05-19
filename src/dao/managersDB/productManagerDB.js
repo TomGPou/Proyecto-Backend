@@ -1,16 +1,13 @@
 import productsModel from "../models/products.model.js";
 
 export default class ProductManager {
-  constructor() {
-    this.products = [];
-  }
+  // constructor() {
+  //   this.products = [];
+  // }
 
   // OBTENER TODOS LOS PRODUCTOS
   async getProducts() {
-    if (!this.products.length) {
-      this.products = await productsModel.find().lean();
-      return this.products;
-    }
+    return await productsModel.find().lean();
   }
 
   // AGREGAR PRODUCTO
