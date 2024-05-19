@@ -1,11 +1,15 @@
 import { Router } from "express";
-import ProductManager from "../dao/managersFS/productManager.js";
+// Managers FS
+// import ProductManager from "../dao/managersFS/productManager.js";
 import ChatManager from "../dao/managersFS/messagesManager.js";
+// Managers MongoDB
+import ProductManager from "../dao/managersDB/productManagerDB.js";
+// import ChatManager from "../dao/managersDB/messagesManagerDB.js";
 
 //* INIT
 const router = Router();
 const productManager = new ProductManager();
-const chatManager = new ChatManager
+const chatManager = new ChatManager();
 
 //* ENDPOINTS (/)
 // Lista de productos
@@ -31,7 +35,7 @@ router.get("/realtimeproducts", async (req, res) => {
 });
 
 // Chat
-router.get('/chat', async (req, res) => {
+router.get("/chat", async (req, res) => {
   try {
     const messages = { messages: await chatManager.getMessages() };
     res.status(200).render("chat", messages);
