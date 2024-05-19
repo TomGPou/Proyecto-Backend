@@ -1,5 +1,8 @@
 import { Router } from "express";
-import ProductManager from "../dao/managersFS/productManager.js";
+// Manager FS
+// import ProductManager from "../dao/managersFS/productManager.js";
+// Manager MongoDB
+import ProductManager from "../dao/managersDB/productManagerDB.js";
 
 //* INIT
 const router = Router();
@@ -8,25 +11,26 @@ const productManager = new ProductManager();
 //* ENDPOINTS (/api/products)
 // Obtener todos los productos con limite
 router.get("/", async (req, res) => {
-  const limit = +req.query.limit;
+  const limit = req.query.limit;
 
   try {
     const products = await productManager.getProducts();
     if (limit) {
       const productsLimit = products.slice(0, limit);
+      console.log(productsLimit);
       res.status(200).send({ payload: productsLimit });
     } else {
       res.status(200).send({ payload: products });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).send({ error: "Internal Server Error" });
+    res.status(500).send({ error: error.message });
   }
 });
 
 // producto por id
 router.get("/:pid", async (req, res) => {
-  const pid = +req.params.pid;
+  const pid = req.params.pid;
 
   try {
     const product = await productManager.getProductById(pid);
@@ -35,7 +39,7 @@ router.get("/:pid", async (req, res) => {
       : res.status(404).send({ error: `Producto de ID ${pid} no encontrado` });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ error: "Internal Server Error" });
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -58,14 +62,17 @@ router.post("/", async (req, res) => {
 // Actualizar producto
 router.put("/:pid", async (req, res) => {
   const io = req.app.get("io");
-  const pid = +req.params.pid;
+  const pid = req.params.pid;
   const updatedData = req.body;
   try {
     const product = await productManager.updateProduct(pid, updatedData);
     res.status(200).send({ payload: product });
 
     const products = await productManager.getProducts();
-    io.emit("products", { message: "producto actualizado", products: products });
+    io.emit("products", {
+      message: "producto actualizado",
+      products: products,
+    });
   } catch (error) {
     console.log(error);
     res.status(400).send({ error: error.message });
@@ -75,9 +82,9 @@ router.put("/:pid", async (req, res) => {
 //Eliminar producto
 router.delete("/:pid", async (req, res) => {
   const io = req.app.get("io");
-  const pid = +req.params.pid;
+  const pid = req.params.pid;
   try {
-    const product = await productManager.deleteProduct(pid);
+    await productManager.deleteProduct(pid);
     res.status(200).send({ payload: `Producto de ID: ${pid} eliminado` });
 
     const products = await productManager.getProducts();

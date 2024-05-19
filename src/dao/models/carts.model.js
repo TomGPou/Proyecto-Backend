@@ -1,11 +1,11 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 mongoose.pluralize(null);
 
-const collection = 'carts';
+const collection = "carts";
 
 const schema = new mongoose.Schema({
-    products: { type: Object, required: false }
+  products: { type: Object, required: true },
 });
 
 const model = mongoose.model(collection, schema);

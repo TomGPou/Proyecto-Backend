@@ -9,6 +9,7 @@ import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
 import messagesRoutes from "./routes/messages.routes.js";
 import { Server } from 'socket.io';
+import { error } from "console";
 
 //* INIT AND CONFIG
 const app = express();

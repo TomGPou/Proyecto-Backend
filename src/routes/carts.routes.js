@@ -1,5 +1,8 @@
 import { Router } from "express";
-import CartManager from "../dao/managersFS/cartManager.js";
+// Manager FS
+// import CartManager from "../dao/managersFS/cartManager.js";
+// Manager MongoDB
+import CartManager from "../dao/managersDB/cartManagerDB.js";
 
 //* INIT
 const router = Router();
@@ -19,10 +22,12 @@ router.post("/", async (req, res) => {
 
 // Ver carrito
 router.get("/:cid", async (req, res) => {
-  const cid = +req.params.cid;
+  const cid = req.params.cid;
   try {
     const cart = await cartManager.getCartById(cid);
-    res.status(200).send({ payload: cart.products });
+    cart
+      ? res.status(200).send({ payload: cart.products })
+      : res.status(404).send({ error: `Producto de ID ${cid} no encontrado` });
   } catch (error) {
     console.log(error);
     res.status(400).send({ error: error.message });
@@ -30,9 +35,9 @@ router.get("/:cid", async (req, res) => {
 });
 
 // Agregar producto al carrito
-router.post("/:cid/product/:pid", async (req, res) => {
-  const cid = +req.params.cid;
-  const pid = +req.params.pid;
+router.put("/:cid/product/:pid", async (req, res) => {
+  const cid = req.params.cid;
+  const pid = req.params.pid;
   try {
     const cart = await cartManager.addProductToCart(cid, pid);
     res.status(200).send({ payload: cart });
