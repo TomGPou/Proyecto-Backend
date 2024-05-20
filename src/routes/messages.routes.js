@@ -2,7 +2,7 @@ import { Router } from "express";
 // Managers FS
 // import ChatManager from "../dao/managersFS/messagesManager.js";
 // Managers MongoDB
-import ChatManager from "../dao/managersDB/messagesManagerDB.js";
+import ChatManager from "../dao/managersDB/messagesManager.mdb.js";
 
 //* INIT
 const router = Router();

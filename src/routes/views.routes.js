@@ -3,8 +3,8 @@ import { Router } from "express";
 // import ProductManager from "../dao/managersFS/productManager.js";
 // import ChatManager from "../dao/managersFS/messagesManager.js";
 // Managers MongoDB
-import ProductManager from "../dao/managersDB/productManagerDB.js";
-import ChatManager from "../dao/managersDB/messagesManagerDB.js";
+import ProductManager from "../dao/managersDB/productManager.mdb.js";
+import ChatManager from "../dao/managersDB/messagesManager.mdb.js";
 
 //* INIT
 const router = Router();
