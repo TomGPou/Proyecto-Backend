@@ -3,12 +3,24 @@ import { Router } from "express";
 // import CartManager from "../dao/managersFS/cartManager.js";
 // Manager MongoDB
 import CartManager from "../dao/managersDB/cartManager.mdb.js";
+import cartsModel from "../dao/models/carts.model.js";
 
 //* INIT
 const router = Router();
 const cartManager = new CartManager();
 
 //* ENDPOINTS (/api/carts)
+
+router.get("/", async (req, res) => {
+  try {
+    const procces = await cartsModel.find().lean();
+    res.status(200).send({ payload: procces });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ error: error.message });
+  }
+});
+
 // Crear carrito
 router.post("/", async (req, res) => {
   try {
