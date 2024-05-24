@@ -21,9 +21,7 @@ export default class CartManager {
 
   // BUSCAR POR ID
   async getCartById(cid) {
-    const cart = cartsModel.findById(cid);
-
-    return cart || null;
+    return await cartsModel.find({ _id: cid }).lean()
   }
 
   // AGREGAR PRODUCTO

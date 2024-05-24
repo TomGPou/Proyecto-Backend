@@ -38,7 +38,7 @@ router.get("/:cid", async (req, res) => {
   try {
     const cart = await cartManager.getCartById(cid);
     cart
-      ? res.status(200).send({ payload: cart.products })
+      ? res.status(200).send({ payload: cart })
       : res.status(404).send({ error: `Producto de ID ${cid} no encontrado` });
   } catch (error) {
     console.log(error);
