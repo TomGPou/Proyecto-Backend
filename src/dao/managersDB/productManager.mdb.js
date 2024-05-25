@@ -6,8 +6,29 @@ export default class ProductManager {
   // }
 
   // OBTENER TODOS LOS PRODUCTOS
-  async getProducts() {
-    return await productsModel.find().lean();
+  async getProducts(limit, page, category, sort) {
+    try {
+      // paginado y ordenamiento
+      const options = {
+        limit: limit || 10,
+        page: page || 1,
+        sort: {price: sort},
+      };
+      // filtrar por categoría
+      if (category) {
+        const products = await productsModel.paginate(
+          { category: category },
+          options
+        );
+        return products;
+      } else {
+        const products = await productsModel.paginate({}, options);
+        return products;
+      }
+    } catch (err) {
+      return err.message;
+    };
+
   }
 
   // AGREGAR PRODUCTO
