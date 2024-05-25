@@ -14,8 +14,15 @@ const chatManager = new ChatManager();
 //* ENDPOINTS (/)
 // Lista de productos
 router.get("/", async (req, res) => {
+  const limit = req.query.limit;
+  const page = req.query.page;
+  const category = req.query.category;
+  const sort = req.query.sort;
+
   try {
-    const products = { products: await productManager.getProducts() };
+    const products = {
+      products: await productManager.getProducts(limit, page, category, sort),
+    };
     res.status(200).render("home", products);
   } catch (error) {
     console.log(error);
@@ -25,8 +32,14 @@ router.get("/", async (req, res) => {
 
 // Lista de productos con socket
 router.get("/realtimeproducts", async (req, res) => {
+  const limit = req.query.limit;
+  const page = req.query.page;
+  const category = req.query.category;
+  const sort = req.query.sort;
   try {
-    const products = { products: await productManager.getProducts() };
+    const products = {
+      products: await productManager.getProducts(limit, page, category, sort),
+    };
     res.status(200).render("realtimeproducts", products);
   } catch (error) {
     console.log(error);

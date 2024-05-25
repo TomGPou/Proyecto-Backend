@@ -17,17 +17,16 @@ router.get("/", async (req, res) => {
   const sort = req.query.sort;
 
   try {
-    const products = await productManager.getProducts(limit, page, category, sort);
-    // if (limit) {
-    //   const productsLimit = products.slice(0, limit);
-    //   console.log(productsLimit);
-    //   res.status(200).send({ payload: productsLimit });
-    // } else {
-      res.status(200).send({status: "success",  payload: products });
-    // }
+    const products = await productManager.getProducts(
+      limit,
+      page,
+      category,
+      sort
+    );
+    res.status(200).send({ status: "success", payload: products });
   } catch (error) {
     console.log(error);
-    res.status(500).send({status: "error", error: error.message });
+    res.status(500).send({ status: "error", error: error.message });
   }
 });
 

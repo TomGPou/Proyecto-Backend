@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
 // Crear carrito
 router.post("/", async (req, res) => {
   try {
-    const newCart = await cartManager.createCart();
+    const newCart = await cartManager.create();
     res.status(200).send({ payload: newCart });
   } catch (error) {
     console.log(error);
@@ -36,10 +36,8 @@ router.post("/", async (req, res) => {
 router.get("/:cid", async (req, res) => {
   const cid = req.params.cid;
   try {
-    const cart = await cartManager.getCartById(cid);
-    cart
-      ? res.status(200).send({ payload: cart })
-      : res.status(404).send({ error: `Producto de ID ${cid} no encontrado` });
+    const cart = await cartManager.getById(cid);
+    res.status(200).send({ payload: cart });
   } catch (error) {
     console.log(error);
     res.status(400).send({ error: error.message });
@@ -51,7 +49,20 @@ router.put("/:cid/product/:pid", async (req, res) => {
   const cid = req.params.cid;
   const pid = req.params.pid;
   try {
-    const cart = await cartManager.addProductToCart(cid, pid);
+    const cart = await cartManager.addProduct(cid, pid);
+    res.status(200).send({ payload: cart });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ error: error.message });
+  }
+});
+
+// Borrar producto del carrito
+router.delete("/:cid/product/:pid", async (req, res) => {
+  const cid = req.params.cid;
+  const pid = req.params.pid;
+  try {
+    const cart = await cartManager.deleteProduct(cid, pid);
     res.status(200).send({ payload: cart });
   } catch (error) {
     console.log(error);

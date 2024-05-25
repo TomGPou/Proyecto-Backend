@@ -1,5 +1,6 @@
 import cartsModel from "../models/carts.model.js";
 import ProductManager from "./productManager.mdb.js";
+import mongoose from "mongoose";
 
 const productManager = new ProductManager();
 
@@ -10,8 +11,28 @@ export default class CartManager {
     this.carts = [];
   }
 
-  // CREAR CARRITO
-  async createCart() {
+  // Validar ID carrito
+  async validateCart(cid) {
+    const cart = await cartsModel.findById(cid);
+    if (!cart) throw new Error(`Carrito con ID: ${cid} no encontrado`);
+    return cart;
+  }
+  // Validar ID de producto
+  async validateProduct(pid) {
+    const product = await productManager.getProductById(pid);
+    if (!product) throw new Error(`Producto con ID: ${pid} no encontrado`);
+    return product;
+  }
+  // Actualizar carrito
+  async update(cid, cart) {
+    return await cartsModel.findByIdAndUpdate(cid, cart, {
+      new: true,
+    });
+    // return cartUpdated;
+  }
+
+  //* CREAR CARRITO
+  async create() {
     const newCart = {
       products: [],
     };
@@ -19,38 +40,56 @@ export default class CartManager {
     return await cartsModel.create(newCart);
   }
 
-  // BUSCAR POR ID
-  async getCartById(cid) {
-    return await cartsModel.find({ _id: cid }).lean()
+  //* BUSCAR POR ID
+  async getById(cid) {
+    try {
+      const cart = await cartsModel.find({ _id: cid }).lean();
+      if (!cart) throw new Error(`Carrito con ID: ${cid} no encontrado`);
+      return cart;
+    } catch (err) {
+      return { error: err.message };
+    }
   }
 
-  // AGREGAR PRODUCTO
-  async addProductToCart(cid, pid) {
+  //* AGREGAR PRODUCTO
+  async addProduct(cid, pid) {
     try {
-      // validar id de carrito
-      const cart = await cartsModel.findById(cid);
-      if (!cart) throw new Error(`Carrito con ID: ${cid} no encontrado`);
-      // validar id de producto
-      const product = await productManager.getProductById(pid);
-      if (!product) throw new Error(`Producto con ID: ${pid} no encontrado`);
+      const cart = await this.validateCart(cid);
+      await this.validateProduct(pid);
 
-      // buscar id de producto en el carrito
-      const productIndex = cart.products.findIndex(
-        (item) => item.product === pid
+      // Buscar producto en array
+      const productId = new mongoose.Types.ObjectId(pid);
+      const productIndex = cart.products.findIndex((item) =>
+        item._id.equals(productId)
       );
-      // si no existe, agregarlo
+      // Agregarlo o sumar uno
       if (productIndex < 0) {
-        cart.products.push({ product: pid, quantity: 1 });
+        cart.products.push({ _id: productId, quantity: 1 });
       } else {
-        // si existe, incrementar cantidad
         cart.products[productIndex].quantity++;
       }
       // actualizar carrito
-      return await cartsModel.findByIdAndUpdate(
-        cid,
-        { products: cart.products },
-        { new: true }
+      return await this.update(cid, { products: cart.products });
+    } catch (err) {
+      return { error: err.message };
+    }
+  }
+
+  //* BORRAR PRODUCTO
+  async deleteProduct(cid, pid) {
+    try {
+      const cart = await this.validateCart(cid);
+      await this.validateProduct(pid);
+
+      // Buscar producto en array
+      const productId = new mongoose.Types.ObjectId(pid);
+      const productIndex = cart.products.findIndex((item) =>
+        item._id.equals(productId)
       );
+
+      // Eliminar producto
+      cart.products.splice(productIndex, 1);
+      return await this.update(cid, { products: cart.products });
     } catch (err) {
       return { error: err.message };
     }
