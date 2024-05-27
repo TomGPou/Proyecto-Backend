@@ -52,7 +52,31 @@ export default class CartManager {
   }
 
   //* AGREGAR PRODUCTO
-  async addProduct(cid, pid) {
+  // async addProduct(cid, pid) {
+  //   try {
+  //     const cart = await this.validateCart(cid);
+  //     await this.validateProduct(pid);
+
+  //     // Buscar producto en array
+  //     const productId = new mongoose.Types.ObjectId(pid);
+  //     const productIndex = cart.products.findIndex((item) =>
+  //       item._id.equals(productId)
+  //     );
+  //     // Agregarlo o sumar uno
+  //     if (productIndex < 0) {
+  //       cart.products.push({ _id: productId, quantity: 1 });
+  //     } else {
+  //       cart.products[productIndex].quantity++;
+  //     }
+  //     // actualizar carrito
+  //     return await this.update(cid, { products: cart.products });
+  //   } catch (err) {
+  //     return { error: err.message };
+  //   }
+  // }
+
+  //* ACTUALIZAR CANTIDAD DE PRODUCTO
+  async updateQty(cid, pid, qty) {
     try {
       const cart = await this.validateCart(cid);
       await this.validateProduct(pid);
@@ -62,11 +86,11 @@ export default class CartManager {
       const productIndex = cart.products.findIndex((item) =>
         item._id.equals(productId)
       );
-      // Agregarlo o sumar uno
+      // actualizar cantidad
       if (productIndex < 0) {
-        cart.products.push({ _id: productId, quantity: 1 });
+        cart.products.push({ _id: productId, quantity: qty });
       } else {
-        cart.products[productIndex].quantity++;
+        cart.products[productIndex].quantity = qty;
       }
       // actualizar carrito
       return await this.update(cid, { products: cart.products });
@@ -89,6 +113,30 @@ export default class CartManager {
 
       // Eliminar producto
       cart.products.splice(productIndex, 1);
+      return await this.update(cid, { products: cart.products });
+    } catch (err) {
+      return { error: err.message };
+    }
+  }
+
+  //* ACTUALIZAR CARRITO
+  async updateCart(cid, products) {
+    try {
+      const cart = await this.validateCart(cid);
+      cart.products = products;
+
+      return await this.update(cid, { products: cart.products });
+    } catch (err) {
+      return { error: err.message };
+    }
+  }
+
+  //* VACIAR CARRITO
+  async empty(cid) {
+    try {
+      const cart = await this.validateCart(cid);
+      cart.products = [];
+
       return await this.update(cid, { products: cart.products });
     } catch (err) {
       return { error: err.message };

@@ -2,14 +2,14 @@
 import express from "express";
 import handlebars from "express-handlebars";
 import mongoose from "mongoose";
+import { Server } from "socket.io";
+
 // IMPORTS FILES
 import config from "./config.js";
 import productsRoutes from "./routes/products.routes.js";
 import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
 import messagesRoutes from "./routes/messages.routes.js";
-import { Server } from 'socket.io';
-import { error } from "console";
 
 //* INIT AND CONFIG
 const app = express();
@@ -28,15 +28,17 @@ app.use("/static", express.static(`${config.DIRNAME}/public`));
 
 //* SERVER
 const httpServer = app.listen(config.PORT, async () => {
-  await mongoose.connect(config.MONGODB_URI)
+  await mongoose.connect(config.MONGODB_URI);
 
   console.log(`Servidor activo en el puerto ${config.PORT} conectado a DB`);
 });
 
 // SOCKET
-const io = new Server(httpServer)
+const io = new Server(httpServer);
 app.set("io", io);
 
-io.on('connection', client => {
-  console.log(`Cliente conectado, id ${client.id} desde ${client.handshake.address}`);
-})
+io.on("connection", (client) => {
+  console.log(
+    `Cliente conectado, id ${client.id} desde ${client.handshake.address}`
+  );
+});

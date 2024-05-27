@@ -45,11 +45,25 @@ router.get("/:cid", async (req, res) => {
 });
 
 // Agregar producto al carrito
+// router.put("/:cid/product/:pid", async (req, res) => {
+//   const cid = req.params.cid;
+//   const pid = req.params.pid;
+//   try {
+//     const cart = await cartManager.addProduct(cid, pid);
+//     res.status(200).send({ payload: cart });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(400).send({ error: error.message });
+//   }
+// });
+
+// Actualizar cantidad
 router.put("/:cid/product/:pid", async (req, res) => {
   const cid = req.params.cid;
   const pid = req.params.pid;
+  const qty = req.body.qty;
   try {
-    const cart = await cartManager.addProduct(cid, pid);
+    const cart = await cartManager.updateQty(cid, pid, qty);
     res.status(200).send({ payload: cart });
   } catch (error) {
     console.log(error);
@@ -63,6 +77,31 @@ router.delete("/:cid/product/:pid", async (req, res) => {
   const pid = req.params.pid;
   try {
     const cart = await cartManager.deleteProduct(cid, pid);
+    res.status(200).send({ payload: cart });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ error: error.message });
+  }
+});
+
+// Actualizar carrito
+router.put("/:cid", async (req, res) => {
+  const cid = req.params.cid;
+  const products = req.body;
+  try {
+    const cart = await cartManager.updateCart(cid, products);
+    res.status(200).send({ payload: cart });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ error: error.message });
+  }
+});
+
+// Vaciar carrito
+router.delete("/:cid", async (req, res) => {
+  const cid = req.params.cid;
+  try {
+    const cart = await cartManager.empty(cid);
     res.status(200).send({ payload: cart });
   } catch (error) {
     console.log(error);

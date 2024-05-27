@@ -17,13 +17,20 @@ router.get("/", async (req, res) => {
   const limit = req.query.limit;
   const page = req.query.page;
   const category = req.query.category;
-  const sort = req.query.sort;
+  const sort = req.query.sort || "asc";
 
   try {
-    const products = {
-      products: await productManager.getProducts(limit, page, category, sort),
-    };
-    res.status(200).render("home", products);
+    const products = await productManager.getProducts(
+      limit,
+      page,
+      category,
+      sort
+    );
+
+    // const productsList = { products: products.docs };
+
+    res.status(200).render("home", { products: products });
+    // res.status(200).send({ status: "success", payload: products });
   } catch (error) {
     console.log(error);
     res.status(500).send({ error: "Internal Server Error" });
@@ -35,7 +42,7 @@ router.get("/realtimeproducts", async (req, res) => {
   const limit = req.query.limit;
   const page = req.query.page;
   const category = req.query.category;
-  const sort = req.query.sort;
+  const sort = req.query.sort || "asc";
   try {
     const products = {
       products: await productManager.getProducts(limit, page, category, sort),

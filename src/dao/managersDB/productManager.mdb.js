@@ -12,7 +12,8 @@ export default class ProductManager {
       const options = {
         limit: limit || 10,
         page: page || 1,
-        sort: {price: sort},
+        sort: { price: sort },
+        lean: true,
       };
       // filtrar por categoría
       if (category) {
@@ -27,8 +28,7 @@ export default class ProductManager {
       }
     } catch (err) {
       return err.message;
-    };
-
+    }
   }
 
   // AGREGAR PRODUCTO

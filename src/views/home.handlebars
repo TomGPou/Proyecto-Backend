@@ -1,7 +1,7 @@
 <div>
   <h1 style="color: white;">Lista de productos</h1>
   <div class="container d-flex flex-row flex-wrap justify-content-evenly">
-    {{#each products}}
+    {{#each products.docs}}
       <div class="card col-4">
         <img src={{thumbnail}} class="card-img-top" alt="..." />
         <div class="card-body">
