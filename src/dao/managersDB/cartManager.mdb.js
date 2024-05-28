@@ -13,7 +13,7 @@ export default class CartManager {
 
   // Validar ID carrito
   async validateCart(cid) {
-    const cart = await cartsModel.findById(cid);
+    const cart = await cartsModel.findOne({ _id: cid }).lean();
     if (!cart) throw new Error(`Carrito con ID: ${cid} no encontrado`);
     return cart;
   }
@@ -43,8 +43,7 @@ export default class CartManager {
   //* BUSCAR POR ID
   async getById(cid) {
     try {
-      const cart = await cartsModel.find({ _id: cid }).lean();
-      if (!cart) throw new Error(`Carrito con ID: ${cid} no encontrado`);
+      const cart = await this.validateCart(cid);
       return cart;
     } catch (err) {
       return { error: err.message };

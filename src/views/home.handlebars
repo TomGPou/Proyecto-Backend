@@ -15,18 +15,11 @@
     {{/each}}
   </div>
 
-  <div>
-    <a href={{products.prevLink}} id="previous" class="btn btn-outline-primary" role="button">Pagina anterior</a>
-    <p>{{products.page}}/{{products.totalPages}}</p>
-    <a href={{products.nextLink}} id="next" class="btn btn-outline-primary" role="button">Pagina siguiente</a>
+  <div id="btnPages" class="mt-3">
+    {{#if products.hasPrevPage}}
+    <a href="{{products.prevLink}}" class="btn btn-outline-primary" role="button">Pagina anterior</a>
+    {{/if}}
+    {{#if products.hasNextPage}}
+    <a href="{{products.nextLink}}" class="btn btn-outline-primary" role="button">Pagina siguiente</a>
+    {{/if}}
   </div>
-</div>
-
-<script>
-  if(products.hasPrevPage = false){
-    document.getElementById("previous").style.display = "none";
-  }
-  if(products.hasNextPage = false){
-    document.getElementById("next").style.display = "none";
-  }
-</script>

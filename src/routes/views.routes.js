@@ -31,9 +31,9 @@ router.get("/", async (req, res) => {
     );
     if (products.hasPrevPage) {
       if (category) {
-        products.prevLink = `http:localhost:${config.PORT}?limit=${limit}&page=${products.prevPage}&category=${category}&sort=${sort}`;
+        products.prevLink = `?limit=${limit}&page=${products.prevPage}&category=${category}&sort=${sort}`;
       } else {
-        products.prevLink = `http:localhost:${config.PORT}?limit=${limit}&page=${products.prevPage}&sort=${sort}`;
+        products.prevLink = `?limit=${limit}&page=${products.prevPage}&sort=${sort}`;
       }
     } else {
       products.prevLink = null;
@@ -41,16 +41,15 @@ router.get("/", async (req, res) => {
 
     if (products.hasNextPage) {
       if (category) {
-        products.nextLink = `http:localhost:${config.PORT}?limit=${limit}&page=${products.nextPage}&category=${category}&sort=${sort}`;
+        products.nextLink = `?limit=${limit}&page=${products.nextPage}&category=${category}&sort=${sort}`;
       } else {
-        products.nextLink = `http:localhost:${config.PORT}?limit=${limit}&page=${products.nextPage}&sort=${sort}`;
+        products.nextLink = `?limit=${limit}&page=${products.nextPage}&sort=${sort}`;
       }
     } else {
       products.nextLink = null;
     }
 
     res.status(200).render("home", { products: products });
-
   } catch (error) {
     console.log(error);
     res.status(500).send({ error: "Internal Server Error" });
@@ -67,7 +66,7 @@ router.get("/realtimeproducts", async (req, res) => {
     const products = {
       products: await productManager.getProducts(limit, page, category, sort),
     };
-    res.status(200).render("realtimeproducts", {products: products});
+    res.status(200).render("realtimeproducts", { products: products });
   } catch (error) {
     console.log(error);
     res.status(500).send({ error: "Internal Server Error" });
@@ -76,10 +75,11 @@ router.get("/realtimeproducts", async (req, res) => {
 
 // Carrito
 router.get("/carts/:cid", async (req, res) => {
-  const cid = req.params.cid
+  const cid = req.params.cid;
   try {
-    const cart = { cart: await cartManager.getById(cid) };
-    res.status(200).render("cart", cart);
+    const cart = await cartManager.getById(cid);
+
+    res.status(200).render("cart", { cart: cart });
   } catch (error) {
     console.log(error);
     res.status(500).send({ error: "Internal Server Error" });

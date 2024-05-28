@@ -16,6 +16,10 @@ schema.pre("find", function () {
   this.populate({ path: "products._id", model: productsModel });
 });
 
+schema.pre("findOne", function () {
+  this.populate({ path: "products._id", model: productsModel });
+});
+
 const model = mongoose.model(collection, schema);
 
 export default model;
