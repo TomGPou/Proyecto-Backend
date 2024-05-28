@@ -13,7 +13,7 @@ export default class ProductManager {
         limit: limit || 10,
         page: page || 1,
         sort: { price: sort },
-        lean: true,
+lean: true,
       };
       // filtrar por categoría
       if (category) {

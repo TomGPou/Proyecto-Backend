@@ -2,16 +2,31 @@
   <h1 style="color: white;">Lista de productos</h1>
   <div class="container d-flex flex-row flex-wrap justify-content-evenly">
     {{#each products.docs}}
-      <div class="card col-4">
-        <img src={{thumbnail}} class="card-img-top" alt="..." />
-        <div class="card-body">
-          <h5 class="card-title">{{title}}</h5>
-          <p class="card-text">{{description}}</p>
-          <p class="card-text">${{price}}</p>
+    <div class="card col-4">
+      <img src={{thumbnail}} class="card-img-top" alt="..." />
+      <div class="card-body">
+        <h5 class="card-title">{{title}}</h5>
+        <p class="card-text">{{description}}</p>
+        <p class="card-text">${{price}}</p>
 
-          <a href="#" class="btn btn-primary">Agregar al carrito</a>
-        </div>
+        <a href="#" class="btn btn-primary">Agregar al carrito</a>
       </div>
+    </div>
     {{/each}}
   </div>
+
+  <div>
+    <a href={{products.prevLink}} id="previous" class="btn btn-outline-primary" role="button">Pagina anterior</a>
+    <p>{{products.page}}/{{products.totalPages}}</p>
+    <a href={{products.nextLink}} id="next" class="btn btn-outline-primary" role="button">Pagina siguiente</a>
+  </div>
 </div>
+
+<script>
+  if(products.hasPrevPage = false){
+    document.getElementById("previous").style.display = "none";
+  }
+  if(products.hasNextPage = false){
+    document.getElementById("next").style.display = "none";
+  }
+</script>
