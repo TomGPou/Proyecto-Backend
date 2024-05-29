@@ -13,7 +13,7 @@ export default class CartManager {
 
   // Validar ID carrito
   async validateCart(cid) {
-    const cart = await cartsModel.findOne({ _id: cid }).lean();
+    const cart = await cartsModel.findById(cid)
     if (!cart) throw new Error(`Carrito con ID: ${cid} no encontrado`);
     return cart;
   }
@@ -43,7 +43,8 @@ export default class CartManager {
   //* BUSCAR POR ID
   async getById(cid) {
     try {
-      const cart = await this.validateCart(cid);
+      const cart = await cartsModel.findOne({ _id: cid }).lean();
+      if (!cart) throw new Error(`Carrito con ID: ${cid} no encontrado`);
       return cart;
     } catch (err) {
       return { error: err.message };
@@ -51,28 +52,28 @@ export default class CartManager {
   }
 
   //* AGREGAR PRODUCTO
-  // async addProduct(cid, pid) {
-  //   try {
-  //     const cart = await this.validateCart(cid);
-  //     await this.validateProduct(pid);
+  async addProduct(cid, pid) {
+    try {
+      const cart = await this.validateCart(cid);
+      await this.validateProduct(pid);
 
-  //     // Buscar producto en array
-  //     const productId = new mongoose.Types.ObjectId(pid);
-  //     const productIndex = cart.products.findIndex((item) =>
-  //       item._id.equals(productId)
-  //     );
-  //     // Agregarlo o sumar uno
-  //     if (productIndex < 0) {
-  //       cart.products.push({ _id: productId, quantity: 1 });
-  //     } else {
-  //       cart.products[productIndex].quantity++;
-  //     }
-  //     // actualizar carrito
-  //     return await this.update(cid, { products: cart.products });
-  //   } catch (err) {
-  //     return { error: err.message };
-  //   }
-  // }
+      // Buscar producto en array
+      const productId = new mongoose.Types.ObjectId(pid);
+      const productIndex = cart.products.findIndex((item) =>
+        item._id.equals(productId)
+      );
+      // Agregarlo o sumar uno
+      if (productIndex < 0) {
+        cart.products.push({ _id: productId, quantity: 1 });
+      } else {
+        cart.products[productIndex].quantity++;
+      }
+      // actualizar carrito
+      return await this.update(cid, { products: cart.products });
+    } catch (err) {
+      return { error: err.message };
+    }
+  }
 
   //* ACTUALIZAR CANTIDAD DE PRODUCTO
   async updateQty(cid, pid, qty) {

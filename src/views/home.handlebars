@@ -9,7 +9,7 @@
         <p class="card-text">{{description}}</p>
         <p class="card-text">${{price}}</p>
 
-        <a href="#" class="btn btn-primary">Agregar al carrito</a>
+        <button onclick="addToCart('{{_id}}')" class="btn btn-primary">Agregar al carrito</button>
       </div>
     </div>
     {{/each}}

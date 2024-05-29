@@ -20,6 +20,7 @@ router.get("/", async (req, res) => {
   const limit = req.query.limit;
   const page = req.query.page;
   const category = req.query.category;
+  const inStock = req.query.inStock;
   const sort = req.query.sort || "asc";
 
   try {
@@ -27,6 +28,7 @@ router.get("/", async (req, res) => {
       limit,
       page,
       category,
+      inStock,
       sort
     );
     res.status(200).render("home", { products: products });

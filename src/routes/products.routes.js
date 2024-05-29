@@ -18,7 +18,6 @@ router.get("/", async (req, res) => {
   const inStock = req.query.inStock;
   const sort = req.query.sort || "asc";
 
-
   try {
     const products = await productManager.getProducts(
       limit,

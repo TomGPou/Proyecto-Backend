@@ -3,7 +3,7 @@
   <div class="container d-flex flex-row flex-wrap justify-content-evenly">
     <ul class="list-group">
       {{#each cart.products}}
-        <li class="list-group-item">{{_id.title}} - ${{_id.price}}</li>
+        <li class="list-group-item">{{_id.title}} - Cantidad: {{quantity}} - ${{_id.price}}</li>
       {{/each}}
     </ul>
   </div>

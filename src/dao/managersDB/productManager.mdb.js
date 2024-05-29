@@ -1,9 +1,6 @@
 import productsModel from "../models/products.model.js";
 
 export default class ProductManager {
-  // constructor() {
-  //   this.products = [];
-  // }
 
   // OBTENER TODOS LOS PRODUCTOS
   async getProducts(limit, page, category, inStock, sort) {
@@ -21,16 +18,17 @@ export default class ProductManager {
       if (inStock) filter.stock = { $gt: 0 };
 
       const products = await productsModel.paginate(filter, options);
+      // link a pagina previa y siguiente
       if (products.prevPage) {
         products.prevLink = `?limit=${limit}&page=${products.prevPage}`;
         if (category) products.prevLink += `&category=${category}`;
         if (inStock) products.prevLink += `&inStock=true`;
-    }
+    } else { products.prevLink = null }
     if (products.nextPage) {
         products.nextLink = `?limit=${limit}&page=${products.nextPage}`;
         if (category) products.nextLink += `&category=${category}`;
         if (inStock) products.nextLink += `&inStock=true`;
-    }
+    } else { products.nextLink = null }
       return products;
 
     } catch (err) {

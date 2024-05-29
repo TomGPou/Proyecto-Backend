@@ -63,8 +63,13 @@ router.put("/:cid/product/:pid", async (req, res) => {
   const pid = req.params.pid;
   const qty = req.body.qty;
   try {
-    const cart = await cartManager.updateQty(cid, pid, qty);
-    res.status(200).send({ payload: cart });
+    if(!qty){
+      const cart = await cartManager.addProduct(cid, pid);
+      res.status(200).send({ payload: cart });
+    } else {
+      const cart = await cartManager.updateQty(cid, pid, qty);
+      res.status(200).send({ payload: cart });
+    }
   } catch (error) {
     console.log(error);
     res.status(400).send({ error: error.message });
