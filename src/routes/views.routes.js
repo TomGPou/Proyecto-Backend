@@ -29,26 +29,6 @@ router.get("/", async (req, res) => {
       category,
       sort
     );
-    if (products.hasPrevPage) {
-      if (category) {
-        products.prevLink = `?limit=${limit}&page=${products.prevPage}&category=${category}&sort=${sort}`;
-      } else {
-        products.prevLink = `?limit=${limit}&page=${products.prevPage}&sort=${sort}`;
-      }
-    } else {
-      products.prevLink = null;
-    }
-
-    if (products.hasNextPage) {
-      if (category) {
-        products.nextLink = `?limit=${limit}&page=${products.nextPage}&category=${category}&sort=${sort}`;
-      } else {
-        products.nextLink = `?limit=${limit}&page=${products.nextPage}&sort=${sort}`;
-      }
-    } else {
-      products.nextLink = null;
-    }
-
     res.status(200).render("home", { products: products });
   } catch (error) {
     console.log(error);

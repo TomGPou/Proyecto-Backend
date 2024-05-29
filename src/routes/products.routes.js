@@ -15,36 +15,18 @@ router.get("/", async (req, res) => {
   const limit = req.query.limit;
   const page = req.query.page;
   const category = req.query.category;
+  const inStock = req.query.inStock;
   const sort = req.query.sort || "asc";
+
 
   try {
     const products = await productManager.getProducts(
       limit,
       page,
       category,
+      inStock,
       sort
     );
-
-    if (products.hasPrevPage) {
-      if (category) {
-        products.prevLink = `http:localhost:${config.PORT}?limit=${limit}&page=${products.prevPage}&category=${category}&sort=${sort}`;
-      } else {
-        products.prevLink = `http:localhost:${config.PORT}?limit=${limit}&page=${products.prevPage}&sort=${sort}`;
-      }
-    } else {
-      products.prevLink = null;
-    }
-
-    if (products.hasNextPage) {
-      if (category) {
-        products.nextLink = `http:localhost:${config.PORT}?limit=${limit}&page=${products.nextPage}&category=${category}&sort=${sort}`;
-      } else {
-        products.nextLink = `http:localhost:${config.PORT}?limit=${limit}&page=${products.nextPage}&sort=${sort}`;
-      }
-    } else {
-      products.nextLink = null;
-    }
-
     res.status(200).send({ status: "success", payload: products });
   } catch (error) {
     console.log(error);

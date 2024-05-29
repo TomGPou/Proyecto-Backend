@@ -6,26 +6,33 @@ export default class ProductManager {
   // }
 
   // OBTENER TODOS LOS PRODUCTOS
-  async getProducts(limit, page, category, sort) {
+  async getProducts(limit, page, category, inStock, sort) {
     try {
-      // paginado y ordenamiento
+      // opciones de paginado y ordenamiento
       const options = {
         limit: limit || 10,
         page: page || 1,
         sort: { price: sort },
-lean: true,
+        lean: true,
       };
-      // filtrar por categoría
-      if (category) {
-        const products = await productsModel.paginate(
-          { category: category },
-          options
-        );
-        return products;
-      } else {
-        const products = await productsModel.paginate({}, options);
-        return products;
-      }
+      // opciones de filtrarado 
+      const filter = {};
+      if (category) filter.category = category;
+      if (inStock) filter.stock = { $gt: 0 };
+
+      const products = await productsModel.paginate(filter, options);
+      if (products.prevPage) {
+        products.prevLink = `?limit=${limit}&page=${products.prevPage}`;
+        if (category) products.prevLink += `&category=${category}`;
+        if (inStock) products.prevLink += `&inStock=true`;
+    }
+    if (products.nextPage) {
+        products.nextLink = `?limit=${limit}&page=${products.nextPage}`;
+        if (category) products.nextLink += `&category=${category}`;
+        if (inStock) products.nextLink += `&inStock=true`;
+    }
+      return products;
+
     } catch (err) {
       return err.message;
     }
