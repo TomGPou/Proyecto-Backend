@@ -3,6 +3,9 @@ import express from "express";
 import handlebars from "express-handlebars";
 import mongoose from "mongoose";
 import { Server } from "socket.io";
+// import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import FileStore from 'session-file-store';
 
 // IMPORTS FILES
 import config from "./config.js";
@@ -10,12 +13,20 @@ import productsRoutes from "./routes/products.routes.js";
 import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
 import messagesRoutes from "./routes/messages.routes.js";
+import sessionRoutes from "./routes/session.routes.js"
 
 //* INIT AND CONFIG
 const app = express();
+const fileStorage = FileStore(session);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.engine("handlebars", handlebars.engine());
+app.use(session({
+  store: new fileStorage({ path: './sessions', ttl: 15, retries: 0 }),
+  secret: config.SECRET,
+  resave: true,
+  saveUninitialized: true
+}));
 app.set("views", `${config.DIRNAME}/views`);
 app.set("view engine", "handlebars");
 
@@ -23,6 +34,7 @@ app.set("view engine", "handlebars");
 app.use("/api/products", productsRoutes);
 app.use("/api/carts", cartsRoutes);
 app.use("/api/chat", messagesRoutes);
+app.use("/api/session", sessionRoutes);
 app.use("/", viewsRoutes);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
 

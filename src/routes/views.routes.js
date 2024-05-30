@@ -79,4 +79,10 @@ router.get("/chat", async (req, res) => {
   }
 });
 
+// Login
+router.get('/login', (req, res) => {
+  if (req.session.user) return res.redirect('/');
+  res.render('login', {});
+});
+
 export default router;
