@@ -1,16 +1,11 @@
 import { Router } from 'express';
 
 import config from '../config.js';
+import UsersManager from '../dao/managersDB/usersManager.js';
 
 const router = Router();
+const usersManager = new UsersManager();
 
-// Validacion admin
-const adminAuth = (req, res, next) => {
-    if (!req.session.user || req.session.user.role !== 'admin')
-        return res.status(401).send({ origin: config.SERVER, payload: 'Acceso no autorizado: se requiere autenticación y nivel de admin' });
-
-    next();
-}
 //* ENDPOINTS (/api/session)
 /**
  * Implementar este endpoint
@@ -21,38 +16,18 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     try {
-        // Recuperamos los campos que llegan del formulario
         // Aquí luego se deberían agregar otras validaciones
         const { email, password } = req.body;
         
-        // Esto simula datos existentes en base de datos
-        // Reemplazar por llamada a método del manager que busque un usuario
-        // filtrando por email y clave.
-        const savedFirstName = 'José';
-        const savedLastName = 'Perez';
-        const savedEmail = 'idux.net@gmail.com';
-        const savedPassword = 'abc123';
-        const savedRole = 'admin';
+        const user = await usersManager.login(email, password);
 
-        if (email !== savedEmail || password !== savedPassword) {
+        if (!user) {
             return res.status(401).send({ origin: config.SERVER, payload: 'Datos de acceso no válidos' });
         }
         
-        req.session.user = { firstName: savedFirstName, lastName: savedLastName, email: email, role: savedRole };
-        res.status(200).send({ origin: config.SERVER, payload: 'Bienvenido!' });
-        // res.redirect('/profile');
-    } catch (err) {
-        res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
-    }
-});
-
-/**
- * Utilizamos el middleware adminAuth (ver arriba) para verificar si el usuario
- * está autenticado (tiene una sesión activa) y es admin
- */
-router.get('/private', adminAuth, async (req, res) => {
-    try {
-        res.status(200).send({ origin: config.SERVER, payload: 'Bienvenido ADMIN!' });
+        req.session.user = user;
+        // res.status(200).send({ origin: config.SERVER, payload: 'Bienvenido!' });
+        res.redirect('/');
     } catch (err) {
         res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
     }

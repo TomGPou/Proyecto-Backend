@@ -14,9 +14,15 @@ const productManager = new ProductManager();
 const chatManager = new ChatManager();
 const cartManager = new CartManager();
 
+// MIDLEWARES
+const loginValidation = (req, res, next) => {
+  if (!req.session.user) return res.redirect('/login');
+  next();
+}
+
 //* ENDPOINTS (/)
 // Lista de productos
-router.get("/", async (req, res) => {
+router.get("/", loginValidation, async (req, res) => {
   const limit = req.query.limit;
   const page = req.query.page;
   const category = req.query.category;
@@ -39,7 +45,7 @@ router.get("/", async (req, res) => {
 });
 
 // Lista de productos con socket
-router.get("/realtimeproducts", async (req, res) => {
+router.get("/realtimeproducts", loginValidation, async (req, res) => {
   const limit = req.query.limit;
   const page = req.query.page;
   const category = req.query.category;
@@ -56,7 +62,7 @@ router.get("/realtimeproducts", async (req, res) => {
 });
 
 // Carrito
-router.get("/carts/:cid", async (req, res) => {
+router.get("/carts/:cid", loginValidation, async (req, res) => {
   const cid = req.params.cid;
   try {
     const cart = await cartManager.getById(cid);
@@ -69,7 +75,7 @@ router.get("/carts/:cid", async (req, res) => {
 });
 
 // Chat
-router.get("/chat", async (req, res) => {
+router.get("/chat", loginValidation, async (req, res) => {
   try {
     const messages = { messages: await chatManager.getMessages() };
     res.status(200).render("chat", messages);
@@ -83,6 +89,17 @@ router.get("/chat", async (req, res) => {
 router.get('/login', (req, res) => {
   if (req.session.user) return res.redirect('/');
   res.render('login', {});
+});
+
+// Register
+router.get('/register', (req, res) => {
+  if (req.session.user) return res.redirect('/');
+  res.render('register', {});
+});
+
+// Profile
+router.get('/profile', loginValidation, (req, res) => {
+  res.render('profile', {});
 });
 
 export default router;
