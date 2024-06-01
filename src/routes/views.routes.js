@@ -29,6 +29,8 @@ router.get("/", loginValidation, async (req, res) => {
   const inStock = req.query.inStock;
   const sort = req.query.sort || "asc";
 
+  const user = req.session.user;
+
   try {
     const products = await productManager.getProducts(
       limit,
@@ -37,7 +39,7 @@ router.get("/", loginValidation, async (req, res) => {
       inStock,
       sort
     );
-    res.status(200).render("home", { products: products });
+    res.status(200).render("home", { products: products, user: user });
   } catch (error) {
     console.log(error);
     res.status(500).send({ error: "Internal Server Error" });
@@ -99,7 +101,9 @@ router.get('/register', (req, res) => {
 
 // Profile
 router.get('/profile', loginValidation, (req, res) => {
-  res.render('profile', {});
+  const user = req.session.user;
+  if (user.role == 'admin') user.isAdmin = true;
+  res.render('profile', {user : user});
 });
 
 export default router;

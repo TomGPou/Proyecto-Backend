@@ -24,6 +24,14 @@ export default class UsersManager {
     // Crear
     async create(user) {
         try {
+            // validar carga de datos
+            if (
+                !user.first_name ||
+                !user.last_name ||
+                !user.email ||
+                !user.age ||
+                !user.password
+            ) throw new Error("Datos incompletos")
             // validar email
             const existingUser = await usersModel.findOne({ email: user.email })
             if (existingUser) throw new Error("Email ya registrado")

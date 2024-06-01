@@ -11,7 +11,9 @@
 </style>
 
 <h2>Usuario: {{user.first_name}}, {{user.last_name}}</h2>
-<h3>Rol: {{user.role}}</h3>
+{{#if user.isAdmin}}
+<h2>Administrador</h2>
+{{/if}}
 
 <form action="/api/sessions/logout" method="get">
     <button type="submit" class="btn btn-success">Salir</button>
