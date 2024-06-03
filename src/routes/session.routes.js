@@ -7,6 +7,7 @@ const router = Router();
 const usersManager = new UsersManager();
 
 //* ENDPOINTS (/api/session)
+// register
 router.post('/register', async (req, res) => {
     try {
         const newUser = req.body;
@@ -23,7 +24,7 @@ router.post('/register', async (req, res) => {
         res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
     }
 });
-
+// login
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -32,10 +33,14 @@ router.post('/login', async (req, res) => {
         if (!user) {
             return res.status(401).send({ origin: config.SERVER, payload: 'Datos de acceso no válidos' });
         }
-
+        // crear session y guardarla
         req.session.user = user;
-        // res.status(200).send({ origin: config.SERVER, payload: 'Bienvenido!' });
-        res.redirect('/');
+        req.session.save((err) => {
+            if (err) return res.status(500).send({ origin: config.SERVER, payload: 'Error al iniciar sesión', error: err });
+            // redirigir al home
+            // res.status(200).send({ origin: config.SERVER, payload: 'Usuario conectado' });
+            res.redirect('/');
+        });
     } catch (err) {
         res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
     }
