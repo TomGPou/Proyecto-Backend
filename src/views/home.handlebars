@@ -1,26 +1,39 @@
 <h3 style="color: white;">Bienvenido a la tienda, {{user.first_name}}</h3>
+<h4 style="color: white;">Rol: {{user.role}}</h4>
+<form action="/profile" method="get">
+  <button type="submit" class="btn btn-success">Perfil de usuario</button>
+</form>
 
 <h1 style="color: white;">Lista de productos</h1>
 <div class="container d-flex flex-row flex-wrap justify-content-evenly">
   {{#each products.docs}}
-  <div class="card col-4">
-    <img src={{thumbnail}} class="card-img-top" alt="..." />
-    <div class="card-body">
-      <h5 class="card-title">{{title}}</h5>
-      <p class="card-text">{{description}}</p>
-      <p class="card-text">${{price}}</p>
+    <div class="card col-4">
+      <img src={{thumbnail}} class="card-img-top" alt="..." />
+      <div class="card-body">
+        <h5 class="card-title">{{title}}</h5>
+        <p class="card-text">{{description}}</p>
+        <p class="card-text">${{price}}</p>
 
-      <button onclick="addToCart('{{_id}}')" class="btn btn-primary">Agregar al carrito</button>
+        <button onclick="addToCart('{{_id}}')" class="btn btn-primary">Agregar
+          al carrito</button>
+      </div>
     </div>
-  </div>
   {{/each}}
 </div>
 
 <div id="btnPages" class="mt-3">
   {{#if products.hasPrevPage}}
-  <a href="{{products.prevLink}}" class="btn btn-outline-primary" role="button">Pagina anterior</a>
+    <a
+      href="{{products.prevLink}}"
+      class="btn btn-outline-primary"
+      role="button"
+    >Pagina anterior</a>
   {{/if}}
   {{#if products.hasNextPage}}
-  <a href="{{products.nextLink}}" class="btn btn-outline-primary" role="button">Pagina siguiente</a>
+    <a
+      href="{{products.nextLink}}"
+      class="btn btn-outline-primary"
+      role="button"
+    >Pagina siguiente</a>
   {{/if}}
 </div>

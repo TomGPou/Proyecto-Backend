@@ -4,7 +4,7 @@ import handlebars from "express-handlebars";
 import mongoose from "mongoose";
 import { Server } from "socket.io";
 // import cookieParser from 'cookie-parser';
-import session from 'express-session';
+import session from "express-session";
 // import FileStore from 'session-file-store';
 import MongoStore from "connect-mongo";
 
@@ -14,7 +14,7 @@ import productsRoutes from "./routes/products.routes.js";
 import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
 import messagesRoutes from "./routes/messages.routes.js";
-import sessionRoutes from "./routes/session.routes.js"
+import sessionRoutes from "./routes/session.routes.js";
 
 //* INIT AND CONFIG
 const app = express();
@@ -22,13 +22,15 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.engine("handlebars", handlebars.engine());
-app.use(session({
-  // store: new fileStorage({ path: './sessions', ttl: 15, retries: 0 }),
-  store: MongoStore.create({ mongoUrl: config.MONGODB_URI, ttl: 15 }),
-  secret: config.SECRET,
-  resave: true,
-  saveUninitialized: true
-}));
+app.use(
+  session({
+    // store: new fileStorage({ path: './sessions', ttl: 15, retries: 0 }),
+    store: MongoStore.create({ mongoUrl: config.MONGODB_URI, ttl: 60 }),
+    secret: config.SECRET,
+    resave: true,
+    saveUninitialized: true,
+  })
+);
 app.set("views", `${config.DIRNAME}/views`);
 app.set("view engine", "handlebars");
 
