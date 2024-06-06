@@ -27,8 +27,8 @@ app.use(
     // store: new fileStorage({ path: './sessions', ttl: 15, retries: 0 }),
     store: MongoStore.create({ mongoUrl: config.MONGODB_URI, ttl: 60 }),
     secret: config.SECRET,
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
   })
 );
 app.set("views", `${config.DIRNAME}/views`);
