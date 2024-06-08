@@ -1,24 +1,21 @@
 import { Router } from "express";
 
 import config from "../config.js";
+import { verifyReqBody } from "../utils/utils.js";
 import UsersManager from "../dao/managersDB/usersManager.js";
+import passport from "passport";
+import initAuthStrategies from "../auth/passport.strategies.js";
 
 const router = Router();
 const usersManager = new UsersManager();
+initAuthStrategies();
 
 //* ENDPOINTS (/api/session)
 // register
-router.post("/register", async (req, res) => {
+router.post("/register", verifyReqBody(['first_name', 'last_name', 'email', 'password']), passport.authenticate('register', {
+  failureRedirect: `/register?error=${encodeURI('Datos de registro no válidos')}`,
+}) , async (req, res) => {
   try {
-    const newUser = req.body;
-    const user = await usersManager.create(newUser);
-
-    if (!user) {
-      return res.status(401).send({
-        origin: config.SERVER,
-        payload: "Datos de registro no válidos",
-      });
-    }
     // Redirigir al usuario a /login
     res.status(200);
     res.redirect("/login");
@@ -29,19 +26,13 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// login
-router.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await usersManager.login(email, password);
-
-    if (!user) {
-      return res
-        .status(401)
-        .send({ origin: config.SERVER, payload: "Datos de acceso no válidos" });
-    }
+// login local
+router.post("/login",verifyReqBody(['email', 'password']), passport.authenticate('login', {
+  failureRedirect: `/login?error=${encodeURI('Datos de acceso no válidos')}`,
+}), async (req, res) => {
+  try{
     // crear session y guardarla
-    req.session.user = user;
+    req.session.user = req.user;
     req.session.save((err) => {
       if (err)
         return res.status(500).send({
@@ -58,11 +49,12 @@ router.post("/login", async (req, res) => {
       .status(500)
       .send({ origin: config.SERVER, payload: null, error: err.message });
   }
-});
+})
 
 // Logout
 router.get("/logout", async (req, res) => {
   try {
+    // destruir session
     req.session.destroy((err) => {
       if (err)
         return res.status(500).send({
@@ -71,7 +63,7 @@ router.get("/logout", async (req, res) => {
           error: err,
         });
       res.status(200);
-      // .send({ origin: config.SERVER, payload: "Usuario desconectado" });
+      // redirigir al login
       res.redirect("/login");
     });
   } catch (err) {
@@ -80,5 +72,32 @@ router.get("/logout", async (req, res) => {
       .send({ origin: config.SERVER, payload: null, error: err.message });
   }
 });
+
+// Github login
+router.get("/ghlogin", passport.authenticate("ghlogin", { scope: ["user:email"] }), async (req,res) => {});
+
+router.get('/ghlogincallback', passport.authenticate('ghlogin', {
+  failureRedirect: `/login?error=${encodeURI('Error al identificar con Github')}`
+}, async (req,res) => {
+  try{
+    // crear session y guardarla
+    req.session.user = req.user;
+    req.session.save((err) => {
+      if (err)
+        return res.status(500).send({
+          origin: config.SERVER,
+          payload: "Error al iniciar sesión",
+          error: err,
+        });
+      // redirigir al home
+      res.status(200);
+      res.redirect("/");
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .send({ origin: config.SERVER, payload: null, error: err.message });
+  }
+}))
 
 export default router;

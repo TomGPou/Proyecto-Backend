@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import session from "express-session";
 // import FileStore from 'session-file-store';
 import MongoStore from "connect-mongo";
+import passport from "passport";
 
 // IMPORTS FILES
 import config from "./config.js";
@@ -17,11 +18,14 @@ import messagesRoutes from "./routes/messages.routes.js";
 import sessionRoutes from "./routes/session.routes.js";
 
 //* INIT AND CONFIG
+// express
 const app = express();
-// const fileStorage = FileStore(session);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// handlebars
 app.engine("handlebars", handlebars.engine());
+// session
+// const fileStorage = FileStore(session);
 app.use(
   session({
     // store: new fileStorage({ path: './sessions', ttl: 15, retries: 0 }),
@@ -31,6 +35,10 @@ app.use(
     saveUninitialized: false,
   })
 );
+// passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.set("views", `${config.DIRNAME}/views`);
 app.set("view engine", "handlebars");
 

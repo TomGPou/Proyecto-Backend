@@ -16,9 +16,9 @@ const cartManager = new CartManager();
 
 // MIDLEWARES
 const loginValidation = (req, res, next) => {
-  if (!req.session.user) return res.redirect('/login');
+  if (!req.session.user) return res.redirect("/login");
   next();
-}
+};
 
 //* ENDPOINTS (/)
 // Lista de productos
@@ -88,22 +88,22 @@ router.get("/chat", loginValidation, async (req, res) => {
 });
 
 // Login
-router.get('/login', (req, res) => {
-  if (req.session.user) return res.redirect('/');
-  res.render('login', {});
+router.get("/login", (req, res) => {
+  if (req.session.user) return res.redirect("/");
+  res.render("login", { showError: req.query.error ? true : false, error: req.query.error });
 });
 
 // Register
-router.get('/register', (req, res) => {
-  if (req.session.user) return res.redirect('/');
-  res.render('register', {});
+router.get("/register", (req, res) => {
+  if (req.session.user) return res.redirect("/");
+  res.render("register", { showError: req.query.error ? true : false, error: req.query.error });
 });
 
 // Profile
-router.get('/profile', loginValidation, (req, res) => {
+router.get("/profile", loginValidation, (req, res) => {
   const user = req.session.user;
-  if (user.role == 'admin') user.isAdmin = true;
-  res.render('profile', {user : user});
+  if (user.role == "admin") user.isAdmin = true;
+  res.render("profile", { user: user });
 });
 
 export default router;

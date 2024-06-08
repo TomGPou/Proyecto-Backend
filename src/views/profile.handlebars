@@ -4,10 +4,11 @@
 </style>
 
 <h2>Usuario: {{user.first_name}}, {{user.last_name}}</h2>
+<h2>Email: {{user.email}}</h2>
 {{#if user.isAdmin}}
   <h2>Administrador</h2>
 {{/if}}
 
 <form action="/api/session/logout" method="get">
-  <button type="submit" class="btn btn-success">Salir</button>
+  <button type="submit" class="btn btn-success">Cerrar sesión</button>
 </form>
