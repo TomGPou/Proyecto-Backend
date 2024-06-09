@@ -94,35 +94,28 @@ router.get(
 
 router.get(
   "/ghlogincallback",
-  passport.authenticate(
-    "ghlogin",
-    {
-      failureRedirect: `/login?error=${encodeURI(
-        "Error al identificar con Github"
-      )}`,
-    },
-    async (req, res) => {
-      try {
-        // crear session y guardarla
-        req.session.user = req.user;
-        req.session.save((err) => {
-          if (err)
-            return res.status(500).send({
-              origin: config.SERVER,
-              payload: "Error al iniciar sesión",
-              error: err,
-            });
-          // redirigir al home
-          res.status(200);
-          res.redirect("/");
-        });
-      } catch (err) {
-        res
-          .status(500)
-          .send({ origin: config.SERVER, payload: null, error: err.message });
-      }
+  passport.authenticate("ghlogin", {
+    failureRedirect: `/login?error=${encodeURI(
+      "Error al identificar con Github"
+    )}`,
+  }),
+  async (req, res) => {
+    try {
+      req.session.user = req.user;
+      req.session.save((err) => {
+        if (err)
+          return res
+            .status(500)
+            .send({ origin: config.SERVER, payload: null, error: err.message });
+
+        res.redirect("/");
+      });
+    } catch (err) {
+      res
+        .status(500)
+        .send({ origin: config.SERVER, payload: null, error: err.message });
     }
-  )
+  }
 );
 
 export default router;
