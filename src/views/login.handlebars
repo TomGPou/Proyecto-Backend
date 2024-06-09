@@ -8,7 +8,7 @@
   <h1><b>CODERStore</b></h1>
   <h2><b>Login de usuario</b></h2>
 
-  <br action="/api/session/login" method="post" style="margin-top: 32px;">
+  <form action="/api/session/login" method="post" style="margin-top: 32px;">
 
     {{#if showError}}
       <div class="alert alert-danger" role="alert" style="margin-top: 16px;">
@@ -44,7 +44,7 @@
       />
     </div>
 
-    <button type="submit" class="btn btn-success">Ingresar</button> </br>
+    <button type="submit" class="btn btn-success">Ingresar</button> </form>
 
     <div style="margin-top: 24px;">
       Ingresar con Github:

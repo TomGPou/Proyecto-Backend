@@ -61,7 +61,6 @@ const initAuthStrategies = () => {
       },
       async (req, accessToken, refreshToken, profile, done) => {
         try {
-          console.log(profile._json);
           const email = profile._json?.email || null;
 
           if (email) {
@@ -69,8 +68,8 @@ const initAuthStrategies = () => {
 
             if (!foundUser) {
               const user = {
-                firstName: profile._json.name.split(" ")[0],
-                lastName: profile._json.name.split(" ")[1],
+                first_name: profile._json.name.split(" ")[0],
+                last_name: profile._json.name.split(" ")[1],
                 email: email,
                 password: "none",
               };
