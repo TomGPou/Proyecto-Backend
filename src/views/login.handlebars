@@ -8,7 +8,7 @@
   <h1><b>CODERStore</b></h1>
   <h2><b>Login de usuario</b></h2>
 
-  <form action="/api/session/login" method="post" style="margin-top: 32px;">
+  <form action="/api/auth/login" method="post" style="margin-top: 32px;">
 
     {{#if showError}}
       <div class="alert alert-danger" role="alert" style="margin-top: 16px;">
@@ -48,7 +48,7 @@
 
     <div style="margin-top: 24px;">
       Ingresar con Github:
-      <button class="btn btn-info submit_btn" onclick="window.location.replace('/api/session/ghlogin')"><i class="fa-brands fa-github"></i></button>
+      <button class="btn btn-info submit_btn" onclick="window.location.replace('/api/auth/ghlogin')"><i class="fa-brands fa-github"></i></button>
     </div>
 
     <div style="margin-top: 24px;">

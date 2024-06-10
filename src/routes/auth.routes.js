@@ -10,7 +10,7 @@ const router = Router();
 const usersManager = new UsersManager();
 initAuthStrategies();
 
-//* ENDPOINTS (/api/session)
+//* ENDPOINTS (/api/auth)
 // register
 router.post(
   "/register",

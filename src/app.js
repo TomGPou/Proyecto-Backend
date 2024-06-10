@@ -15,7 +15,7 @@ import productsRoutes from "./routes/products.routes.js";
 import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
 import messagesRoutes from "./routes/messages.routes.js";
-import sessionRoutes from "./routes/session.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 
 //* INIT AND CONFIG
 // express
@@ -46,7 +46,7 @@ app.set("view engine", "handlebars");
 app.use("/api/products", productsRoutes);
 app.use("/api/carts", cartsRoutes);
 app.use("/api/chat", messagesRoutes);
-app.use("/api/session", sessionRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/", viewsRoutes);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
 
