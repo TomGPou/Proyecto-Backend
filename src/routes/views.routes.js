@@ -21,6 +21,18 @@ const loginValidation = (req, res, next) => {
 };
 
 //* ENDPOINTS (/)
+router.param("cid", async (req, res, next, cid) => {
+  if (config.MONGODB_ID_REGEX.test(cid)) {
+    next();
+  } else {
+    res.status(400).send({
+      origin: config.SERVER,
+      payload: null,
+      error: "Id del carrito no válido",
+    });
+  }
+});
+
 // Lista de productos
 router.get("/", loginValidation, async (req, res) => {
   const limit = req.query.limit;
@@ -90,13 +102,19 @@ router.get("/chat", loginValidation, async (req, res) => {
 // Login
 router.get("/login", (req, res) => {
   if (req.session.user) return res.redirect("/");
-  res.render("login", { showError: req.query.error ? true : false, error: req.query.error });
+  res.render("login", {
+    showError: req.query.error ? true : false,
+    error: req.query.error,
+  });
 });
 
 // Register
 router.get("/register", (req, res) => {
   if (req.session.user) return res.redirect("/");
-  res.render("register", { showError: req.query.error ? true : false, error: req.query.error });
+  res.render("register", {
+    showError: req.query.error ? true : false,
+    error: req.query.error,
+  });
 });
 
 // Profile

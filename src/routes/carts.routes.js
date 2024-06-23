@@ -10,6 +10,29 @@ const router = Router();
 const cartManager = new CartManager();
 
 //* ENDPOINTS (/api/carts)
+router.param("cid", async (req, res, next, cid) => {
+  if (config.MONGODB_ID_REGEX.test(cid)) {
+    next();
+  } else {
+    res.status(400).send({
+      origin: config.SERVER,
+      payload: null,
+      error: "Id del carrito no válido",
+    });
+  }
+});
+
+router.param("pid", async (req, res, next, pid) => {
+  if (config.MONGODB_ID_REGEX.test(pid)) {
+    next();
+  } else {
+    res.status(400).send({
+      origin: config.SERVER,
+      payload: null,
+      error: "Id del producto no válido",
+    });
+  }
+});
 
 router.get("/", async (req, res) => {
   try {
@@ -63,7 +86,7 @@ router.put("/:cid/product/:pid", async (req, res) => {
   const pid = req.params.pid;
   const qty = req.body.qty;
   try {
-    if(!qty){
+    if (!qty) {
       const cart = await cartManager.addProduct(cid, pid);
       res.status(200).send({ payload: cart });
     } else {

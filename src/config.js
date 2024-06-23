@@ -8,6 +8,7 @@ const config = {
   },
   MONGODB_URI:
     "mongodb+srv://admin:coder2024@clusterproyecto.09d4t4t.mongodb.net/ecommerce",
+  MONGODB_ID_REGEX: /^[a-fA-F0-9]{24}$/,
   SECRET: "coder_53160_abc",
 
   GITHUB_CLIENT_ID: "Iv23liB8jgKFdThwsuEg",

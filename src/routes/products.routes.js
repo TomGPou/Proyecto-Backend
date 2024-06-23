@@ -10,6 +10,18 @@ const router = Router();
 const productManager = new ProductManager();
 
 //* ENDPOINTS (/api/products)
+router.param("pid", async (req, res, next, pid) => {
+  if (config.MONGODB_ID_REGEX.test(pid)) {
+    next();
+  } else {
+    res.status(400).send({
+      origin: config.SERVER,
+      payload: null,
+      error: "Id del producto no válido",
+    });
+  }
+});
+
 // Obtener todos los productos con limite
 router.get("/", async (req, res) => {
   const limit = req.query.limit;
