@@ -18,14 +18,28 @@ export const verifyReqBody = (requiredFields) => {
     );
 
     if (!allOk)
-      return res
-        .status(400)
-        .send({
-          origin: config.SERVER,
-          payload: "Faltan propiedades",
-          requiredFields,
-        });
+      return res.status(400).send({
+        origin: config.SERVER,
+        payload: "Faltan propiedades",
+        requiredFields,
+      });
 
     next();
   };
-}
+};
+
+export const handlePolicies = (policies) => {
+  return (req, res, next) => {
+    // verificar ruta publica
+    if (policies[0] === "PUBLIC") return next();
+    // verificar si existe session
+    if (!req.session.user) return res.redirect("/login");
+
+    // verificar politicas de autorizacion
+    const userRole = req.session.user.role.toUpperCase();
+    if (!policies.includes(userRole))
+      return res.status(403).send({ error: "Acceso no autorizado" });
+
+    next();
+  };
+};
