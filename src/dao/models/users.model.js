@@ -10,7 +10,8 @@ const schema = new mongoose.Schema({
   email: { type: String, required: true },
   age: { type: Number, required: false },
   password: { type: String, required: true },
-  role: { type: String, enum: ['admin', 'user'], default: 'user' },
+  cart: { type: mongoose.Schema.Types.ObjectId, required: false },
+  role: { type: String, enum: ['admin', 'user', 'premium'], default: 'user' },
 });
 
 const model = mongoose.model(collection, schema);

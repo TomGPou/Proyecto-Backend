@@ -1,5 +1,9 @@
 import usersModel from "../models/users.model.js";
 import { createHash, isValidPassword } from "../../utils/utils.js";
+import CartManager from "./cartManager.mdb.js";
+
+// INIT
+const cartManager = new CartManager();
 
 export default class UsersManager {
   // Obtener todos
@@ -45,6 +49,11 @@ export default class UsersManager {
       if (existingUser) throw new Error("Email ya registrado");
       // crear hash de contraseña
       user.password = createHash(user.password);
+
+      // crear carrito asignarlo al usuario
+      const newCart = await cartManager.create();
+      user.cart = newCart._id;
+
       // crear usuario
       const newUser = await usersModel.create(user);
       return newUser;
