@@ -1,4 +1,4 @@
-import cartsModel from "../models/carts.model.js";
+import cartsModel from "../../models/carts.model.js";
 import ProductManager from "./productManager.mdb.js";
 import mongoose from "mongoose";
 
@@ -13,7 +13,7 @@ export default class CartManager {
 
   // Validar ID carrito
   async validateCart(cid) {
-    const cart = await cartsModel.findById(cid)
+    const cart = await cartsModel.findById(cid);
     if (!cart) throw new Error(`Carrito con ID: ${cid} no encontrado`);
     return cart;
   }
@@ -28,7 +28,6 @@ export default class CartManager {
     return await cartsModel.findByIdAndUpdate(cid, cart, {
       new: true,
     });
-    // return cartUpdated;
   }
 
   //* CREAR CARRITO

@@ -3,11 +3,11 @@ import { Router } from "express";
 // import ProductManager from "../dao/managersFS/productManager.js";
 // import ChatManager from "../dao/managersFS/messagesManager.js";
 // Managers MongoDB
-import ProductManager from "../dao/managersDB/productManager.mdb.js";
-import ChatManager from "../dao/managersDB/messagesManager.mdb.js";
-import CartManager from "../dao/managersDB/cartManager.mdb.js";
+import ProductManager from "../controllers/controllersDB/productManager.mdb.js";
+import ChatManager from "../controllers/controllersDB/messagesManager.mdb.js";
+import CartManager from "../controllers/controllersDB/cartManager.mdb.js";
 import config from "../config.js";
-import { handlePolicies } from "../utils/utils.js";
+import { handlePolicies } from "../services/utils/utils.js";
 
 //* INIT
 const router = Router();

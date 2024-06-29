@@ -2,7 +2,7 @@ import { Router } from "express";
 // Manager FS
 // import ProductManager from "../dao/managersFS/productManager.js";
 // Manager MongoDB
-import ProductManager from "../dao/managersDB/productManager.mdb.js";
+import ProductManager from "../controllers/controllersDB/productManager.mdb.js";
 import config from "../config.js";
 
 //* INIT

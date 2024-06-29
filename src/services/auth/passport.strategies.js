@@ -3,8 +3,8 @@ import passport from "passport";
 import local from "passport-local";
 import GHStrategy from "passport-github2";
 
-import UsersManager from "../dao/managersDB/usersManager.js";
-import config from "../config.js";
+import UsersManager from "../../controllers/controllersDB/usersManager.mdb.js";
+import config from "../../config.js";
 
 // INIT
 const localStrategy = local.Strategy;

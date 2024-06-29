@@ -1,5 +1,5 @@
-import usersModel from "../models/users.model.js";
-import { createHash, isValidPassword } from "../../utils/utils.js";
+import usersModel from "../../models/users.model.js";
+import { createHash, isValidPassword } from "../../services/utils/utils.js";
 import CartManager from "./cartManager.mdb.js";
 
 // INIT

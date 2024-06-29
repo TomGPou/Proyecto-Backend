@@ -2,8 +2,8 @@ import { Router } from "express";
 // Manager FS
 // import CartManager from "../dao/managersFS/cartManager.js";
 // Manager MongoDB
-import CartManager from "../dao/managersDB/cartManager.mdb.js";
-import cartsModel from "../dao/models/carts.model.js";
+import CartManager from "../controllers/controllersDB/cartManager.mdb.js";
+import cartsModel from "../models/carts.model.js";
 
 //* INIT
 const router = Router();
