@@ -1,19 +1,27 @@
 import * as url from "url";
+import { Command } from "commander";
 
+// CL Options
+const program = new Command();
+program.option("--mode <mode>").option("--port <port>");
+program.parse();
+
+const clOptions = program.opts();
+
+// Config
 const config = {
-  PORT: 5050,
+  PORT: process.env.PORT || clOptions.port || 5050,
   DIRNAME: url.fileURLToPath(new URL(".", import.meta.url)),
   get UPLOAD_DIR() {
     return `${this.DIRNAME}/public/img`;
   },
-  MONGODB_URI:
-    "mongodb+srv://admin:coder2024@clusterproyecto.09d4t4t.mongodb.net/ecommerce",
+  MONGODB_URI: process.env.MONGODB_URI,
   MONGODB_ID_REGEX: /^[a-fA-F0-9]{24}$/,
-  SECRET: "coder_53160_abc",
+  SECRET: process.env.SECRET,
 
-  GITHUB_CLIENT_ID: "Iv23liB8jgKFdThwsuEg",
-  GITHUB_CLIENT_SECRET: "2042d962897109a0cd6edc2d4160d86233558609",
-  GITHUB_CALLBACK_URL: "http://localhost:5050/api/auth/ghlogincallback",
+  GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+  GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL,
 };
 
 export default config;
