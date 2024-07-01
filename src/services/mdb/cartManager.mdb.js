@@ -31,12 +31,13 @@ export default class CartManager {
   }
 
   //* CREAR CARRITO
-  async create() {
-    const newCart = {
-      products: [],
-    };
-
+  async create(newCart) {
     return await cartsModel.create(newCart);
+  }
+
+  //* BUSCAR TODOS
+  async getAll() {
+    return await cartsModel.find().lean();
   }
 
   //* BUSCAR POR ID

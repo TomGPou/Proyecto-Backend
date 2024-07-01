@@ -1,6 +1,5 @@
 //* IMPORTS
-import { query } from "express";
-import UsersManager from "./controllersDB/usersManager.mdb.js";
+import UsersManager from "../services/mdb/usersManager.mdb.js";
 //* INIT
 const usersManager = new UsersManager();
 
@@ -22,7 +21,7 @@ export const getUserById = async (uid) => {
   }
 };
 
-//* OBTENER POR QUERY
+//* OBTENER UN USUARIO POR QUERY
 export const getOneUser = async (query) => {
   try {
     return await usersManager.getOne(query);

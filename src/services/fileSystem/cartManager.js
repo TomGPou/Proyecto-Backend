@@ -36,7 +36,7 @@ export default class CartManager {
   }
 
   // CREAR CARRITO
-  async createCart() {
+  async create() {
     await this.readFile();
     const newCart = {
       cid: this.carts.length + 1,
@@ -50,7 +50,7 @@ export default class CartManager {
   }
 
   // BUSCAR POR ID
-  async getCartById(cid) {
+  async getById(cid) {
     try {
       await this.readFile();
 
@@ -66,7 +66,7 @@ export default class CartManager {
   }
 
   // AGREGAR PRODUCTO
-  async addProductToCart(cid, pid) {
+  async addProduct(cid, pid) {
     try {
       await this.readFile();
       // buscar id de carrito

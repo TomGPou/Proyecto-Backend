@@ -1,5 +1,5 @@
 //* IMPORTS
-import ChatManager from "./controllersDB/messagesManager.mdb.js";
+import ChatManager from "../services/mdb/messagesManager.mdb.js";
 //* INIT
 const chatManager = new ChatManager();
 

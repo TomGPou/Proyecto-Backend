@@ -40,17 +40,6 @@ export default class ProductManager {
 
   // AGREGAR PRODUCTO
   async addProduct(newProduct) {
-    // Validar la carga de datos
-    if (
-      !newProduct.title ||
-      !newProduct.description ||
-      !newProduct.category ||
-      !newProduct.code ||
-      !newProduct.price ||
-      !newProduct.stock
-    )
-      throw new Error("Falta completar datos del producto");
-
     // Validar productos duplicados
     const isDuplicated = await productsModel.findOne({ code: newProduct.code });
     if (isDuplicated) throw new Error("El código del producto ya existe");

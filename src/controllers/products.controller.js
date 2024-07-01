@@ -1,5 +1,5 @@
 //* IMPORTS
-import ProductManager from "./controllersDB/productManager.mdb.js";
+import ProductManager from "../services/mdb/productManager.mdb.js";
 //* INIT
 const productManager = new ProductManager();
 

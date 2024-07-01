@@ -1,5 +1,5 @@
 //* IMPORTS
-import CartManager from "./controllersDB/cartManager.mdb.js";
+import CartManager from "../services/mdb/cartManager.mdb.js";
 //* INIT
 const cartManager = new CartManager();
 
@@ -10,6 +10,15 @@ export const createCart = async () => {
   };
 
   return await cartManager.create(newCart);
+};
+
+//* BUSCAR TODOS
+export const getAllCarts = async () => {
+  try {
+    return await cartManager.getAll();
+  } catch (error) {
+    return { error: error.message };
+  }
 };
 
 //* BUSCAR POR ID

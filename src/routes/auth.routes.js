@@ -1,13 +1,13 @@
+//* IMPORTS
 import { Router } from "express";
+import passport from "passport";
 
 import config from "../config.js";
 import { verifyReqBody } from "../services/utils/utils.js";
-import UsersManager from "../controllers/controllersDB/usersManager.mdb.js";
-import passport from "passport";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
 
+//* INIT
 const router = Router();
-const usersManager = new UsersManager();
 initAuthStrategies();
 
 //* ENDPOINTS (/api/auth)

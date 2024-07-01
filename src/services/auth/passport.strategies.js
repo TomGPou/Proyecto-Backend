@@ -3,12 +3,11 @@ import passport from "passport";
 import local from "passport-local";
 import GHStrategy from "passport-github2";
 
-import UsersManager from "../../controllers/controllersDB/usersManager.mdb.js";
 import config from "../../config.js";
+import { createUser, getOneUser, loginUser } from "../../controllers/users.controller.js";
 
 // INIT
 const localStrategy = local.Strategy;
-const usersManager = new UsersManager();
 
 // STRATEGIES
 
@@ -20,7 +19,7 @@ const initAuthStrategies = () => {
       { passReqToCallback: true, usernameField: "email" },
       async (req, username, password, done) => {
         try {
-          const user = await usersManager.login(username, password);
+          const user = await loginUser(username, password);
           if (!user) {
             return done(null, false);
           }
@@ -38,7 +37,7 @@ const initAuthStrategies = () => {
       { passReqToCallback: true, usernameField: "email" },
       async (req, username, password, done) => {
         try {
-          const user = await usersManager.create(req.body);
+          const user = await createUser(req.body);
           if (!user) {
             return done(null, false);
           }
@@ -64,7 +63,7 @@ const initAuthStrategies = () => {
           const email = profile._json?.email || null;
 
           if (email) {
-            const foundUser = await usersManager.getOne({ email: email });
+            const foundUser = await getOneUser({ email: email });
 
             if (!foundUser) {
               const user = {
@@ -74,7 +73,7 @@ const initAuthStrategies = () => {
                 password: "none",
               };
 
-              const process = await usersManager.create(user);
+              const process = await createUser(user);
 
               return done(null, process);
             } else {

@@ -1,25 +1,14 @@
+//* IMPORTS
 import { Router } from "express";
-// Managers FS
-// import ProductManager from "../dao/managersFS/productManager.js";
-// import ChatManager from "../dao/managersFS/messagesManager.js";
-// Managers MongoDB
-import ProductManager from "../controllers/controllersDB/productManager.mdb.js";
-import ChatManager from "../controllers/controllersDB/messagesManager.mdb.js";
-import CartManager from "../controllers/controllersDB/cartManager.mdb.js";
+
 import config from "../config.js";
 import { handlePolicies } from "../services/utils/utils.js";
+import { getProducts } from "../controllers/products.controller.js";
+import { getCartById } from "../controllers/cart.controller.js";
+import { getChat } from "../controllers/messages.controller.js";
 
 //* INIT
 const router = Router();
-const productManager = new ProductManager();
-const chatManager = new ChatManager();
-const cartManager = new CartManager();
-
-// MIDLEWARES
-const loginValidation = (req, res, next) => {
-  if (!req.session.user) return res.redirect("/login");
-  next();
-};
 
 //* ENDPOINTS (/)
 router.param("cid", async (req, res, next, cid) => {
@@ -48,7 +37,7 @@ router.get(
     const user = req.session.user;
 
     try {
-      const products = await productManager.getProducts(
+      const products = await getProducts(
         limit,
         page,
         category,
@@ -74,7 +63,7 @@ router.get(
     const sort = req.query.sort || "asc";
     try {
       const products = {
-        products: await productManager.getProducts(limit, page, category, sort),
+        products: await getProducts(limit, page, category, sort),
       };
       res.status(200).render("realtimeproducts", { products: products });
     } catch (error) {
@@ -91,7 +80,7 @@ router.get(
   async (req, res) => {
     const cid = req.params.cid;
     try {
-      const cart = await cartManager.getById(cid);
+      const cart = await getCartById(cid);
 
       res.status(200).render("cart", { cart: cart });
     } catch (error) {
@@ -107,7 +96,7 @@ router.get(
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
   async (req, res) => {
     try {
-      const messages = { messages: await chatManager.getMessages() };
+      const messages = { messages: await getChat() };
       res.status(200).render("chat", messages);
     } catch (error) {
       console.log(error);

@@ -1,18 +1,15 @@
+//* IMPORTS
 import { Router } from "express";
-// Managers FS
-// import ChatManager from "../dao/managersFS/messagesManager.js";
-// Managers MongoDB
-import ChatManager from "../controllers/controllersDB/messagesManager.mdb.js";
+import { addMessage, getChat } from "../controllers/messages.controller.js";
 
 //* INIT
 const router = Router();
-const chatManager = new ChatManager();
 
 //* ENDPOINTS (/api/chat)
 // Obtener mensajes
 router.get("/", async (req, res) => {
   try {
-    const messages = { messages: await chatManager.getMessages() };
+    const messages = { messages: await getChat() };
     res.status(200).send({ payload: messages });
   } catch (error) {
     console.log(error);
@@ -25,10 +22,10 @@ router.post("/", async (req, res) => {
   const io = req.app.get("io");
   const newMessage = req.body;
   try {
-    const message = await chatManager.addMessage(newMessage);
+    const message = await addMessage(newMessage);
     res.status(200).send({ payload: message });
 
-    const messages = await chatManager.getMessages();
+    const messages = await getChat();
     io.emit("newMessage", { messages: messages });
   } catch (error) {
     console.log(error);
