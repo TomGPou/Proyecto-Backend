@@ -117,7 +117,7 @@ router.put("/:cid", async (req, res) => {
   const cid = req.params.cid;
   const products = req.body;
   try {
-    const cart = await cartManager.updateCart(cid, products);
+    const cart = await cartManager.update(cid, products);
     res.status(200).send({ payload: cart });
   } catch (error) {
     console.log(error);

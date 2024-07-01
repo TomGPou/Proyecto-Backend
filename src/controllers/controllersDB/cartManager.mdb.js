@@ -119,7 +119,7 @@ export default class CartManager {
   }
 
   //* ACTUALIZAR CARRITO
-  async updateCart(cid, products) {
+  async update(cid, products) {
     try {
       const cart = await this.validateCart(cid);
       cart.products = products;
