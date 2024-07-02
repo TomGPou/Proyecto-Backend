@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import config from "../config.js";
-import { verifyReqBody } from "../utils/utils.js";
+import { verifyReqBody, handlePolicies } from "../utils/utils.js";
 import UsersManager from "../dao/managersDB/usersManager.js";
 import passport from "passport";
 import initAuthStrategies from "../auth/passport.strategies.js";
@@ -115,6 +115,16 @@ router.get(
         .status(500)
         .send({ origin: config.SERVER, payload: null, error: err.message });
     }
+  }
+);
+
+// Current user
+router.get(
+  "/current",
+  handlePolicies(["USER", "PREMIUM", "ADMIN"]),
+  (req, res) => {
+    const user = req.session.user;
+    res.status(200).send({ payload: user });
   }
 );
 
