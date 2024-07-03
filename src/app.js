@@ -16,12 +16,12 @@ import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
 import messagesRoutes from "./routes/messages.routes.js";
 import authRoutes from "./routes/auth.routes.js";
-import MongoSingleton from "./services/mdb/mongo.singleton.js";
+import MongoSingleton from "./services/mongo.singleton.js";
 
 //* INIT AND CONFIG
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: "*" }))
+app.use(cors({ origin: "*" }));
 app.use(express.urlencoded({ extended: true }));
 app.engine("handlebars", handlebars.engine());
 // const fileStorage = FileStore(session);

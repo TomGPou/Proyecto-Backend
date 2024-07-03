@@ -1,9 +1,10 @@
 //* IMPORTS
 import { Router } from "express";
-import { addProductToCart, createCart, deleteProductFromCart, emptyCart, getAllCarts, getCartById, updateCart, updateProductQty } from "../controllers/cart.controller.js";
+import CartController from "../controllers/cart.controller.js";
 
 //* INIT
 const router = Router();
+const cartController = new CartController();
 
 //* ENDPOINTS (/api/carts)
 router.param("cid", async (req, res, next, cid) => {
@@ -32,7 +33,7 @@ router.param("pid", async (req, res, next, pid) => {
 
 router.get("/", async (req, res) => {
   try {
-    const procces = await getAllCarts();
+    const procces = await cartController.getAll();
     res.status(200).send({ payload: procces });
   } catch (error) {
     console.log(error);
@@ -43,7 +44,7 @@ router.get("/", async (req, res) => {
 // Crear carrito
 router.post("/", async (req, res) => {
   try {
-    const newCart = await createCart();
+    const newCart = await cartController.create();
     res.status(200).send({ payload: newCart });
   } catch (error) {
     console.log(error);
@@ -55,7 +56,7 @@ router.post("/", async (req, res) => {
 router.get("/:cid", async (req, res) => {
   const cid = req.params.cid;
   try {
-    const cart = await getCartById(cid);
+    const cart = await cartController.getById(cid);
     res.status(200).send({ payload: cart });
   } catch (error) {
     console.log(error);
@@ -83,10 +84,10 @@ router.put("/:cid/product/:pid", async (req, res) => {
   const qty = req.body.qty;
   try {
     if (!qty) {
-      const cart = await addProductToCart(cid, pid);
+      const cart = await cartController.addProduct(cid, pid);
       res.status(200).send({ payload: cart });
     } else {
-      const cart = await updateProductQty(cid, pid, qty);
+      const cart = await cartController.updateQty(cid, pid, qty);
       res.status(200).send({ payload: cart });
     }
   } catch (error) {
@@ -100,7 +101,7 @@ router.delete("/:cid/product/:pid", async (req, res) => {
   const cid = req.params.cid;
   const pid = req.params.pid;
   try {
-    const cart = await deleteProductFromCart(cid, pid);
+    const cart = await cartController.deleteProduct(cid, pid);
     res.status(200).send({ payload: cart });
   } catch (error) {
     console.log(error);
@@ -113,7 +114,7 @@ router.put("/:cid", async (req, res) => {
   const cid = req.params.cid;
   const products = req.body;
   try {
-    const cart = await updateCart(cid, products);
+    const cart = await cartController.update(cid, products);
     res.status(200).send({ payload: cart });
   } catch (error) {
     console.log(error);
@@ -125,7 +126,7 @@ router.put("/:cid", async (req, res) => {
 router.delete("/:cid", async (req, res) => {
   const cid = req.params.cid;
   try {
-    const cart = await emptyCart(cid);
+    const cart = await cartController.empty(cid);
     res.status(200).send({ payload: cart });
   } catch (error) {
     console.log(error);

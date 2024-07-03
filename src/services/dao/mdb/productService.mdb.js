@@ -1,8 +1,8 @@
-import productsModel from "../../models/products.model.js";
+import productsModel from "../../../models/products.model.js";
 
-export default class ProductManager {
+export default class ProductService {
   // OBTENER TODOS LOS PRODUCTOS
-  async getProducts(limit, page, category, inStock, sort) {
+  async get(limit, page, category, inStock, sort) {
     try {
       // opciones de paginado y ordenamiento
       const options = {
@@ -39,7 +39,7 @@ export default class ProductManager {
   }
 
   // AGREGAR PRODUCTO
-  async addProduct(newProduct) {
+  async add(newProduct) {
     // Validar productos duplicados
     const isDuplicated = await productsModel.findOne({ code: newProduct.code });
     if (isDuplicated) throw new Error("El código del producto ya existe");
@@ -49,14 +49,14 @@ export default class ProductManager {
   }
 
   //  BUSCAR PRODUCTO POR ID
-  async getProductById(pid) {
+  async getById(pid) {
     const product = productsModel.findById(pid);
 
     return product || null;
   }
 
   // ACTUALIZAR PRODUCTO
-  async updateProduct(pid, data) {
+  async update(pid, data) {
     // validar si existe el ID
     const exist = await productsModel.findById(pid);
     if (!exist) throw new Error("El producto no existe");

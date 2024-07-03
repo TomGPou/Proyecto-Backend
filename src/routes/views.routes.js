@@ -3,12 +3,15 @@ import { Router } from "express";
 
 import config from "../config.js";
 import { handlePolicies } from "../services/utils/utils.js";
-import { getProducts } from "../controllers/products.controller.js";
-import { getCartById } from "../controllers/cart.controller.js";
-import { getChat } from "../controllers/messages.controller.js";
+import ProductController from "../controllers/products.controller.js";
+import CartController from "../controllers/cart.controller.js";
+import MessagesController from "../controllers/messages.controller.js";
 
 //* INIT
 const router = Router();
+const productController = new ProductController();
+const cartController = new CartController();
+const messagesController = new MessagesController();
 
 //* ENDPOINTS (/)
 router.param("cid", async (req, res, next, cid) => {
@@ -37,7 +40,7 @@ router.get(
     const user = req.session.user;
 
     try {
-      const products = await getProducts(
+      const products = await productController.get(
         limit,
         page,
         category,
@@ -63,7 +66,7 @@ router.get(
     const sort = req.query.sort || "asc";
     try {
       const products = {
-        products: await getProducts(limit, page, category, sort),
+        products: await productController.get(limit, page, category, sort),
       };
       res.status(200).render("realtimeproducts", { products: products });
     } catch (error) {
@@ -80,7 +83,7 @@ router.get(
   async (req, res) => {
     const cid = req.params.cid;
     try {
-      const cart = await getCartById(cid);
+      const cart = await cartController.getById(cid);
 
       res.status(200).render("cart", { cart: cart });
     } catch (error) {
@@ -96,7 +99,7 @@ router.get(
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
   async (req, res) => {
     try {
-      const messages = { messages: await getChat() };
+      const messages = { messages: await messagesController.getChat() };
       res.status(200).render("chat", messages);
     } catch (error) {
       console.log(error);

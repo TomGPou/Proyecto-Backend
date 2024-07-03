@@ -1,18 +1,23 @@
 //* IMPORTS
-import ChatManager from "../services/mdb/messagesManager.mdb.js";
+import ChatService from "../services/dao/mdb/messagesService.mdb.js";
 //* INIT
-const chatManager = new ChatManager();
+const service = new ChatService();
 
-//* OBTENER LOS MENSAJES
-export const getChat = () => {
-  return chatManager.getMessages();
-};
+export default class MessagesController {
+  constructor() {}
 
-//* AGREGAR MENSAJES
-export const addMessage = (newMessage) => {
-  // Validar mensaje vacio
-  if (!newMessage.message) {
-    throw new Error("El mensaje no puede estar vacio");
-  }
-  return chatManager.addMessage(newMessage);
-};
+  //* METHODS
+  //* OBTENER LOS MENSAJES
+  getChat = () => {
+    return service.getChat();
+  };
+
+  //* AGREGAR MENSAJES
+  add = (newMessage) => {
+    // Validar mensaje vacio
+    if (!newMessage.message) {
+      throw new Error("El mensaje no puede estar vacio");
+    }
+    return service.add(newMessage);
+  };
+}

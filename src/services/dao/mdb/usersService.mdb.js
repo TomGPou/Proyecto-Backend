@@ -1,11 +1,11 @@
-import usersModel from "../../models/users.model.js";
-import { createHash, isValidPassword } from "../utils/utils.js";
-import CartManager from "./cartManager.mdb.js";
+import usersModel from "../../../models/users.model.js";
+import { createHash, isValidPassword } from "../../utils/utils.js";
+import CartService from "./cartService.mdb.js";
 
 // INIT
-const cartManager = new CartManager();
+const cartService = new CartService();
 
-export default class UsersManager {
+export default class UsersService {
   // Obtener todos
   async getAll() {
     try {
@@ -48,7 +48,7 @@ export default class UsersManager {
       user.password = createHash(user.password);
 
       // crear carrito asignarlo al usuario
-      const newCart = await cartManager.create();
+      const newCart = await cartService.create();
       user.cart = newCart._id;
 
       // crear usuario

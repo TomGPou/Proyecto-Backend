@@ -1,12 +1,12 @@
-import cartsModel from "../../models/carts.model.js";
-import ProductManager from "./productManager.mdb.js";
+import cartsModel from "../../../models/carts.model.js";
+import ProductService from "./productService.mdb.js";
 import mongoose from "mongoose";
 
-const productManager = new ProductManager();
+const productService = new ProductService();
 
 // MANAGER DE CARRITO
 
-export default class CartManager {
+export default class CartService {
   constructor() {
     this.carts = [];
   }
@@ -19,7 +19,7 @@ export default class CartManager {
   }
   // Validar ID de producto
   async validateProduct(pid) {
-    const product = await productManager.getProductById(pid);
+    const product = await productService.getById(pid);
     if (!product) throw new Error(`Producto con ID: ${pid} no encontrado`);
     return product;
   }

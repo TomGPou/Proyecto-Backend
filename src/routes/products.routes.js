@@ -1,10 +1,11 @@
 //* IMPORTS
-import { Router } from "express";;
+import { Router } from "express";
 import config from "../config.js";
-import { addProduct, deleteProduct, getProductById, getProducts, updateProduct } from "../controllers/products.controller.js";
+import ProductController from "../controllers/products.controller.js";
 
 //* INIT
 const router = Router();
+const productController = new ProductController();
 
 //* ENDPOINTS (/api/products)
 router.param("pid", async (req, res, next, pid) => {
@@ -28,7 +29,7 @@ router.get("/", async (req, res) => {
   const sort = req.query.sort || "asc";
 
   try {
-    const products = await getProducts(
+    const products = await productController.get(
       limit,
       page,
       category,
@@ -47,7 +48,7 @@ router.get("/:pid", async (req, res) => {
   const pid = req.params.pid;
 
   try {
-    const product = await getProductById(pid);
+    const product = await productController.getById(pid);
     product
       ? res.send({ status: 1, payload: product })
       : res.status(404).send({ error: `Producto de ID ${pid} no encontrado` });
@@ -62,10 +63,10 @@ router.post("/", async (req, res) => {
   const io = req.app.get("io");
   const newProduct = req.body;
   try {
-    const product = await addProduct(newProduct);
+    const product = await productController.add(newProduct);
     res.status(200).send({ payload: product });
 
-    const products = await getProducts();
+    const products = await productController.get();
     io.emit("products", { message: "producto agregado", products: products });
   } catch (error) {
     console.log(error);
@@ -79,10 +80,10 @@ router.put("/:pid", async (req, res) => {
   const pid = req.params.pid;
   const updatedData = req.body;
   try {
-    const product = await updateProduct(pid, updatedData);
+    const product = await productController.update(pid, updatedData);
     res.status(200).send({ payload: product });
 
-    const products = await getProducts();
+    const products = await productController.get();
     io.emit("products", {
       message: "producto actualizado",
       products: products,
@@ -98,10 +99,10 @@ router.delete("/:pid", async (req, res) => {
   const io = req.app.get("io");
   const pid = req.params.pid;
   try {
-    await deleteProduct(pid);
+    await productController.deleteProduct(pid);
     res.status(200).send({ payload: `Producto de ID: ${pid} eliminado` });
 
-    const products = await getProducts();
+    const products = await productController.get();
     io.emit("products", { message: "producto eliminado", products: products });
   } catch (error) {
     console.log(error);

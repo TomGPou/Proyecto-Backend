@@ -1,76 +1,80 @@
 //* IMPORTS
-import CartManager from "../services/mdb/cartManager.mdb.js";
+import CartService from "../services/dao/mdb/cartService.mdb.js";
 //* INIT
-const cartManager = new CartManager();
+const cartService = new CartService();
 
-//* CREAR CARRITO
-export const createCart = async () => {
-  const newCart = {
-    products: [],
+export default class CartController {
+  constructor() {}
+
+  //* CREAR CARRITO
+  create = async () => {
+    const newCart = {
+      products: [],
+    };
+
+    return await cartManager.create(newCart);
   };
 
-  return await cartManager.create(newCart);
-};
+  //* BUSCAR TODOS
+  getAll = async () => {
+    try {
+      return await cartManager.getAll();
+    } catch (error) {
+      return { error: error.message };
+    }
+  };
 
-//* BUSCAR TODOS
-export const getAllCarts = async () => {
-  try {
-    return await cartManager.getAll();
-  } catch (error) {
-    return { error: error.message };
-  }
-};
+  //* BUSCAR POR ID
+  getById = async (cid) => {
+    try {
+      return await cartManager.getById(cid);
+    } catch (error) {
+      return { error: error.message };
+    }
+  };
 
-//* BUSCAR POR ID
-export const getCartById = async (cid) => {
-  try {
-    return await cartManager.getById(cid);
-  } catch (error) {
-    return { error: error.message };
-  }
-};
+  //* AGREGAR PRODUCTO
+  addProduct = async (cid, pid) => {
+    try {
+      return await cartManager.addProduct(cid, pid);
+    } catch (error) {
+      return { error: error.message };
+    }
+  };
 
-//* AGREGAR PRODUCTO
-export const addProductToCart = async (cid, pid) => {
-  try {
-    return await cartManager.addProduct(cid, pid);
-  } catch (error) {
-    return { error: error.message };
-  }
-};
+  //* ACTUALIZAR CANTIDAD DE PRODUCTO
+  updateQty = async (cid, pid, qty) => {
+    try {
+      return await cartManager.updateQty(cid, pid, qty);
+    } catch (error) {
+      return { error: error.message };
+    }
+  };
 
-//* ACTUALIZAR CANTIDAD DE PRODUCTO
-export const updateProductQty = async (cid, pid, qty) => {
-  try {
-    return await cartManager.updateQty(cid, pid, qty);
-  } catch (error) {
-    return { error: error.message };
-  }
-};
+  //* BORRAR PRODUCTO
+  deleteProduct = async (cid, pid) => {
+    try {
+      return await cartManager.deleteProduct(cid, pid);
+    } catch (error) {
+      return { error: error.message };
+    }
+  };
 
-//* BORRAR PRODUCTO
-export const deleteProductFromCart = async (cid, pid) => {
-  try {
-    return await cartManager.deleteProduct(cid, pid);
-  } catch (error) {
-    return { error: error.message };
-  }
-};
+  //* ACTUALIZAR CARRITO
+  update = async (cid, cart) => {
+    try {
+      return await cartManager.update(cid, cart);
+    } catch (error) {
+      return { error: error.message };
+    }
+  };
 
-//* ACTUALIZAR CARRITO
-export const updateCart = async (cid, cart) => {
-  try {
-    return await cartManager.update(cid, cart);
-  } catch (error) {
-    return { error: error.message };
-  }
-};
-
-//* VACIAR CARRITO
-export const emptyCart = async (cid) => {
-  try {
-    return await cartManager.empty(cid);
-  } catch (error) {
-    return { error: error.message };
-  }
-};
+  //* VACIAR CARRITO
+  empty = async (cid) => {
+    try {
+      return await cartManager.empty(cid);
+    } catch (error) {
+      return { error: error.message };
+    }
+  };
+}
