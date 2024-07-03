@@ -7,6 +7,7 @@ import session from "express-session";
 // import FileStore from 'session-file-store';
 import MongoStore from "connect-mongo";
 import passport from "passport";
+import cors from "cors";
 
 // IMPORTS FILES
 import config from "./config.js";
@@ -20,6 +21,7 @@ import MongoSingleton from "./services/mdb/mongo.singleton.js";
 //* INIT AND CONFIG
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: "*" }))
 app.use(express.urlencoded({ extended: true }));
 app.engine("handlebars", handlebars.engine());
 // const fileStorage = FileStore(session);
