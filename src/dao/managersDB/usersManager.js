@@ -32,6 +32,8 @@ export default class UsersManager {
     try {
       const user = await usersModel.findOne(query);
       if (!user) throw new Error("Usuario no encontrado");
+      delete user.password;
+
       return user;
     } catch (error) {
       console.log(error);
@@ -56,6 +58,8 @@ export default class UsersManager {
 
       // crear usuario
       const newUser = await usersModel.create(user);
+      delete newUser.password;
+
       return newUser;
     } catch (error) {
       console.log(error);
@@ -93,8 +97,8 @@ export default class UsersManager {
       if (!user || !isValidPassword(enteredPassword, user.password))
         throw new Error("Datos de acceso no válidos");
 
-      const { password, ...filteredUser } = user;
-      return filteredUser;
+      delete user.password;
+      return user;
     } catch (error) {
       console.log(error);
       return null;
