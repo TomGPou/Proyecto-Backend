@@ -1,7 +1,6 @@
 //* IMPORTS
 import express from "express";
 import handlebars from "express-handlebars";
-import mongoose from "mongoose";
 import { Server } from "socket.io";
 // import cookieParser from 'cookie-parser';
 import session from "express-session";
@@ -16,15 +15,13 @@ import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
 import messagesRoutes from "./routes/messages.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import MongoSingleton from "./services/mdb/mongo.singleton.js";
 
 //* INIT AND CONFIG
-// express
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// handlebars
 app.engine("handlebars", handlebars.engine());
-// session
 // const fileStorage = FileStore(session);
 app.use(
   session({
@@ -35,7 +32,6 @@ app.use(
     saveUninitialized: false,
   })
 );
-// passport
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -52,7 +48,7 @@ app.use("/static", express.static(`${config.DIRNAME}/public`));
 
 //* SERVER
 const httpServer = app.listen(config.PORT, async () => {
-  await mongoose.connect(config.MONGODB_URI);
+  MongoSingleton.getInstance();
 
   console.log(`Servidor activo en el puerto ${config.PORT} conectado a DB`);
 });
