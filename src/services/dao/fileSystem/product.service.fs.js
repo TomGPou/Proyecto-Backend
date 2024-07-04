@@ -1,38 +1,22 @@
-import fs from "fs";
+import { readFile, writeFile } from '../../utils/utils.js'
 
-export default class ProductManager {
+export default class ProductService {
   constructor() {
     this.path = './src/utils/products.json',
-    this.products = [];
+      this.products = [];
   }
-
-  async readFile() {
-    try {
-      const data = await fs.promises.readFile(this.path);
-      this.products = JSON.parse(data);
-    } catch (err) {
-      console.error(err);
-      throw err;
+  // OBTENER TODOS LOS PRODUCTOS
+  async get() {
+    if (!this.products.length) {
+      this.products = await readFile(this.path);
     }
-  }
-
-  async writeFile() {
-    try {
-      await fs.promises.writeFile(
-        this.path,
-        JSON.stringify(this.products),
-        "utf-8"
-      );
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
+    return this.products;
   }
 
   // AGREGAR PRODUCTO
-  async addProduct(newProduct) {
+  async add(newProduct) {
     // Leer archivo
-    await this.readFile();
+    this.products = await readFile(this.path);
     // Validar la carga de datos
     if (
       !newProduct.title ||
@@ -54,27 +38,22 @@ export default class ProductManager {
     newProduct.pid = this.products.length + 1;
     newProduct.status = true;
     this.products.push(newProduct);
-    await this.writeFile();
+    await writeFile(this.path, this.products);
     return newProduct;
   }
 
-  // OBTENER TODOS LOS PRODUCTOS
-  async getProducts() {
-    if (!this.products.length) await this.readFile();
-    return this.products;
-  }
 
   //  BUSCAR PRODUCTO POR ID
-  async getProductById(pid) {
-    const productsList = await this.getProducts();
+  async getById(pid) {
+    const productsList = await this.get();
     const product = productsList.find((p) => p.pid === pid);
 
     return product || null;
   }
 
   // ACTUALIZAR PRODUCTO
-  async updateProduct(pid, data) {
-    const productsList = await this.getProducts();
+  async update(pid, data) {
+    const productsList = await this.get();
 
     const i = productsList.findIndex((item) => item.pid === pid);
     // verificar que exista el ID
@@ -88,7 +67,7 @@ export default class ProductManager {
       // modificar producto y actualizar DB
       this.products[i] = { ...this.products[i], ...data };
 
-      await this.writeFile();
+      await writeFile(this.path, this.products);
       return this.products[i];
     }
   }
@@ -106,7 +85,7 @@ export default class ProductManager {
       productsList.splice(i, 1);
       this.products = [...productsList];
 
-      await this.writeFile();
+      await writeFile(this.path, this.products);
       return console.log(`Producto de ID: ${pid} eliminado`);
     }
   }

@@ -1,10 +1,7 @@
 import messagesModel from "../../../models/messages.model.js";
 
 export default class ChatService {
-  // constructor() {
-  //     this.path = './src/utils/chatLog.json',
-  //     this.messages = []
-  // }
+  constructor() {}
 
   // OBTENER LOS MENSAJES
   async getChat() {

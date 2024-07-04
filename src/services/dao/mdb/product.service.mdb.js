@@ -1,6 +1,7 @@
 import productsModel from "../../../models/products.model.js";
 
 export default class ProductService {
+  constructor() {}
   // OBTENER TODOS LOS PRODUCTOS
   async get(limit, page, category, inStock, sort) {
     try {

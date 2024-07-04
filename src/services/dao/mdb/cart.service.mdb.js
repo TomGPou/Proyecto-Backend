@@ -1,5 +1,5 @@
 import cartsModel from "../../../models/carts.model.js";
-import ProductService from "./productService.mdb.js";
+import ProductService from "./product.service.mdb.js";
 import mongoose from "mongoose";
 
 const productService = new ProductService();
@@ -22,12 +22,6 @@ export default class CartService {
     const product = await productService.getById(pid);
     if (!product) throw new Error(`Producto con ID: ${pid} no encontrado`);
     return product;
-  }
-  // Actualizar carrito
-  async update(cid, cart) {
-    return await cartsModel.findByIdAndUpdate(cid, cart, {
-      new: true,
-    });
   }
 
   //* CREAR CARRITO
@@ -125,7 +119,9 @@ export default class CartService {
       const cart = await this.validateCart(cid);
       cart.products = products;
 
-      return await this.update(cid, { products: cart.products });
+      return await cartsModel.findByIdAndUpdate(cid, cart, {
+        new: true,
+      });
     } catch (err) {
       return { error: err.message };
     }
@@ -137,7 +133,9 @@ export default class CartService {
       const cart = await this.validateCart(cid);
       cart.products = [];
 
-      return await this.update(cid, { products: cart.products });
+      return await cartsModel.findByIdAndUpdate(cid, cart, {
+        new: true,
+      });
     } catch (err) {
       return { error: err.message };
     }

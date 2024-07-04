@@ -1,5 +1,5 @@
 //* IMPORTS
-import ProductService from "../services/dao/mdb/productService.mdb.js";
+import ProductService from "../services/dao/mdb/product.service.mdb.js";
 //* INIT
 const productService = new ProductService();
 

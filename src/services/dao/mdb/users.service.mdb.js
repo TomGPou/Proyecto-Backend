@@ -1,11 +1,12 @@
 import usersModel from "../../../models/users.model.js";
 import { createHash, isValidPassword } from "../../utils/utils.js";
-import CartService from "./cartService.mdb.js";
+import CartService from "./cart.service.mdb.js";
 
 // INIT
 const cartService = new CartService();
 
 export default class UsersService {
+  constructor() {}
   // Obtener todos
   async getAll() {
     try {

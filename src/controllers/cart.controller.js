@@ -1,5 +1,5 @@
 //* IMPORTS
-import CartService from "../services/dao/mdb/cartService.mdb.js";
+import CartService from "../services/dao/mdb/cart.service.mdb.js";
 //* INIT
 const cartService = new CartService();
 

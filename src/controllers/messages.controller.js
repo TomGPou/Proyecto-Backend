@@ -1,5 +1,5 @@
 //* IMPORTS
-import ChatService from "../services/dao/mdb/messagesService.mdb.js";
+import ChatService from "../services/dao/mdb/messages.service.mdb.js";
 //* INIT
 const service = new ChatService();
 
