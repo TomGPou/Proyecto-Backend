@@ -1,25 +1,25 @@
-import cartsModel from "../models/carts.model.js";
-import ProductManager from "./productManager.mdb.js";
+import cartsModel from "../../../models/carts.model.js";
+import ProductService from "./productService.mdb.js";
 import mongoose from "mongoose";
 
-const productManager = new ProductManager();
+const productService = new ProductService();
 
 // MANAGER DE CARRITO
 
-export default class CartManager {
+export default class CartService {
   constructor() {
     this.carts = [];
   }
 
   // Validar ID carrito
   async validateCart(cid) {
-    const cart = await cartsModel.findById(cid)
+    const cart = await cartsModel.findById(cid);
     if (!cart) throw new Error(`Carrito con ID: ${cid} no encontrado`);
     return cart;
   }
   // Validar ID de producto
   async validateProduct(pid) {
-    const product = await productManager.getProductById(pid);
+    const product = await productService.getById(pid);
     if (!product) throw new Error(`Producto con ID: ${pid} no encontrado`);
     return product;
   }
@@ -28,16 +28,16 @@ export default class CartManager {
     return await cartsModel.findByIdAndUpdate(cid, cart, {
       new: true,
     });
-    // return cartUpdated;
   }
 
   //* CREAR CARRITO
-  async create() {
-    const newCart = {
-      products: [],
-    };
-
+  async create(newCart) {
     return await cartsModel.create(newCart);
+  }
+
+  //* BUSCAR TODOS
+  async getAll() {
+    return await cartsModel.find().lean();
   }
 
   //* BUSCAR POR ID
@@ -120,7 +120,7 @@ export default class CartManager {
   }
 
   //* ACTUALIZAR CARRITO
-  async updateCart(cid, products) {
+  async update(cid, products) {
     try {
       const cart = await this.validateCart(cid);
       cart.products = products;

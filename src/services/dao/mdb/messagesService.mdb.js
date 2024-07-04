@@ -1,22 +1,18 @@
-import messagesModel from "../models/messages.model.js";
+import messagesModel from "../../../models/messages.model.js";
 
-export default class ChatManager {
+export default class ChatService {
   // constructor() {
   //     this.path = './src/utils/chatLog.json',
   //     this.messages = []
   // }
 
   // OBTENER LOS MENSAJES
-  async getMessages() {
+  async getChat() {
     return await messagesModel.find().lean();
   }
 
   // AGREGAR MENSAJES
-  async addMessage(newMessage) {
-    // Validar mensaje vacio
-    if (!newMessage.message) {
-      throw new Error("El mensaje no puede estar vacio");
-    }
+  async add(newMessage) {
     // Guardar mensaje en DB
     return messagesModel.create(newMessage);
   }

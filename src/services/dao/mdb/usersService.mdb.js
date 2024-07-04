@@ -1,11 +1,11 @@
-import usersModel from "../models/users.model.js";
+import usersModel from "../../../models/users.model.js";
 import { createHash, isValidPassword } from "../../utils/utils.js";
-import CartManager from "./cartManager.mdb.js";
+import CartService from "./cartService.mdb.js";
 
 // INIT
-const cartManager = new CartManager();
+const cartService = new CartService();
 
-export default class UsersManager {
+export default class UsersService {
   // Obtener todos
   async getAll() {
     try {
@@ -43,9 +43,6 @@ export default class UsersManager {
   // Crear
   async create(user) {
     try {
-      // validar carga de datos
-      if (!user.first_name || !user.last_name || !user.email || !user.password)
-        throw new Error("Datos incompletos");
       // validar email
       const existingUser = await usersModel.findOne({ email: user.email });
       if (existingUser) throw new Error("Email ya registrado");
@@ -53,7 +50,7 @@ export default class UsersManager {
       user.password = createHash(user.password);
 
       // crear carrito asignarlo al usuario
-      const newCart = await cartManager.create();
+      const newCart = await cartService.create();
       user.cart = newCart._id;
 
       // crear usuario

@@ -3,12 +3,12 @@ import passport from "passport";
 import local from "passport-local";
 import GHStrategy from "passport-github2";
 
-import UsersManager from "../dao/managersDB/usersManager.js";
-import config from "../config.js";
+import config from "../../config.js";
+import UserController from "../../controllers/users.controller.js";
 
 // INIT
 const localStrategy = local.Strategy;
-const usersManager = new UsersManager();
+const userController = new UserController();
 
 // STRATEGIES
 
@@ -20,7 +20,7 @@ const initAuthStrategies = () => {
       { passReqToCallback: true, usernameField: "email" },
       async (req, username, password, done) => {
         try {
-          const user = await usersManager.login(username, password);
+          const user = await userController.login(username, password);
           if (!user) {
             return done(null, false);
           }
@@ -38,7 +38,7 @@ const initAuthStrategies = () => {
       { passReqToCallback: true, usernameField: "email" },
       async (req, username, password, done) => {
         try {
-          const user = await usersManager.create(req.body);
+          const user = await userController.create(req.body);
           if (!user) {
             return done(null, false);
           }
@@ -64,7 +64,7 @@ const initAuthStrategies = () => {
           const email = profile._json?.email || null;
 
           if (email) {
-            const foundUser = await usersManager.getOne({ email: email });
+            const foundUser = await userController.getOne({ email: email });
 
             if (!foundUser) {
               const user = {
@@ -74,7 +74,7 @@ const initAuthStrategies = () => {
                 password: "none",
               };
 
-              const process = await usersManager.create(user);
+              const process = await userController.create(user);
 
               return done(null, process);
             } else {
