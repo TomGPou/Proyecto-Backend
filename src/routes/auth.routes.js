@@ -1,7 +1,7 @@
 //* IMPORTS
 import { Router } from "express";
 import passport from "passport";
-
+import { handlePolicies } from "../services/utils/utils.js";
 import config from "../config.js";
 import { verifyReqBody } from "../services/utils/utils.js";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
@@ -101,6 +101,7 @@ router.get(
   }),
   async (req, res) => {
     try {
+      req.user.password = null;
       req.session.user = req.user;
       req.session.save((err) => {
         if (err)
