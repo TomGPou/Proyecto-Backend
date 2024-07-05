@@ -1,8 +1,18 @@
 //* IMPORTS
 import ProductService from "../services/dao/mdb/product.service.mdb.js";
+// import ProductService from "../services/dao/fileSystem/product.service.fs.js";
 //* INIT
 const productService = new ProductService();
 
+// DTO
+export class ProductDTO {
+  constructor(product) {
+    this.product = product;
+    this.product.code = product.code.toUpperCase();
+  }
+}
+
+// CONTROLLER
 export default class ProductController {
   constructor() {}
 
@@ -29,7 +39,10 @@ export default class ProductController {
       ) {
         throw new Error("Falta completar datos del producto");
       }
-      return await productService.add(newProduct);
+
+      const normalizeProduct = new ProductDTO(newProduct);
+
+      return await productService.add(normalizeProduct);
     } catch (error) {
       return { error: error.message };
     }
@@ -47,6 +60,10 @@ export default class ProductController {
   //* ACTUALIZAR PRODUCTO
   update = async (pid, data) => {
     try {
+      if (data.code) {
+        normalizedData = new ProductDTO(data);
+        return await productService.update(pid, normalizedData);
+      }
       return await productService.update(pid, data);
     } catch (error) {
       return { error: error.message };

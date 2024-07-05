@@ -1,8 +1,20 @@
 //* IMPORTS
 import UsersService from "../services/dao/mdb/users.service.mdb.js";
+// import UsersService from "../services/dao/fileSystem/users.service.fs.js";
 //* INIT
 const usersService = new UsersService();
 
+// DTO
+export class UsersDTO {
+  constructor(user) {
+    this.user = user;
+    this.user.email = user.email.toLowerCase();
+  }
+
+}
+
+
+// CONTROLLER
 export default class UserController {
   constructor() {}
 
@@ -39,7 +51,10 @@ export default class UserController {
       // validar carga de datos
       if (!user.first_name || !user.last_name || !user.email || !user.password)
         throw new Error("Datos incompletos");
-      return await usersService.create(user);
+      
+      const normalizedUser = new UsersDTO(user);
+
+      return await usersService.create(normalizedUser);
     } catch (error) {
       console.log(error);
     }
@@ -48,7 +63,12 @@ export default class UserController {
   //* ACTUALIZAR USUARIO
   update = async (uid, user) => {
     try {
-      return usersService.update(uid, user);
+      if (user.email) {
+        normalizedUser = new UsersDTO(user);
+        return await usersService.update(uid, normalizedUser);
+      }
+
+      return await usersService.update(uid, user);
     } catch {
       console.log(error);
     }
@@ -57,7 +77,7 @@ export default class UserController {
   //* ELIMINAR USUARIO
   delete = async (uid) => {
     try {
-      return usersService.delete(uid);
+      return await usersService.delete(uid);
     } catch {
       console.log(error);
     }
@@ -66,7 +86,7 @@ export default class UserController {
   //* LOGIN
   login = async (email, enteredPassword) => {
     try {
-      return usersService.login(email, enteredPassword);
+      return await usersService.login(email, enteredPassword);
     } catch {
       console.log(error);
       return null;
