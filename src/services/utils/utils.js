@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import config from "../../config.js";
 import fs from "fs";
+import { v4 as uuidv4 } from "uuid";
 
 // Hasheo de contraseña
 export const createHash = (password) =>
@@ -58,7 +59,7 @@ export const readFile = async (path) => {
     console.error(err);
     throw err;
   }
-}
+};
 
 // Escritura de archivo JSON
 export const writeFile = async (path, data) => {
@@ -68,4 +69,9 @@ export const writeFile = async (path, data) => {
     console.error(err);
     throw err;
   }
-}
+};
+
+// Generar código unico
+export const generateUniqueCode = () => {
+  return uuidv4();
+};
