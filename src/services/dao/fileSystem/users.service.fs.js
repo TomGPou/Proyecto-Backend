@@ -55,6 +55,7 @@ export default class UsersService {
   // Crear
   async create(user) {
     try {
+      this.users = await readFile(this.path);
       // validar email
       const existingUser = this.users.find((user) => user.email === user.email);
       if (existingUser) throw new Error("Email ya registrado");
@@ -63,7 +64,7 @@ export default class UsersService {
 
       // crear carrito asignarlo al usuario
       const newCart = await cartService.create();
-      user.cart = newCart._id;
+      user.cart = newCart.cid;
 
       // crear usuario
       this.users.push(user);

@@ -1,6 +1,7 @@
 //* IMPORTS
 import { Router } from "express";
 import CartController from "../controllers/cart.controller.js";
+import { handlePolicies } from "../services/utils/utils.js";
 
 //* INIT
 const router = Router();
@@ -31,7 +32,7 @@ router.param("pid", async (req, res, next, pid) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/",handlePolicies(["ADMIN"]) , async (req, res) => {
   try {
     const procces = await cartController.getAll();
     res.status(200).send({ payload: procces });
@@ -42,7 +43,7 @@ router.get("/", async (req, res) => {
 });
 
 // Crear carrito
-router.post("/", async (req, res) => {
+router.post("/",handlePolicies(["PREMIUM","USER"]), async (req, res) => {
   try {
     const newCart = await cartController.create();
     res.status(200).send({ payload: newCart });
@@ -53,7 +54,7 @@ router.post("/", async (req, res) => {
 });
 
 // Ver carrito
-router.get("/:cid", async (req, res) => {
+router.get("/:cid",handlePolicies(["PREMIUM","USER","ADMIN"]), async (req, res) => {
   const cid = req.params.cid;
   try {
     const cart = await cartController.getById(cid);
@@ -64,21 +65,8 @@ router.get("/:cid", async (req, res) => {
   }
 });
 
-// Agregar producto al carrito
-// router.put("/:cid/product/:pid", async (req, res) => {
-//   const cid = req.params.cid;
-//   const pid = req.params.pid;
-//   try {
-//     const cart = await cartManager.addProduct(cid, pid);
-//     res.status(200).send({ payload: cart });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(400).send({ error: error.message });
-//   }
-// });
-
 // Actualizar cantidad
-router.put("/:cid/product/:pid", async (req, res) => {
+router.put("/:cid/product/:pid",handlePolicies(["PREMIUM","USER"]), async (req, res) => {
   const cid = req.params.cid;
   const pid = req.params.pid;
   const qty = req.body.qty;
@@ -97,7 +85,7 @@ router.put("/:cid/product/:pid", async (req, res) => {
 });
 
 // Borrar producto del carrito
-router.delete("/:cid/product/:pid", async (req, res) => {
+router.delete("/:cid/product/:pid",handlePolicies(["PREMIUM","USER"]), async (req, res) => {
   const cid = req.params.cid;
   const pid = req.params.pid;
   try {
@@ -110,7 +98,7 @@ router.delete("/:cid/product/:pid", async (req, res) => {
 });
 
 // Actualizar carrito
-router.put("/:cid", async (req, res) => {
+router.put("/:cid",handlePolicies(["PREMIUM","USER"]), async (req, res) => {
   const cid = req.params.cid;
   const products = req.body;
   try {
@@ -123,10 +111,22 @@ router.put("/:cid", async (req, res) => {
 });
 
 // Vaciar carrito
-router.delete("/:cid", async (req, res) => {
+router.delete("/:cid",handlePolicies(["PREMIUM","USER"]), async (req, res) => {
   const cid = req.params.cid;
   try {
     const cart = await cartController.empty(cid);
+    res.status(200).send({ payload: cart });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ error: error.message });
+  }
+});
+
+// Comprar carrito
+router.post("/:cid/purchase",handlePolicies(["PREMIUM","USER"]), async (req, res) => {
+  const cid = req.params.cid;
+  try {
+    const cart = await cartController.purchase(cid);
     res.status(200).send({ payload: cart });
   } catch (error) {
     console.log(error);

@@ -1,14 +1,15 @@
-import { readFile, writeFile } from '../../utils/utils.js'
-import ProductService from './product.service.fs.js';
+import { readFile, writeFile } from "../../utils/utils.js";
+import ProductService from "./product.service.fs.js";
+import UsersService from "../mdb/users.service.fs.js";
 
 const productService = new ProductService();
+const usersService = new UsersService();
 
 // MANAGER DE CARRITO
 
 export default class CartService {
   constructor() {
-    this.path = './src/utils/carts.json',
-      this.carts = [];
+    (this.path = "./src/utils/carts.json"), (this.carts = []);
   }
 
   // Validar ID carrito
@@ -38,14 +39,14 @@ export default class CartService {
     };
 
     this.carts.push(newCart);
-    await writeFile(this.path, this.carts)
+    await writeFile(this.path, this.carts);
 
     return newCart;
   }
 
   // BUSCAR TODOS
   async getAll() {
-    return this.carts = await readFile(this.path);
+    return (this.carts = await readFile(this.path));
   }
 
   // BUSCAR POR ID
@@ -107,7 +108,6 @@ export default class CartService {
       // actualizar carrito
       await writeFile(this.path, this.carts);
       return cart;
-
     } catch (err) {
       return { error: err.message };
     }
@@ -158,8 +158,42 @@ export default class CartService {
 
       await writeFile(this.path, this.carts);
       return cart;
+    } catch (err) {
+      return { error: err.message };
+    }
+  }
 
-      } catch (err) {
+  // COMPRAR CARRITO
+  async purchase(cid) {
+    try {
+      this.carts = await readFile(this.path);
+
+      const cart = await this.validateCart(cid);
+      let amount = 0;
+      // verificar stock
+      for (const product of cart.products) {
+        const stock = await productService.getStock(product.pid);
+        if (stock >= product.quantity) {
+          await productService.update(product.pid, {
+            stock: stock - product.quantity,
+          });
+          amount += product.quantity * product.price;
+          await this.deleteProduct(cid, product.pid);
+        }
+      }
+      // buscar cid en users
+      const user = await usersService.getByCart(cid);
+      // generar ticket
+      const ticket = {
+        purchase_datetime: Date.now(),
+        amount: amount,
+        purchaser: user.email,
+      };
+      ticket.code = generateCode();
+      await ticketsModel.create(ticket);
+
+      return cart;
+    } catch {
       return { error: err.message };
     }
   }

@@ -72,6 +72,6 @@ export const writeFile = async (path, data) => {
 };
 
 // Generar código unico
-export const generateUniqueCode = () => {
+export const generateCode = () => {
   return uuidv4();
 };

@@ -1,8 +1,13 @@
 import cartsModel from "../../../models/carts.model.js";
+import { generateCode } from "../../utils/utils.js";
 import ProductService from "./product.service.mdb.js";
+import UsersService from "./users.service.mdb.js";
+import TicketService from "./ticket.service.mdb.js";
 import mongoose from "mongoose";
 
 const productService = new ProductService();
+const usersService = new UsersService();
+const ticketService = new TicketService();
 
 // MANAGER DE CARRITO
 
@@ -136,6 +141,39 @@ export default class CartService {
       return await cartsModel.findByIdAndUpdate(cid, cart, {
         new: true,
       });
+    } catch (err) {
+      return { error: err.message };
+    }
+  }
+
+  //* COMPRAR CARRITO
+  async purchase(cid) {
+    try {
+      const cart = await this.validateCart(cid);
+      let amount = 0;
+      // verificar stock
+      for (const product of cart.products) {
+        const stock = await productService.getStock(product._id);
+        if (stock >= product.quantity) {
+          await productService.update(product._id, {
+            stock: stock - product.quantity,
+          });
+          amount += product.quantity * product.price;
+          await this.deleteProduct(cid, product._id);
+        }
+      }
+      // buscar cid en users
+      const user = await usersService.getByCart(cid);
+      // generar ticket
+      const ticket = {
+        purchase_datetime: Date.now(),
+        amount: amount,
+        purchaser: user.email,
+      };
+      ticket.code = generateCode();
+      await ticketService.create(ticket);
+
+      return cart
     } catch (err) {
       return { error: err.message };
     }

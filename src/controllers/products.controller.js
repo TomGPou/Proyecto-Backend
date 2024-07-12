@@ -4,15 +4,15 @@ import ProductService from "../services/dao/mdb/product.service.mdb.js";
 //* INIT
 const productService = new ProductService();
 
-// DTO
-export class ProductDTO {
+//* DTO
+class ProductDTO {
   constructor(product) {
     this.product = product;
     this.product.code = product.code.toUpperCase();
   }
 }
 
-// CONTROLLER
+//* CONTROLLER
 export default class ProductController {
   constructor() {}
 

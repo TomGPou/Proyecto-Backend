@@ -80,4 +80,10 @@ export default class ProductService {
     // buscar y borrar
     return await productsModel.findByIdAndDelete(pid);
   }
+
+  // OBTENER STOCK
+  async getStock(pid) {
+    const product = await productsModel.findById(pid);
+    return product.stock;
+  }
 }

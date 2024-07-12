@@ -2,6 +2,7 @@
 import { Router } from "express";
 import config from "../config.js";
 import ProductController from "../controllers/products.controller.js";
+import { handlePolicies } from "../services/utils/utils.js";
 
 //* INIT
 const router = Router();
@@ -21,45 +22,55 @@ router.param("pid", async (req, res, next, pid) => {
 });
 
 // Obtener todos los productos con parginacion y ordenamiento
-router.get("/", async (req, res) => {
-  const limit = req.query.limit;
-  const page = req.query.page;
-  const category = req.query.category;
-  const inStock = req.query.inStock;
-  const sort = req.query.sort || "asc";
+router.get(
+  "/",
+  handlePolicies(["USER", "PREMIUM", "ADMIN"]),
+  async (req, res) => {
+    const limit = req.query.limit;
+    const page = req.query.page;
+    const category = req.query.category;
+    const inStock = req.query.inStock;
+    const sort = req.query.sort || "asc";
 
-  try {
-    const products = await productController.get(
-      limit,
-      page,
-      category,
-      inStock,
-      sort
-    );
-    res.status(200).send({ status: "success", payload: products });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ status: "error", error: error.message });
+    try {
+      const products = await productController.get(
+        limit,
+        page,
+        category,
+        inStock,
+        sort
+      );
+      res.status(200).send({ status: "success", payload: products });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ status: "error", error: error.message });
+    }
   }
-});
+);
 
 // producto por id
-router.get("/:pid", async (req, res) => {
-  const pid = req.params.pid;
+router.get(
+  "/:pid",
+  handlePolicies(["USER", "PREMIUM", "ADMIN"]),
+  async (req, res) => {
+    const pid = req.params.pid;
 
-  try {
-    const product = await productController.getById(pid);
-    product
-      ? res.send({ status: 1, payload: product })
-      : res.status(404).send({ error: `Producto de ID ${pid} no encontrado` });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ error: error.message });
+    try {
+      const product = await productController.getById(pid);
+      product
+        ? res.send({ status: 1, payload: product })
+        : res
+            .status(404)
+            .send({ error: `Producto de ID ${pid} no encontrado` });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ error: error.message });
+    }
   }
-});
+);
 
 // Agregar producto
-router.post("/", async (req, res) => {
+router.post("/", handlePolicies(["ADMIN"]), async (req, res) => {
   const io = req.app.get("io");
   const newProduct = req.body;
   try {
@@ -75,7 +86,7 @@ router.post("/", async (req, res) => {
 });
 
 // Actualizar producto
-router.put("/:pid", async (req, res) => {
+router.put("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
   const io = req.app.get("io");
   const pid = req.params.pid;
   const updatedData = req.body;
@@ -95,7 +106,7 @@ router.put("/:pid", async (req, res) => {
 });
 
 //Eliminar producto
-router.delete("/:pid", async (req, res) => {
+router.delete("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
   const io = req.app.get("io");
   const pid = req.params.pid;
   try {

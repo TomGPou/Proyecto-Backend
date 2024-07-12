@@ -16,6 +16,7 @@ import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
 import messagesRoutes from "./routes/messages.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import ticketRoutes from "./routes/ticket.routes.js"
 import MongoSingleton from "./services/mongo.singleton.js";
 
 //* INIT AND CONFIG
@@ -45,6 +46,7 @@ app.use("/api/products", productsRoutes);
 app.use("/api/carts", cartsRoutes);
 app.use("/api/chat", messagesRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/ticket", ticketRoutes);
 app.use("/", viewsRoutes);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
 

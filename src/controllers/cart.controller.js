@@ -13,13 +13,13 @@ export default class CartController {
       products: [],
     };
 
-    return await cartManager.create(newCart);
+    return await cartService.create(newCart);
   };
 
   //* BUSCAR TODOS
   getAll = async () => {
     try {
-      return await cartManager.getAll();
+      return await cartService.getAll();
     } catch (error) {
       return { error: error.message };
     }
@@ -28,7 +28,7 @@ export default class CartController {
   //* BUSCAR POR ID
   getById = async (cid) => {
     try {
-      return await cartManager.getById(cid);
+      return await cartService.getById(cid);
     } catch (error) {
       return { error: error.message };
     }
@@ -37,7 +37,7 @@ export default class CartController {
   //* AGREGAR PRODUCTO
   addProduct = async (cid, pid) => {
     try {
-      return await cartManager.addProduct(cid, pid);
+      return await cartService.addProduct(cid, pid);
     } catch (error) {
       return { error: error.message };
     }
@@ -46,7 +46,7 @@ export default class CartController {
   //* ACTUALIZAR CANTIDAD DE PRODUCTO
   updateQty = async (cid, pid, qty) => {
     try {
-      return await cartManager.updateQty(cid, pid, qty);
+      return await cartService.updateQty(cid, pid, qty);
     } catch (error) {
       return { error: error.message };
     }
@@ -55,7 +55,7 @@ export default class CartController {
   //* BORRAR PRODUCTO
   deleteProduct = async (cid, pid) => {
     try {
-      return await cartManager.deleteProduct(cid, pid);
+      return await cartService.deleteProduct(cid, pid);
     } catch (error) {
       return { error: error.message };
     }
@@ -64,7 +64,7 @@ export default class CartController {
   //* ACTUALIZAR CARRITO
   update = async (cid, cart) => {
     try {
-      return await cartManager.update(cid, cart);
+      return await cartService.update(cid, cart);
     } catch (error) {
       return { error: error.message };
     }
@@ -73,7 +73,16 @@ export default class CartController {
   //* VACIAR CARRITO
   empty = async (cid) => {
     try {
-      return await cartManager.empty(cid);
+      return await cartService.empty(cid);
+    } catch (error) {
+      return { error: error.message };
+    }
+  };
+
+  //* COMPRAR CARRITO
+  purchase = async (cid) => {
+    try {
+      return await cartService.purchase(cid);
     } catch (error) {
       return { error: error.message };
     }

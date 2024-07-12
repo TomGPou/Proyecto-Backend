@@ -1,6 +1,7 @@
 //* IMPORTS
 import { Router } from "express";
 import MessagesController from "../controllers/messages.controller.js";
+import { handlePolicies } from "../services/utils/utils.js";
 
 //* INIT
 const router = Router();
@@ -8,18 +9,22 @@ const messagesController = new MessagesController();
 
 //* ENDPOINTS (/api/chat)
 // Obtener mensajes
-router.get("/", async (req, res) => {
-  try {
-    const messages = { messages: await messagesController.getChat() };
-    res.status(200).send({ payload: messages });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ error: error.message });
+router.get(
+  "/",
+  handlePolicies(["PREMIUM", "USER", "ADMIN"]),
+  async (req, res) => {
+    try {
+      const messages = { messages: await messagesController.getChat() };
+      res.status(200).send({ payload: messages });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ error: error.message });
+    }
   }
-});
+);
 
 // Agregar mensaje
-router.post("/", async (req, res) => {
+router.post("/", handlePolicies(["PREMIUM", "USER"]), async (req, res) => {
   const io = req.app.get("io");
   const newMessage = req.body;
   try {

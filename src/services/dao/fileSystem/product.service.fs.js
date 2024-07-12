@@ -1,9 +1,8 @@
-import { readFile, writeFile } from '../../utils/utils.js'
+import { readFile, writeFile } from "../../utils/utils.js";
 
 export default class ProductService {
   constructor() {
-    this.path = './src/utils/products.json',
-      this.products = [];
+    (this.path = "./src/utils/products.json"), (this.products = []);
   }
   // OBTENER TODOS LOS PRODUCTOS
   async get() {
@@ -41,7 +40,6 @@ export default class ProductService {
     await writeFile(this.path, this.products);
     return newProduct;
   }
-
 
   //  BUSCAR PRODUCTO POR ID
   async getById(pid) {
@@ -88,5 +86,11 @@ export default class ProductService {
       await writeFile(this.path, this.products);
       return console.log(`Producto de ID: ${pid} eliminado`);
     }
+  }
+
+  // OBTENER STOCK
+  async getStock(pid) {
+    const product = await this.getById(pid);
+    return product.stock;
   }
 }

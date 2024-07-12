@@ -102,4 +102,15 @@ export default class UsersService {
       return null;
     }
   }
+
+  // Buscar por cart
+  async getByCart(cid) {
+    try {
+      const user = await usersModel.findOne({ cart: cid });
+      if (!user) throw new Error("Usuario no encontrado");
+      return user;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
