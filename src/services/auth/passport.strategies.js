@@ -73,7 +73,6 @@ const initAuthStrategies = () => {
                 email: email,
                 password: "none",
               };
-
               const process = await userController.create(user);
 
               return done(null, process);

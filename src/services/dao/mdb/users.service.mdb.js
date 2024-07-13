@@ -1,6 +1,6 @@
+import CartService from "./cart.service.mdb.js";
 import usersModel from "../../../models/users.model.js";
 import { createHash, isValidPassword } from "../../utils/utils.js";
-import CartService from "./cart.service.mdb.js";
 
 // INIT
 const cartService = new CartService();
@@ -48,6 +48,7 @@ export default class UsersService {
       const existingUser = await usersModel.findOne({ email: user.email });
       if (existingUser) throw new Error("Email ya registrado");
       // crear hash de contraseña
+      console.log(user);
       user.password = createHash(user.password);
 
       // crear carrito asignarlo al usuario

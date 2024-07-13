@@ -21,7 +21,7 @@ router.param("tid", async (req, res, next, tid) => {
 });
 
 // GET ALL
-router.get("/", handlePolicies(["ADMIN"]), async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const tickets = await ticketController.getAll();
     res.status(200).send({ payload: tickets });
@@ -32,7 +32,7 @@ router.get("/", handlePolicies(["ADMIN"]), async (req, res) => {
 });
 
 // GET BY ID
-router.get("/:tid", handlePolicies(["PREMIUM","USER","ADMIN"]), async (req, res) => {
+router.get("/:tid", async (req, res) => {
   try {
     const ticket = await ticketController.getById(req.params.tid);
     res.status(200).send({ payload: ticket });
@@ -55,7 +55,7 @@ router.post("/", handlePolicies(["PREMIUM","USER"]), async (req, res) => {
 });
 
 // ACTUALIZAR AMOUNT
-router.put("/:tid", handlePolicies(["ADMIN","PREMIUM","USER"]), async (req, res) => {
+router.put("/:tid", async (req, res) => {
   try {
     const ticket = await ticketController.updateAmount(req.params.tid, req.body.amount);
     res.status(200).send({ payload: ticket });
@@ -67,7 +67,7 @@ router.put("/:tid", handlePolicies(["ADMIN","PREMIUM","USER"]), async (req, res)
 });
 
 // BORRAR TICKET
-router.delete("/:tid", handlePolicies(["ADMIN"]), async (req, res) => {
+router.delete("/:tid", async (req, res) => {
   try {
     const ticket = await ticketController.delete(req.params.tid);
     res.status(200).send({ payload: ticket });

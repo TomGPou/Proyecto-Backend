@@ -62,11 +62,13 @@ export default class ProductService {
     const exist = await productsModel.findById(pid);
     if (!exist) throw new Error("El producto no existe");
     // validar si el código ya existe
-    const isDuplicated = await productsModel.findOne({
-      code: data.code,
-      _id: { $ne: pid },
-    });
-    if (isDuplicated) throw new Error("El código del producto ya existe");
+    if (data.code) {
+      const isDuplicated = await productsModel.findOne({
+        code: data.code,
+        _id: { $ne: pid },
+      });
+      if (isDuplicated) throw new Error("El código del producto ya existe");
+    }
 
     // Actualizar
     return await productsModel.findByIdAndUpdate(pid, data, { new: true });

@@ -78,14 +78,19 @@ router.get(
 
 // Carrito
 router.get(
-  "/carts/:cid",
+  "/cart/:cid",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
   async (req, res) => {
     const cid = req.params.cid;
+    const purchaser = req.session.user.email
     try {
       const cart = await cartController.getById(cid);
+      let total = 0;
+      cart.products.forEach(product => {
+        total += product._id.price * product.quantity;
+      });
 
-      res.status(200).render("cart", { cart: cart });
+      res.status(200).render("cart", { cart: cart, total: total, purchaser: purchaser });
     } catch (error) {
       console.log(error);
       res.status(500).send({ error: "Internal Server Error" });
@@ -94,19 +99,15 @@ router.get(
 );
 
 // Chat
-router.get(
-  "/chat",
-  handlePolicies(["USER", "PREMIUM", "ADMIN"]),
-  async (req, res) => {
-    try {
-      const messages = { messages: await messagesController.getChat() };
-      res.status(200).render("chat", messages);
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ error: "Internal Server Error" });
-    }
+router.get("/chat", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
+  try {
+    const messages = { messages: await messagesController.getChat() };
+    res.status(200).render("chat", messages);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ error: "Internal Server Error" });
   }
-);
+});
 
 // Login
 router.get("/login", handlePolicies(["PUBLIC"]), (req, res) => {

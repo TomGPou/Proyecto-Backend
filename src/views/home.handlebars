@@ -3,6 +3,9 @@
 <form action="/profile" method="get">
   <button type="submit" class="btn btn-success">Perfil de usuario</button>
 </form>
+<form action="/cart/{{user.cart}}" method="get">
+  <button type="submit" class="btn btn-success">Carrito</button>
+</form>
 
 <h1 style="color: white;">Lista de productos</h1>
 <div class="container d-flex flex-row flex-wrap justify-content-evenly">
@@ -14,7 +17,7 @@
         <p class="card-text">{{description}}</p>
         <p class="card-text">${{price}}</p>
 
-        <button onclick="addToCart('{{_id}}')" class="btn btn-primary">Agregar
+        <button onclick="addToCart('{{_id}}', '{{../user.cart}}')" class="btn btn-primary">Agregar
           al carrito</button>
       </div>
     </div>
@@ -37,3 +40,27 @@
     >Pagina siguiente</a>
   {{/if}}
 </div>
+
+<script>
+  const addToCart = async (pid, cid) => {
+    const url = `api/carts/${cid}/product/${pid}`
+
+    try {
+      const response = await fetch (url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      if (response.ok) {
+        alert('Producto agregado al carrito')
+      } else {
+        alert('Error al agregar producto al carrito')
+      }
+
+    } catch (error) {
+      console.log(error)
+      alert('Error en la petición')
+    }
+  }
+</script>

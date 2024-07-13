@@ -80,9 +80,9 @@ export default class CartController {
   };
 
   //* COMPRAR CARRITO
-  purchase = async (cid) => {
+  purchase = async (cid, purchaser) => {
     try {
-      return await cartService.purchase(cid);
+      return await cartService.purchase(cid, purchaser);
     } catch (error) {
       return { error: error.message };
     }

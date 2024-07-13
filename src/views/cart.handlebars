@@ -5,6 +5,28 @@
       {{#each cart.products}}
         <li class="list-group-item">{{_id.title}} - Cantidad: {{quantity}} - ${{_id.price}}</li>
       {{/each}}
+      <li class="list-group-item"> Total: ${{total}} <button onclick="purchase('{{cart._id}}','{{purchaser}}')" class="btn btn-success">Comprar</button></li>
     </ul>
   </div>
 </div>
+
+<script>
+  async function purchase(cid, purchaser) {
+    try {
+      const response = await fetch (`${window.location.origin}/api/carts/${cid}/purchase`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ purchaser: purchaser })
+      });
+      if (response.ok) {
+        alert('Compra realizada con exito')
+      } else {
+        console.log('Error al realizar la compra')
+      }
+    } catch (error) {
+      console.log("Error al realizar la peticion", error)
+    }
+  }
+</script>

@@ -5,14 +5,11 @@ import UsersService from "../services/dao/mdb/users.service.mdb.js";
 const usersService = new UsersService();
 
 // DTO
-export class UsersDTO {
-  constructor(user) {
-    this.user = user;
-    this.user.email = user.email.toLowerCase();
-  }
-
-}
-
+// export class UsersDTO {
+//   constructor(user) {
+//     this.user = user;
+//   }
+// }
 
 // CONTROLLER
 export default class UserController {
@@ -51,10 +48,8 @@ export default class UserController {
       // validar carga de datos
       if (!user.first_name || !user.last_name || !user.email || !user.password)
         throw new Error("Datos incompletos");
-      
-      const normalizedUser = new UsersDTO(user);
 
-      return await usersService.create(normalizedUser);
+      return await usersService.create(user);
     } catch (error) {
       console.log(error);
     }
