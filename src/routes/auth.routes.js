@@ -5,6 +5,7 @@ import { handlePolicies } from "../services/utils/utils.js";
 import config from "../config.js";
 import { verifyReqBody } from "../services/utils/utils.js";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
+import { UsersDTO } from "../controllers/users.controller.js";
 
 //* INIT
 const router = Router();
@@ -124,7 +125,7 @@ router.get(
   "/current",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
   (req, res) => {
-    const user = req.session.user;
+    const user = new UsersDTO(req.session.user);
     res.status(200).send({ payload: user });
   }
 );

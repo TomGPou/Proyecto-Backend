@@ -24,7 +24,7 @@ router.get(
 );
 
 // Agregar mensaje
-router.post("/", async (req, res) => {
+router.post("/", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
   const io = req.app.get("io");
   const newMessage = req.body;
   try {

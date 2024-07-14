@@ -1,4 +1,4 @@
-import ticketModel from "../../../models/tickets.model.js";
+import ticketModel from "./models/tickets.model.js";
 import mongoose from "mongoose";
 
 export default class TicketService {

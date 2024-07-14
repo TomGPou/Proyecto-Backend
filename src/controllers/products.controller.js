@@ -4,14 +4,6 @@ import ProductService from "../services/dao/mdb/product.service.mdb.js";
 //* INIT
 const productService = new ProductService();
 
-//* DTO
-class ProductDTO {
-  constructor(product) {
-    this.product = product;
-    this.product.code = product.code.toUpperCase();
-  }
-}
-
 //* CONTROLLER
 export default class ProductController {
   constructor() {}
@@ -40,9 +32,7 @@ export default class ProductController {
         throw new Error("Falta completar datos del producto");
       }
 
-      const normalizeProduct = new ProductDTO(newProduct);
-
-      return await productService.add(normalizeProduct);
+      return await productService.add(newProduct);
     } catch (error) {
       return { error: error.message };
     }
@@ -61,8 +51,7 @@ export default class ProductController {
   update = async (pid, data) => {
     try {
       if (data.code) {
-        normalizedData = new ProductDTO(data);
-        return await productService.update(pid, normalizedData);
+        return await productService.update(pid, data);
       }
       return await productService.update(pid, data);
     } catch (error) {

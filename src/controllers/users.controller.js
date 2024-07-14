@@ -5,11 +5,12 @@ import UsersService from "../services/dao/mdb/users.service.mdb.js";
 const usersService = new UsersService();
 
 // DTO
-// export class UsersDTO {
-//   constructor(user) {
-//     this.user = user;
-//   }
-// }
+export class UsersDTO {
+  constructor(user) {
+    this.user = user;
+    this.user.password = null;
+  }
+}
 
 // CONTROLLER
 export default class UserController {
@@ -59,8 +60,7 @@ export default class UserController {
   update = async (uid, user) => {
     try {
       if (user.email) {
-        normalizedUser = new UsersDTO(user);
-        return await usersService.update(uid, normalizedUser);
+        return await usersService.update(uid, user);
       }
 
       return await usersService.update(uid, user);

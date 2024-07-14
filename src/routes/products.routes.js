@@ -70,7 +70,7 @@ router.get(
 );
 
 // Agregar producto
-router.post("/", async (req, res) => {
+router.post("/", handlePolicies(["ADMIN"]), async (req, res) => {
   const io = req.app.get("io");
   const newProduct = req.body;
   try {
@@ -86,7 +86,7 @@ router.post("/", async (req, res) => {
 });
 
 // Actualizar producto
-router.put("/:pid", async (req, res) => {
+router.put("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
   const io = req.app.get("io");
   const pid = req.params.pid;
   const updatedData = req.body;
@@ -106,7 +106,7 @@ router.put("/:pid", async (req, res) => {
 });
 
 //Eliminar producto
-router.delete("/:pid", async (req, res) => {
+router.delete("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
   const io = req.app.get("io");
   const pid = req.params.pid;
   try {

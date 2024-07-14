@@ -1,4 +1,4 @@
-import cartsModel from "../../../models/carts.model.js";
+import cartsModel from "./models/carts.model.js";
 import { generateCode } from "../../utils/utils.js";
 import ProductService from "./product.service.mdb.js";
 import TicketService from "./ticket.service.mdb.js";

@@ -33,7 +33,7 @@ router.param("pid", async (req, res, next, pid) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/", handlePolicies(["ADMIN"]), async (req, res) => {
   try {
     const procces = await cartController.getAll();
     res.status(200).send({ payload: procces });
@@ -57,6 +57,7 @@ router.post("/", async (req, res) => {
 // Ver carrito
 router.get(
   "/:cid",
+  handlePolicies(["USER", "PREMIUM", "ADMIN"]),
   async (req, res) => {
     const cid = req.params.cid;
     try {
@@ -72,6 +73,7 @@ router.get(
 // Actualizar cantidad
 router.put(
   "/:cid/product/:pid",
+  handlePolicies(["USER", "PREMIUM"]),
   async (req, res) => {
     const cid = req.params.cid;
     const pid = req.params.pid;
@@ -98,6 +100,7 @@ router.put(
 // Borrar producto del carrito
 router.delete(
   "/:cid/product/:pid",
+  handlePolicies(["USER", "PREMIUM"]),
   async (req, res) => {
     const cid = req.params.cid;
     const pid = req.params.pid;
@@ -112,7 +115,7 @@ router.delete(
 );
 
 // Actualizar carrito
-router.put("/:cid", async (req, res) => {
+router.put("/:cid", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
   const cid = req.params.cid;
   const products = req.body;
   try {
@@ -127,6 +130,7 @@ router.put("/:cid", async (req, res) => {
 // Vaciar carrito
 router.delete(
   "/:cid",
+  handlePolicies(["USER", "PREMIUM"]),
   async (req, res) => {
     const cid = req.params.cid;
     try {
@@ -142,6 +146,7 @@ router.delete(
 // Comprar carrito
 router.post(
   "/:cid/purchase",
+  handlePolicies(["USER", "PREMIUM"]),
   async (req, res) => {
     const cid = req.params.cid;
     const purchaser = req.body.purchaser;

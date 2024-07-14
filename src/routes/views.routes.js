@@ -6,6 +6,7 @@ import { handlePolicies } from "../services/utils/utils.js";
 import ProductController from "../controllers/products.controller.js";
 import CartController from "../controllers/cart.controller.js";
 import MessagesController from "../controllers/messages.controller.js";
+import { UsersDTO } from "../controllers/users.controller.js";
 
 //* INIT
 const router = Router();
@@ -132,7 +133,7 @@ router.get(
   "/profile",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
   (req, res) => {
-    const user = req.session.user;
+    const user = new UsersDTO(req.session.user);
     if (user.role == "admin") user.isAdmin = true;
     res.render("profile", { user: user });
   }
@@ -140,7 +141,7 @@ router.get(
 
 // Admin
 router.get("/admin", handlePolicies(["ADMIN"]), (req, res) => {
-  const user = req.session.user;
+  const user = new UsersDTO(req.session.user);
 
   res.render("profile", { user: user });
 });
