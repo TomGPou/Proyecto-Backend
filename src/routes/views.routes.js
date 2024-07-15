@@ -83,15 +83,17 @@ router.get(
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
   async (req, res) => {
     const cid = req.params.cid;
-    const purchaser = req.session.user.email
+    const purchaser = req.session.user.email;
     try {
       const cart = await cartController.getById(cid);
       let total = 0;
-      cart.products.forEach(product => {
+      cart.products.forEach((product) => {
         total += product._id.price * product.quantity;
       });
 
-      res.status(200).render("cart", { cart: cart, total: total, purchaser: purchaser });
+      res
+        .status(200)
+        .render("cart", { cart: cart, total: total, purchaser: purchaser });
     } catch (error) {
       console.log(error);
       res.status(500).send({ error: "Internal Server Error" });
@@ -100,15 +102,19 @@ router.get(
 );
 
 // Chat
-router.get("/chat", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
-  try {
-    const messages = { messages: await messagesController.getChat() };
-    res.status(200).render("chat", messages);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ error: "Internal Server Error" });
+router.get(
+  "/chat",
+  handlePolicies(["USER", "PREMIUM", "ADMIN"]),
+  async (req, res) => {
+    try {
+      const messages = { messages: await messagesController.getChat() };
+      res.status(200).render("chat", messages);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ error: "Internal Server Error" });
+    }
   }
-});
+);
 
 // Login
 router.get("/login", handlePolicies(["PUBLIC"]), (req, res) => {
@@ -134,6 +140,7 @@ router.get(
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
   (req, res) => {
     const user = new UsersDTO(req.session.user);
+    console.log(user);
     if (user.role == "admin") user.isAdmin = true;
     res.render("profile", { user: user });
   }

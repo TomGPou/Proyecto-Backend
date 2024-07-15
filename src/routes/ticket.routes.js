@@ -2,12 +2,13 @@
 import { Router } from "express";
 import TicketController from "../controllers/ticket.controller.js";
 import { handlePolicies } from "../services/utils/utils.js";
+import config from "../config.js";
 
 //* INIT
 const router = Router();
 const ticketController = new TicketController();
 
-//* ENDPOINTS (/api/tickets)
+//* ENDPOINTS (/api/ticket)
 router.param("tid", async (req, res, next, tid) => {
   if (config.MONGODB_ID_REGEX.test(tid)) {
     next();

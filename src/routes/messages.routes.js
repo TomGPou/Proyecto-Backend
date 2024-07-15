@@ -31,7 +31,7 @@ router.post("/", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
     const message = await messagesController.add(newMessage);
     res.status(200).send({ payload: message });
 
-    const messages = await getChat();
+    const messages = await messagesController.getChat();
     io.emit("newMessage", { messages: messages });
   } catch (error) {
     console.log(error);

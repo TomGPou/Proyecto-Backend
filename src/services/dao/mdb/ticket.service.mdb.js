@@ -1,3 +1,4 @@
+import { purchaseMail } from "../../utils/nodemailer.js";
 import ticketModel from "./models/tickets.model.js";
 import mongoose from "mongoose";
 
@@ -41,6 +42,7 @@ export default class TicketService {
       }
       // Crear
       const ticket = await ticketModel.create(newTicket);
+      await purchaseMail(ticket);
       return ticket;
     } catch (error) {
       return { error: error.message };
