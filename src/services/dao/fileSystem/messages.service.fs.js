@@ -1,31 +1,30 @@
-import { readFile, writeFile } from '../../utils/utils.js'
+import { readFile, writeFile } from "../../utils/utils.js";
 
 export default class ChatService {
   constructor() {
-    this.path = './src/utils/chatLog.json',
-      this.messages = []
+    this.path = "./src/services/utils/chatLog.json";
   }
 
   // OBTENER LOS MENSAJES
   async getChat() {
     if (!this.messages.length) {
-      this.messages = await readFile(this.path);
+      const messages = await readFile(this.path);
     }
-    return this.messages;
+    return messages;
   }
 
   // AGREGAR MENSAJES
   async add(newMessage) {
     if (!this.messages.length) {
-      this.messages = await readFile(this.path);
+      const messages = await readFile(this.path);
     }
     // Validar mensaje vacio
     if (!newMessage.message) {
-      throw new Error('El mensaje no puede estar vacio');
+      throw new Error("El mensaje no puede estar vacio");
     }
     // carga al array y guardado de archivo
-    this.messages.push(newMessage);
-    await writeFile(this.path, this.messages);
-    return newMessage
+    messages.push(newMessage);
+    await writeFile(this.path, messages);
+    return newMessage;
   }
 }

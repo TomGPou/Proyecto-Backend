@@ -1,25 +1,26 @@
 import { readFile, writeFile } from "../../utils/utils.js";
 import ProductService from "./product.service.fs.js";
-import UsersService from "../mdb/users.service.fs.js";
+import TicketService from "./ticket.service.fs.js";
 
 const productService = new ProductService();
-const usersService = new UsersService();
+const ticketService = new TicketService();
 
 // MANAGER DE CARRITO
 
 export default class CartService {
   constructor() {
-    (this.path = "./src/utils/carts.json"), (this.carts = []);
+    this.path = "./src/services/utils/carts.json";
   }
 
   // Validar ID carrito
   async validateCart(cid) {
-    const cartIndex = this.carts.findIndex((item) => item.cid === cid);
+    const carts = await readFile(this.path);
+    const cartIndex = carts.findIndex((item) => item.cid === cid);
 
     if (cartIndex < 0) {
       throw new Error(`Carrito con ID: ${cid} no encontrado`);
     }
-    return this.carts[cartIndex];
+    return carts[cartIndex];
   }
 
   // Validar ID de producto
@@ -32,29 +33,28 @@ export default class CartService {
 
   // CREAR CARRITO
   async create() {
-    this.carts = await readFile(this.path);
+    const carts = await readFile(this.path);
     const newCart = {
-      cid: this.carts.length + 1,
+      cid: carts.length + 1,
       products: [],
     };
 
-    this.carts.push(newCart);
-    await writeFile(this.path, this.carts);
+    carts.push(newCart);
+    await writeFile(this.path, carts);
 
     return newCart;
   }
 
   // BUSCAR TODOS
   async getAll() {
-    return (this.carts = await readFile(this.path));
+    const carts = await readFile(this.path);
+    return carts;
   }
 
   // BUSCAR POR ID
   async getById(cid) {
     try {
-      this.carts = await readFile(this.path);
-
-      const cart = this.carts.find((cart) => cart.cid === cid);
+      const cart = this.validateCart(cid);
       if (cart) {
         return cart;
       } else {
@@ -68,8 +68,7 @@ export default class CartService {
   // AGREGAR PRODUCTO
   async addProduct(cid, pid) {
     try {
-      this.carts = await readFile(this.path);
-
+      const carts = await readFile(this.path);
       const cart = await this.validateCart(cid);
       await this.validateProduct(pid);
 
@@ -82,8 +81,7 @@ export default class CartService {
         cart.products[productIndex].quantity++;
       }
       // actualizar carrito
-      await writeFile(this.path, this.carts);
-      return cart;
+      return await this.update(cid, cart.products);
     } catch (err) {
       return { error: err.message };
     }
@@ -92,8 +90,7 @@ export default class CartService {
   //  ACTUALIZAR CANTIDAD DE PRODUCTO
   async updateQty(cid, pid, qty) {
     try {
-      this.carts = await readFile(this.path);
-
+      const carts = await readFile(this.path);
       const cart = await this.validateCart(cid);
       await this.validateProduct(pid);
 
@@ -106,8 +103,7 @@ export default class CartService {
         cart.products[productIndex].quantity = qty;
       }
       // actualizar carrito
-      await writeFile(this.path, this.carts);
-      return cart;
+      return await this.update(cid, cart.products);
     } catch (err) {
       return { error: err.message };
     }
@@ -116,18 +112,16 @@ export default class CartService {
   // BORRAR PRODUCTO
   async deleteProduct(cid, pid) {
     try {
-      this.carts = await readFile(this.path);
-
+      const carts = await readFile(this.path);
       const cart = await this.validateCart(cid);
       await this.validateProduct(pid);
 
-      // Buscar producto en array
+      // Buscar producto en array y eliminar
       const productIndex = cart.products.findIndex((item) => item.pid === pid);
-
-      // Eliminar producto
       cart.products.splice(productIndex, 1);
-      await writeFile(this.path, this.carts);
-      return cart;
+
+      // actualizar
+      return await this.update(cid, cart.products);
     } catch (err) {
       return { error: err.message };
     }
@@ -136,12 +130,13 @@ export default class CartService {
   // ACTUALIZAR CARRITO
   async update(cid, products) {
     try {
-      this.carts = await readFile(this.path);
-
+      const carts = await readFile(this.path);
       const cart = await this.validateCart(cid);
-      cart.products = products;
 
-      await writeFile(this.path, this.carts);
+      const cartIndex = carts.findIndex((c) => c.cid === cid);
+      carts[cartIndex].products = products;
+
+      await writeFile(this.path, carts);
       return cart;
     } catch (err) {
       return { error: err.message };
@@ -156,20 +151,19 @@ export default class CartService {
       const cart = await this.validateCart(cid);
       cart.products = [];
 
-      await writeFile(this.path, this.carts);
-      return cart;
+      return await this.update(cid, cart.products);
     } catch (err) {
       return { error: err.message };
     }
   }
 
   // COMPRAR CARRITO
-  async purchase(cid) {
+  async purchase(cid, purchaser) {
     try {
-      this.carts = await readFile(this.path);
-
+      const carts = await readFile(this.path);
       const cart = await this.validateCart(cid);
       let amount = 0;
+
       // verificar stock
       for (const product of cart.products) {
         const stock = await productService.getStock(product.pid);
@@ -181,18 +175,17 @@ export default class CartService {
           await this.deleteProduct(cid, product.pid);
         }
       }
-      // buscar cid en users
-      const user = await usersService.getByCart(cid);
+
       // generar ticket
       const ticket = {
         purchase_datetime: Date.now(),
         amount: amount,
-        purchaser: user.email,
+        purchaser: purchaser,
       };
       ticket.code = generateCode();
       await ticketsModel.create(ticket);
 
-      return cart;
+      return await this.getById(cid);
     } catch {
       return { error: err.message };
     }

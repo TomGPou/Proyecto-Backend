@@ -2,14 +2,12 @@ import { readFile, writeFile } from "../../utils/utils.js";
 
 export default class TicketService {
   constructor() {
-    (this.path = "./src/utils/tickets.json"), (this.tickets = []);
+    this.path = "./src/services/utils/tickets.json";
   }
 
   async getAll() {
-    if (!this.tickets.length) {
-      this.tickets = await readFile(this.path);
-    }
-    return this.tickets;
+    const tickets = await readFile(this.path);
+    return tickets;
   }
 
   async getById(id) {
@@ -45,8 +43,8 @@ export default class TicketService {
       }
       // Crear
       const ticketsList = await this.getAll();
-      this.tickets = [...ticketsList, newTicket];
-      await writeFile(this.path, this.tickets);
+      const tickets = [...ticketsList, newTicket];
+      await writeFile(this.path, tickets);
       return newTicket;
     } catch (error) {
       return { error: error.message };
@@ -55,16 +53,19 @@ export default class TicketService {
 
   async updateAmount(id, amount) {
     // validar id
-    this.getById(id);
+    const ticket = await this.getById(id);
+    if (!ticket) {
+      throw new Error("No existe el ticket con id " + id);
+    }
 
-    const ticketsList = await this.getAll();
+    const tickets = await this.getAll();
     // buscar ticket
-    const i = ticketsList.findIndex((item) => item.id === id);
+    const i = tickets.findIndex((item) => item.id === id);
     // actualizar
-    this.tickets[i].amount = amount;
+    tickets[i].amount = amount;
 
-    await writeFile(this.path, this.tickets);
-    return this.tickets[i];
+    await writeFile(this.path, tickets);
+    return tickets[i];
   }
 
   // async update(id, data) {
@@ -86,16 +87,18 @@ export default class TicketService {
 
   async delete(id) {
     // validar id
-    this.getById(id);
+    const ticket = await this.getById(id);
+    if (!ticket) {
+      throw new Error("No existe el ticket con id " + id);
+    }
 
-    const ticketsList = await this.getAll();
+    const tickets = await this.getAll();
     // buscar ticket
-    const i = ticketsList.findIndex((item) => item.id === id);
+    const i = tickets.findIndex((item) => item.id === id);
     // borrar
-    ticketsList.splice(i, 1);
-    this.tickets = [...ticketsList];
+    tickets.splice(i, 1);
 
-    await writeFile(this.path, this.tickets);
+    await writeFile(this.path, tickets);
     return console.log(`Ticket de ID: ${id} eliminado`);
   }
 }

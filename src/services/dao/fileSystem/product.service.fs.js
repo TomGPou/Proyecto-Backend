@@ -2,20 +2,18 @@ import { readFile, writeFile } from "../../utils/utils.js";
 
 export default class ProductService {
   constructor() {
-    (this.path = "./src/utils/products.json"), (this.products = []);
+    this.path = "./src/services/utils/products.json";
   }
   // OBTENER TODOS LOS PRODUCTOS
   async get() {
-    if (!this.products.length) {
-      this.products = await readFile(this.path);
-    }
-    return this.products;
+    const products = await readFile(this.path);
+    return products;
   }
 
   // AGREGAR PRODUCTO
   async add(newProduct) {
     // Leer archivo
-    this.products = await readFile(this.path);
+    const products = await readFile(this.path);
     // Validar la carga de datos
     if (
       !newProduct.title ||
@@ -28,16 +26,16 @@ export default class ProductService {
       throw new Error("Falta completar datos del producto");
 
     // Validar productos duplicados
-    const isDuplicated = this.products.some((p) => p.code === newProduct.code);
+    const isDuplicated = products.some((p) => p.code === newProduct.code);
 
     if (isDuplicated)
       throw new Error("El código debe ser único para cada producto");
 
     // Cargar al array
-    newProduct.pid = this.products.length + 1;
+    newProduct.pid = products.length + 1;
     newProduct.status = true;
-    this.products.push(newProduct);
-    await writeFile(this.path, this.products);
+    products.push(newProduct);
+    await writeFile(this.path, products);
     return newProduct;
   }
 
@@ -51,9 +49,9 @@ export default class ProductService {
 
   // ACTUALIZAR PRODUCTO
   async update(pid, data) {
-    const productsList = await this.get();
+    const products = await this.get();
 
-    const i = productsList.findIndex((item) => item.pid === pid);
+    const i = products.findIndex((item) => item.pid === pid);
     // verificar que exista el ID
     if (i < 0) {
       throw new Error(`Producto con ID: ${pid} no encontrado`);
@@ -63,27 +61,26 @@ export default class ProductService {
         delete data.pid;
       }
       // modificar producto y actualizar DB
-      this.products[i] = { ...this.products[i], ...data };
+      products[i] = { ...products[i], ...data };
 
-      await writeFile(this.path, this.products);
-      return this.products[i];
+      await writeFile(this.path, products);
+      return products[i];
     }
   }
 
   // BORRAR PRODUCTO
   async deleteProduct(pid) {
-    const productsList = await this.getProducts();
+    const products = await this.get();
 
-    const i = productsList.findIndex((item) => item.pid === pid);
+    const i = products.findIndex((item) => item.pid === pid);
     // verificar que exista el ID
     if (i < 0) {
       throw new Error(`NOT FOUND`);
     } else {
       // Quitar producto del array y actualizar DB
-      productsList.splice(i, 1);
-      this.products = [...productsList];
+      products.splice(i, 1);
 
-      await writeFile(this.path, this.products);
+      await writeFile(this.path, products);
       return console.log(`Producto de ID: ${pid} eliminado`);
     }
   }

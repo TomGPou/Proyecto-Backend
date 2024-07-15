@@ -1,5 +1,4 @@
 //* IMPORTS
-import { generateCode } from "../services/utils/utils.js";
 import TicketService from "../services/dao/mdb/ticket.service.mdb.js";
 // import TicketService from "../services/dao/fileSystem/ticket.service.fs.js";
 //* INIT

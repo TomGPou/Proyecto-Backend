@@ -4,22 +4,21 @@ import {
   createHash,
   isValidPassword,
 } from "../../utils/utils.js";
-import CartService from "../mdb/cart.service.fs.js";
+import CartService from "./cart.service.fs.js";
 
 //INIT
 const cartService = new CartService();
 
 export default class UsersService {
   constructor() {
-    this.path = "./src/utils/users.json";
-    this.users = [];
+    this.path = "./src/services/utils/users.json";
   }
 
   // Obtener todos
   async getAll() {
     try {
-      this.users = await readFile(this.path);
-      return this.users;
+      const users = await readFile(this.path);
+      return users;
     } catch (error) {
       console.log(error);
     }
@@ -28,8 +27,8 @@ export default class UsersService {
   // Obtener por id
   async getById(id) {
     try {
-      this.users = await readFile(this.path);
-      const user = this.users.find((user) => user.uid === id);
+      const users = await readFile(this.path);
+      const user = users.find((user) => user.uid === id);
       if (!user) throw new Error("Usuario no encontrado");
       return user;
     } catch (error) {
@@ -40,8 +39,8 @@ export default class UsersService {
   // getOne
   async getOne(query) {
     try {
-      this.users = await readFile(this.path);
-      const user = this.users.find((user) =>
+      const users = await readFile(this.path);
+      const user = users.find((user) =>
         Object.keys(query).every((key) => user[key] === query[key])
       );
       if (!user) throw new Error("Usuario no encontrado");
@@ -53,23 +52,25 @@ export default class UsersService {
   }
 
   // Crear
-  async create(user) {
+  async create(newUser) {
     try {
-      this.users = await readFile(this.path);
+      const users = await readFile(this.path);
       // validar email
-      const existingUser = this.users.find((user) => user.email === user.email);
-      if (existingUser) throw new Error("Email ya registrado");
-      // crear hash de contraseña
-      user.password = createHash(user.password);
+      const emailExists = users.find((user) => user.email === newUser.email);
+      if (emailExists) throw new Error("Email ya registrado");
 
-      // crear carrito asignarlo al usuario
+      // hash de password
+      newUser.password = createHash(newUser.password);
+      // agregar rol
+      newUser.role = "user";
+      // crear carrito
       const newCart = await cartService.create();
-      user.cart = newCart.cid;
+      newUser.cart = newCart.cid;
 
       // crear usuario
-      this.users.push(user);
-      await writeFile(this.path, this.users);
-      return user;
+      users.push(newUser);
+      await writeFile(this.path, users);
+      return newUser;
     } catch (error) {
       console.log(error);
       return null;
@@ -79,7 +80,7 @@ export default class UsersService {
   // Actualizar
   async update(uid, user) {
     try {
-      this.users = await readFile(this.path);
+      const users = await readFile(this.path);
       const i = this.users.findIndex((item) => item.uid === uid);
       // verificar que exista el ID
       if (i < 0) {
@@ -90,9 +91,9 @@ export default class UsersService {
         delete user.uid;
       }
       // modificar usuario y actualizar DB
-      this.users[i] = { ...this.users[i], ...user };
-      await writeFile(this.path, this.users);
-      return this.users[i];
+      users[i] = { ...users[i], ...user };
+      await writeFile(this.path, users);
+      return users[i];
     } catch (error) {
       console.log(error);
     }
@@ -101,16 +102,16 @@ export default class UsersService {
   //  Eliminar
   async delete(uid) {
     try {
-      this.users = await readFile(this.path);
-      const i = this.users.findIndex((item) => item.uid === uid);
+      const users = await readFile(this.path);
+      const i = users.findIndex((item) => item.uid === uid);
 
       // verificar que exista el ID
       if (i < 0) {
         throw new Error(`Usuario con ID: ${uid} no encontrado`);
       }
       // Quitar usuario del array y actualizar DB
-      this.users.splice(i, 1);
-      await writeFile(this.path, this.users);
+      users.splice(i, 1);
+      await writeFile(this.path, users);
       return console.log(`Usuario de ID: ${uid} eliminado`);
     } catch (error) {
       console.log(error);
@@ -120,8 +121,8 @@ export default class UsersService {
   // Login
   async login(email, enteredPassword) {
     try {
-      this.users = await readFile(this.path);
-      const user = this.users.find((user) => user.email === email);
+      const users = await readFile(this.path);
+      const user = users.find((user) => user.email === email);
 
       if (!user || !isValidPassword(enteredPassword, user.password))
         throw new Error("Datos de acceso no válidos");

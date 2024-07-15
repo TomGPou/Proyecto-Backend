@@ -64,12 +64,22 @@ router.get(
     const limit = req.query.limit;
     const page = req.query.page;
     const category = req.query.category;
+    const inStock = req.query.inStock;
     const sort = req.query.sort || "asc";
+
+    const user = req.session.user;
+
     try {
-      const products = {
-        products: await productController.get(limit, page, category, sort),
-      };
-      res.status(200).render("realtimeproducts", { products: products });
+      const products = await productController.get(
+        limit,
+        page,
+        category,
+        inStock,
+        sort
+      );
+      res
+        .status(200)
+        .render("realtimeproducts", { products: products, user: user });
     } catch (error) {
       console.log(error);
       res.status(500).send({ error: "Internal Server Error" });
@@ -140,7 +150,6 @@ router.get(
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
   (req, res) => {
     const user = new UsersDTO(req.session.user);
-    console.log(user);
     if (user.role == "admin") user.isAdmin = true;
     res.render("profile", { user: user });
   }

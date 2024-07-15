@@ -4,7 +4,7 @@ import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 // import cookieParser from 'cookie-parser';
 import session from "express-session";
-// import FileStore from 'session-file-store';
+// import FileStore from "session-file-store";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import cors from "cors";
@@ -16,7 +16,7 @@ import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
 import messagesRoutes from "./routes/messages.routes.js";
 import authRoutes from "./routes/auth.routes.js";
-import ticketRoutes from "./routes/ticket.routes.js"
+import ticketRoutes from "./routes/ticket.routes.js";
 import MongoSingleton from "./services/mongo.singleton.js";
 
 //* INIT AND CONFIG
@@ -28,7 +28,7 @@ app.engine("handlebars", handlebars.engine());
 // const fileStorage = FileStore(session);
 app.use(
   session({
-    // store: new fileStorage({ path: './sessions', ttl: 15, retries: 0 }),
+    // store: new fileStorage({ path: "./sessions", ttl: 60, retries: 0 }),
     store: MongoStore.create({ mongoUrl: config.MONGODB_URI, ttl: 60 }),
     secret: config.SECRET,
     resave: false,

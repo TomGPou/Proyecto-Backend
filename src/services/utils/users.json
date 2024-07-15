@@ -1,0 +1,19 @@
+[
+  {
+    "id": 1,
+    "first_name": "Coder",
+    "last_name": "House",
+    "email": "adminCoder@coder.com",
+    "age": 25,
+    "password": "$2b$10$7QFl7PBvENYSiY/KLL55jOj9clZA0LqNPST.VfUvQhnfxxDAYfgmC",
+    "role": "admin"
+  },
+  {
+    "first_name": "Tomás",
+    "last_name": "Gómez",
+    "email": "tomas.gomezpou@gmail.com",
+    "password": "$2b$10$EYQ5AAmBsgKu8Ip0cdZ5KeWGnnX87Y.0KOgHvcQifNxOwceF7Du6i",
+    "role": "user",
+    "cart": 2
+  }
+]
