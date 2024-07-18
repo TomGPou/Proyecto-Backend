@@ -7,6 +7,7 @@ import ProductController from "../controllers/products.controller.js";
 import CartController from "../controllers/cart.controller.js";
 import MessagesController from "../controllers/messages.controller.js";
 import { UsersDTO } from "../controllers/users.controller.js";
+import { generateFakeProducts } from "../services/utils/mocking.js";
 
 //* INIT
 const router = Router();
@@ -86,6 +87,19 @@ router.get(
     }
   }
 );
+
+// Mocking
+router.get("/mockingproducts", handlePolicies(["ADMIN"]), async (req, res) => {
+  const user = req.session.user;
+
+  try {
+    const products = await generateFakeProducts(100);
+    res.status(200).render("home", { products: products, user: user });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
 
 // Carrito
 router.get(
