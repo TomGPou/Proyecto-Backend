@@ -1,6 +1,6 @@
 //* IMPORTS
 import { Router } from "express";
-
+import compression from "express-compression";
 import config from "../config.js";
 import { handlePolicies } from "../services/utils/utils.js";
 import ProductController from "../controllers/products.controller.js";
@@ -9,8 +9,11 @@ import MessagesController from "../controllers/messages.controller.js";
 import { UsersDTO } from "../controllers/users.controller.js";
 import { generateFakeProducts } from "../services/utils/mocking.js";
 
-//* INIT
+//* ROUTER
 const router = Router();
+router.use(compression());
+
+//* CONTROLLERS
 const productController = new ProductController();
 const cartController = new CartController();
 const messagesController = new MessagesController();

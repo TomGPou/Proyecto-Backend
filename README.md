@@ -27,4 +27,5 @@
 ###
 
 <p align="center">Inicio del servidor</p>
-<p align="center">`npm start`</p>
+<p align="center">Modo development: `npm run dev`</p>
+<p align="center">Modo production: `npm run prod`</p>

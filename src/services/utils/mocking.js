@@ -1,4 +1,4 @@
-import faker from "@faker-js/faker";
+import { faker } from "@faker-js/faker";
 
 // PRODUCTS SCHEMA
 // title: { type: String, required: true },
@@ -35,7 +35,7 @@ export const generateFakeProducts = async (qty) => {
       price,
       stock,
       thumbnail,
-      status
+      status,
     });
   }
   return products;
