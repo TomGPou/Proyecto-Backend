@@ -2,7 +2,7 @@
 import { Router } from "express";
 import config from "../config.js";
 import ProductController from "../controllers/products.controller.js";
-import { handlePolicies } from "../services/utils/utils.js";
+import { handlePolicies, verifyReqBody } from "../services/utils/utils.js";
 
 //* INIT
 const router = Router();
@@ -70,7 +70,7 @@ router.get(
 );
 
 // Agregar producto
-router.post("/", handlePolicies(["ADMIN"]), async (req, res) => {
+router.post("/", handlePolicies(["ADMIN"]), verifyReqBody(["title","description","category","code","price","thumbnail","stock"]), async (req, res) => {
   const io = req.app.get("io");
   const newProduct = req.body;
   try {

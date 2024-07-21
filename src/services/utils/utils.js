@@ -2,6 +2,8 @@ import bcrypt from "bcrypt";
 import config from "../../config.js";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
+import errorsDictonary from "../errors/errrosDictionary.js";
+import CustomError from "../errors/CustomErrors.class.js";
 
 // Hasheo de contraseña
 export const createHash = (password) =>
@@ -22,13 +24,7 @@ export const verifyReqBody = (requiredFields) => {
         req.body[field] !== undefined
     );
 
-    if (!allOk)
-      return res.status(400).send({
-        origin: config.SERVER,
-        payload: "Faltan propiedades",
-        requiredFields,
-      });
-
+    if (!allOk) throw new CustomError(errorsDictonary.FEW_PARAMETERS);
     next();
   };
 };
@@ -48,6 +44,12 @@ export const handlePolicies = (policies) => {
 
     next();
   };
+};
+
+// Verificacion de id de MongoDB
+export const verifyMongoId = (id) => {
+  if (!config.MONGODB_ID_REGEX.test(id))
+    throw new CustomError(errorsDictonary.INVALID_MONGOID_FORMAT);
 };
 
 // Lectura de archivo JSON

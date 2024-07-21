@@ -1,7 +1,7 @@
 //* IMPORTS
 import { Router } from "express";
 import CartController from "../controllers/cart.controller.js";
-import { handlePolicies } from "../services/utils/utils.js";
+import { handlePolicies, verifyMongoId } from "../services/utils/utils.js";
 import config from "../config.js";
 
 //* INIT
@@ -10,28 +10,38 @@ const cartController = new CartController();
 
 //* ENDPOINTS (/api/carts)
 router.param("cid", async (req, res, next, cid) => {
-  if (config.MONGODB_ID_REGEX.test(cid)) {
-    next();
-  } else {
-    res.status(400).send({
-      origin: config.SERVER,
-      payload: null,
-      error: "Id del carrito no válido",
-    });
-  }
+  verifyMongoId(cid);
+  next();
 });
 
 router.param("pid", async (req, res, next, pid) => {
-  if (config.MONGODB_ID_REGEX.test(pid)) {
-    next();
-  } else {
-    res.status(400).send({
-      origin: config.SERVER,
-      payload: null,
-      error: "Id del producto no válido",
-    });
-  }
+  verifyMongoId(pid);
+  next();
 });
+
+// router.param("cid", async (req, res, next, cid) => {
+//   if (config.MONGODB_ID_REGEX.test(cid)) {
+//     next();
+//   } else {
+//     res.status(400).send({
+//       origin: config.SERVER,
+//       payload: null,
+//       error: "Id del carrito no válido",
+//     });
+//   }
+// });
+
+// router.param("pid", async (req, res, next, pid) => {
+//   if (config.MONGODB_ID_REGEX.test(pid)) {
+//     next();
+//   } else {
+//     res.status(400).send({
+//       origin: config.SERVER,
+//       payload: null,
+//       error: "Id del producto no válido",
+//     });
+//   }
+// });
 
 router.get("/", handlePolicies(["ADMIN"]), async (req, res) => {
   try {

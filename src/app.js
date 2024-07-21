@@ -11,6 +11,7 @@ import cors from "cors";
 
 // IMPORTS FILES
 import config from "./config.js";
+import errorsHandler from "./services/errors/errors.handler.js";
 import productsRoutes from "./routes/products.routes.js";
 import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
@@ -37,6 +38,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(errorsHandler);
 
 app.set("views", `${config.DIRNAME}/views`);
 app.set("view engine", "handlebars");

@@ -11,7 +11,7 @@ import { generateFakeProducts } from "../services/utils/mocking.js";
 
 //* ROUTER
 const router = Router();
-router.use(compression());
+router.use(compression({ brotli: { enabled: true }, zlib: {} }));
 
 //* CONTROLLERS
 const productController = new ProductController();
