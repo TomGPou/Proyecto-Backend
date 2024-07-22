@@ -1,13 +1,14 @@
 //* IMPORTS
 import { Router } from "express";
 import compression from "express-compression";
-import config from "../config.js";
-import { handlePolicies } from "../services/utils/utils.js";
+import { handlePolicies, verifyMongoId } from "../services/utils/utils.js";
 import ProductController from "../controllers/products.controller.js";
 import CartController from "../controllers/cart.controller.js";
 import MessagesController from "../controllers/messages.controller.js";
 import { UsersDTO } from "../controllers/users.controller.js";
 import { generateFakeProducts } from "../services/utils/mocking.js";
+import CustomError from "../services/errors/CustomErrors.class.js";
+import errorsDictionary from "../services/errors/errrosDictionary.js";
 
 //* ROUTER
 const router = Router();
@@ -19,17 +20,7 @@ const cartController = new CartController();
 const messagesController = new MessagesController();
 
 //* ENDPOINTS (/)
-router.param("cid", async (req, res, next, cid) => {
-  if (config.MONGODB_ID_REGEX.test(cid)) {
-    next();
-  } else {
-    res.status(400).send({
-      origin: config.SERVER,
-      payload: null,
-      error: "Id del carrito no válido",
-    });
-  }
-});
+router.param("cid", verifyMongoId("cid"));
 
 // Lista de productos
 router.get(
@@ -53,9 +44,15 @@ router.get(
         sort
       );
       res.status(200).render("home", { products: products, user: user });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ error: "Internal Server Error" });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        res.status(err.status).send({ error: err.message });
+      } else {
+        console.error(err);
+        res
+          .status(500)
+          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      }
     }
   }
 );
@@ -84,9 +81,15 @@ router.get(
       res
         .status(200)
         .render("realtimeproducts", { products: products, user: user });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ error: "Internal Server Error" });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        res.status(err.status).send({ error: err.message });
+      } else {
+        console.error(err);
+        res
+          .status(500)
+          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      }
     }
   }
 );
@@ -100,9 +103,13 @@ router.get("/mockingproducts", handlePolicies(["ADMIN"]), async (req, res) => {
     res
       .status(200)
       .render("mockingproducts", { products: products, user: user });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ error: "Internal Server Error" });
+  } catch (err) {
+    if (err instanceof CustomError) {
+      res.status(err.status).send({ error: err.message });
+    } else {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    }
   }
 });
 
@@ -123,9 +130,15 @@ router.get(
       res
         .status(200)
         .render("cart", { cart: cart, total: total, purchaser: purchaser });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ error: "Internal Server Error" });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        res.status(err.status).send({ error: err.message });
+      } else {
+        console.error(err);
+        res
+          .status(500)
+          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      }
     }
   }
 );
@@ -138,47 +151,90 @@ router.get(
     try {
       const messages = { messages: await messagesController.getChat() };
       res.status(200).render("chat", messages);
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ error: "Internal Server Error" });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        res.status(err.status).send({ error: err.message });
+      } else {
+        console.error(err);
+        res
+          .status(500)
+          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      }
     }
   }
 );
 
 // Login
-router.get("/login", handlePolicies(["PUBLIC"]), (req, res) => {
-  if (req.session.user) return res.redirect("/");
-  res.render("login", {
-    showError: req.query.error ? true : false,
-    error: req.query.error,
-  });
+router.get("/login", handlePolicies(["PUBLIC"]), async (req, res) => {
+  try {
+    if (req.session.user) return res.redirect("/");
+    res.render("login", {
+      showError: req.query.error ? true : false,
+      error: req.query.error,
+    });
+  } catch (err) {
+    if (err instanceof CustomError) {
+      res.status(err.status).send({ error: err.message });
+    } else {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    }
+  }
 });
 
 // Register
-router.get("/register", handlePolicies(["PUBLIC"]), (req, res) => {
-  if (req.session.user) return res.redirect("/");
-  res.render("register", {
-    showError: req.query.error ? true : false,
-    error: req.query.error,
-  });
+router.get("/register", handlePolicies(["PUBLIC"]), async (req, res) => {
+  try {
+    if (req.session.user) return res.redirect("/");
+    res.render("register", {
+      showError: req.query.error ? true : false,
+      error: req.query.error,
+    });
+  } catch (err) {
+    if (err instanceof CustomError) {
+      res.status(err.status).send({ error: err.message });
+    } else {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    }
+  }
 });
 
 // Profile
 router.get(
   "/profile",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
-  (req, res) => {
-    const user = new UsersDTO(req.session.user);
-    if (user.role == "admin") user.isAdmin = true;
-    res.render("profile", { user: user });
+  async (req, res) => {
+    try {
+      const user = new UsersDTO(req.session.user);
+      if (user.role == "admin") user.isAdmin = true;
+      res.render("profile", { user: user });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        res.status(err.status).send({ error: err.message });
+      } else {
+        console.error(err);
+        res
+          .status(500)
+          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      }
+    }
   }
 );
 
 // Admin
-router.get("/admin", handlePolicies(["ADMIN"]), (req, res) => {
-  const user = new UsersDTO(req.session.user);
-
-  res.render("profile", { user: user });
+router.get("/admin", handlePolicies(["ADMIN"]), async (req, res) => {
+  try {
+    const user = new UsersDTO(req.session.user);
+    res.render("profile", { user: user });
+  } catch (err) {
+    if (err instanceof CustomError) {
+      res.status(err.status).send({ error: err.message });
+    } else {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    }
+  }
 });
 
 export default router;

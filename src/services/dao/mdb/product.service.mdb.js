@@ -1,4 +1,6 @@
 import productsModel from "./models/products.model.js";
+import CustomError from "../../errors/CustomErrors.class.js";
+import errorsDictionary from "../../errors/errrosDictionary.js";
 
 export default class ProductService {
   constructor() {}
@@ -35,57 +37,102 @@ export default class ProductService {
       }
       return products;
     } catch (err) {
-      return err.message;
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+      }
+      throw err;
     }
   }
 
   // AGREGAR PRODUCTO
   async add(newProduct) {
-    // Validar productos duplicados
-    const isDuplicated = await productsModel.findOne({ code: newProduct.code });
-    if (isDuplicated) throw new Error("El código del producto ya existe");
+    try {
+      // Validar productos duplicados
+      const isDuplicated = await productsModel.findOne({
+        code: newProduct.code,
+      });
+      if (isDuplicated)
+        throw new CustomError(errorsDictionary.PRODUCT_CODE_EXISTS);
 
-    // Cargar a DB
-    return await productsModel.create(newProduct);
+      // Cargar a DB
+      return await productsModel.create(newProduct);
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+      }
+      throw err;
+    }
   }
 
   //  BUSCAR PRODUCTO POR ID
   async getById(pid) {
-    const product = productsModel.findById(pid);
-
-    return product || null;
+    try {
+      const product = await productsModel.findOne({ _id: pid }).lean();
+      if (!product) {
+        throw new CustomError(errorsDictionary.ID_NOT_FOUND);
+      }
+      return product;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+      }
+      throw err;
+    }
   }
 
   // ACTUALIZAR PRODUCTO
   async update(pid, data) {
-    // validar si existe el ID
-    const exist = await productsModel.findById(pid);
-    if (!exist) throw new Error("El producto no existe");
-    // validar si el código ya existe
-    if (data.code) {
-      const isDuplicated = await productsModel.findOne({
-        code: data.code,
-        _id: { $ne: pid },
-      });
-      if (isDuplicated) throw new Error("El código del producto ya existe");
-    }
+    try {
+      // validar si existe el ID
+      const exist = await productsModel.findById(pid);
+      if (!exist) throw new CustomError(errorsDictionary.ID_NOT_FOUND);
+      // validar si el código ya existe
+      if (data.code) {
+        const isDuplicated = await productsModel.findOne({
+          code: data.code,
+          _id: { $ne: pid },
+        });
+        if (isDuplicated)
+          throw new CustomError(errorsDictionary.PRODUCT_CODE_EXISTS);
+      }
 
-    // Actualizar
-    return await productsModel.findByIdAndUpdate(pid, data, { new: true });
+      // Actualizar
+      return await productsModel.findByIdAndUpdate(pid, data, { new: true });
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+      }
+      throw err;
+    }
   }
 
   // BORRAR PRODUCTO
   async deleteProduct(pid) {
-    // validar si existe el ID
-    const exist = await productsModel.findById(pid);
-    if (!exist) throw new Error("El producto no existe");
-    // buscar y borrar
-    return await productsModel.findByIdAndDelete(pid);
+    try {
+      // validar si existe el ID
+      const exist = await productsModel.findById(pid);
+      if (!exist) throw new CustomError(errorsDictionary.ID_NOT_FOUND);
+      // buscar y borrar
+      return await productsModel.findByIdAndDelete(pid);
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+      }
+      throw err;
+    }
   }
 
   // OBTENER STOCK
   async getStock(pid) {
-    const product = await productsModel.findById(pid);
-    return product.stock;
+    try {
+      const product = await this.getById(pid);
+
+      return product.stock;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+      }
+      throw err;
+    }
   }
 }

@@ -38,7 +38,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(errorsHandler);
 
 app.set("views", `${config.DIRNAME}/views`);
 app.set("view engine", "handlebars");
@@ -51,6 +50,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/ticket", ticketRoutes);
 app.use("/", viewsRoutes);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
+
+//* ERROR HANDLER
+app.use(errorsHandler);
 
 //* SERVER
 const httpServer = app.listen(config.PORT, async () => {

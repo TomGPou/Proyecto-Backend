@@ -1,6 +1,7 @@
 import { purchaseMail } from "../../utils/nodemailer.js";
 import ticketModel from "./models/tickets.model.js";
-import mongoose from "mongoose";
+import CustomError from "../../errors/CustomErrors.class.js";
+import errorsDictionary from "../../errors/errrosDictionary.js";
 
 export default class TicketService {
   constructor() {
@@ -13,21 +14,36 @@ export default class TicketService {
   }
 
   async getById(id) {
-    const ticket = await ticketModel.findById(id);
-    if (!ticket) throw new Error(`Ticket con ID: ${id} no encontrado`);
-    return ticket;
+    try {
+      const ticket = await ticketModel.findById(id);
+      if (!ticket) throw new CustomError(errorsDictionary.ID_NOT_FOUND);
+      return ticket;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+      }
+      throw err;
+    }
   }
 
   async getByCode(code) {
-    const ticket = await ticketModel.findOne({ code });
-    return ticket;
+    try {
+      const ticket = await ticketModel.findOne({ code: code });
+      if (!ticket) throw new CustomError(errorsDictionary.NOT_FOUND);
+      return ticket;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+      }
+      throw err;
+    }
   }
 
   async create(newTicket) {
     try {
       // Validar la carga de datos
       if (!newTicket.code || !newTicket.amount || !newTicket.purchaser) {
-        throw new Error("Falta datos del ticket");
+        throw new CustomError(errorsDictionary.FEW_PARAMETERS);
       }
       // Validar ticket code
       let maxTries = 10;
@@ -38,27 +54,37 @@ export default class TicketService {
         tries++;
       }
       if (tries === maxTries) {
-        throw new Error("No se pudo generar el código del ticket");
+        throw new CustomError(errorsDictionary.RECORD_CREATION_ERROR);
       }
       // Crear
       const ticket = await ticketModel.create(newTicket);
       await purchaseMail(ticket);
       return ticket;
-    } catch (error) {
-      return { error: error.message };
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+      }
+      throw err;
     }
   }
 
   async updateAmount(id, amount) {
-    // validar id
-    this.getById(id);
-    // actualizar
-    const ticket = await ticketModel.findByIdAndUpdate(
-      id,
-      { amount },
-      { new: true }
-    );
-    return ticket;
+    try {
+      // validar id
+      this.getById(id);
+      // actualizar
+      const ticket = await ticketModel.findByIdAndUpdate(
+        id,
+        { amount },
+        { new: true }
+      );
+      return ticket;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+      }
+      throw err;
+    }
   }
 
   // async update(id, data) {
@@ -70,10 +96,17 @@ export default class TicketService {
   // }
 
   async delete(id) {
-    // validar id
-    this.getById(id);
-    // borrar
-    const ticket = await ticketModel.findByIdAndDelete(id);
-    return ticket;
+    try {
+      // validar id
+      this.getById(id);
+      // borrar
+      const ticket = await ticketModel.findByIdAndDelete(id);
+      return ticket;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+      }
+      throw err;
+    }
   }
 }

@@ -6,6 +6,8 @@ import config from "../config.js";
 import { verifyReqBody } from "../services/utils/utils.js";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
 import { UsersDTO } from "../controllers/users.controller.js";
+import CustomError from "../services/errors/CustomErrors.class.js";
+import errorsDictionary from "../services/errors/errrosDictionary.js";
 
 //* INIT
 const router = Router();
@@ -27,9 +29,14 @@ router.post(
       res.status(200);
       res.redirect("/login");
     } catch (err) {
-      res
-        .status(500)
-        .send({ origin: config.SERVER, payload: null, error: err.message });
+      if (err instanceof CustomError) {
+        res.status(err.status).send({ error: err.message });
+      } else {
+        console.error(err);
+        res
+          .status(500)
+          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      }
     }
   }
 );
@@ -57,9 +64,14 @@ router.post(
         res.redirect("/");
       });
     } catch (err) {
-      res
-        .status(500)
-        .send({ origin: config.SERVER, payload: null, error: err.message });
+      if (err instanceof CustomError) {
+        res.status(err.status).send({ error: err.message });
+      } else {
+        console.error(err);
+        res
+          .status(500)
+          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      }
     }
   }
 );
@@ -80,9 +92,12 @@ router.get("/logout", async (req, res) => {
       res.redirect("/login");
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ origin: config.SERVER, payload: null, error: err.message });
+    if (err instanceof CustomError) {
+      res.status(err.status).send({ error: err.message });
+    } else {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    }
   }
 });
 
@@ -113,9 +128,14 @@ router.get(
         res.redirect("/");
       });
     } catch (err) {
-      res
-        .status(500)
-        .send({ origin: config.SERVER, payload: null, error: err.message });
+      if (err instanceof CustomError) {
+        res.status(err.status).send({ error: err.message });
+      } else {
+        console.error(err);
+        res
+          .status(500)
+          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      }
     }
   }
 );
@@ -124,9 +144,20 @@ router.get(
 router.get(
   "/current",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
-  (req, res) => {
-    const user = new UsersDTO(req.session.user);
-    res.status(200).send({ payload: user });
+  async (req, res) => {
+    try {
+      const user = new UsersDTO(req.session.user);
+      res.status(200).send({ payload: user });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        res.status(err.status).send({ error: err.message });
+      } else {
+        console.error(err);
+        res
+          .status(500)
+          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      }
+    }
   }
 );
 

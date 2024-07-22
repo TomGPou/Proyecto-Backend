@@ -1,25 +1,20 @@
 //* IMPORTS
 import { Router } from "express";
-import config from "../config.js";
 import ProductController from "../controllers/products.controller.js";
-import { handlePolicies, verifyReqBody } from "../services/utils/utils.js";
+import {
+  handlePolicies,
+  verifyMongoId,
+  verifyReqBody,
+} from "../services/utils/utils.js";
+import CustomError from "../services/errors/CustomErrors.class.js";
+import errorsDictionary from "../services/errors/errrosDictionary.js";
 
 //* INIT
 const router = Router();
 const productController = new ProductController();
 
 //* ENDPOINTS (/api/products)
-router.param("pid", async (req, res, next, pid) => {
-  if (config.MONGODB_ID_REGEX.test(pid)) {
-    next();
-  } else {
-    res.status(400).send({
-      origin: config.SERVER,
-      payload: null,
-      error: "Id del producto no válido",
-    });
-  }
-});
+router.param("pid", verifyMongoId("pid"));
 
 // Obtener todos los productos con parginacion y ordenamiento
 router.get(
@@ -41,9 +36,15 @@ router.get(
         sort
       );
       res.status(200).send({ status: "success", payload: products });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ status: "error", error: error.message });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        res.status(err.status).send({ error: err.message });
+      } else {
+        console.error(err);
+        res
+          .status(500)
+          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      }
     }
   }
 );
@@ -57,33 +58,54 @@ router.get(
 
     try {
       const product = await productController.getById(pid);
-      product
-        ? res.send({ status: 1, payload: product })
-        : res
-            .status(404)
-            .send({ error: `Producto de ID ${pid} no encontrado` });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ error: error.message });
+      res.status(200).send({ payload: product });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        res.status(err.status).send({ error: err.message });
+      } else {
+        console.error(err);
+        res
+          .status(500)
+          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      }
     }
   }
 );
 
 // Agregar producto
-router.post("/", handlePolicies(["ADMIN"]), verifyReqBody(["title","description","category","code","price","thumbnail","stock"]), async (req, res) => {
-  const io = req.app.get("io");
-  const newProduct = req.body;
-  try {
-    const product = await productController.add(newProduct);
-    res.status(200).send({ payload: product });
+router.post(
+  "/",
+  handlePolicies(["ADMIN"]),
+  verifyReqBody([
+    "title",
+    "description",
+    "category",
+    "code",
+    "price",
+    "thumbnail",
+    "stock",
+  ]),
+  async (req, res) => {
+    const io = req.app.get("io");
+    const newProduct = req.body;
+    try {
+      const product = await productController.add(newProduct);
+      res.status(200).send({ payload: product });
 
-    const products = await productController.get();
-    io.emit("products", { message: "producto agregado", products: products });
-  } catch (error) {
-    console.log(error);
-    res.status(400).send({ error: error.message });
+      const products = await productController.get();
+      io.emit("products", { message: "producto agregado", products: products });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        res.status(err.status).send({ error: err.message });
+      } else {
+        console.error(err);
+        res
+          .status(500)
+          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      }
+    }
   }
-});
+);
 
 // Actualizar producto
 router.put("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
@@ -99,9 +121,13 @@ router.put("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
       message: "producto actualizado",
       products: products,
     });
-  } catch (error) {
-    console.log(error);
-    res.status(400).send({ error: error.message });
+  } catch (err) {
+    if (err instanceof CustomError) {
+      res.status(err.status).send({ error: err.message });
+    } else {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    }
   }
 });
 
@@ -115,9 +141,13 @@ router.delete("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
 
     const products = await productController.get();
     io.emit("products", { message: "producto eliminado", products: products });
-  } catch (error) {
-    console.log(error);
-    res.status(400).send({ error: error.message });
+  } catch (err) {
+    if (err instanceof CustomError) {
+      res.status(err.status).send({ error: err.message });
+    } else {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    }
   }
 });
 

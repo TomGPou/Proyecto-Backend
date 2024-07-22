@@ -24,7 +24,7 @@ export default class UserController {
     try {
       return await usersService.getAll();
     } catch (error) {
-      console.log(error);
+      return { error: error.message };
     }
   };
 
@@ -33,7 +33,7 @@ export default class UserController {
     try {
       return await usersService.getById(uid);
     } catch (error) {
-      console.log(error);
+      return { error: error.message };
     }
   };
 
@@ -42,7 +42,7 @@ export default class UserController {
     try {
       return await usersService.getOne(query);
     } catch (error) {
-      console.log(error);
+      return { error: error.message };
     }
   };
 
@@ -55,7 +55,7 @@ export default class UserController {
 
       return await usersService.create(user);
     } catch (error) {
-      console.log(error);
+      return { error: error.message };
     }
   };
 
@@ -68,7 +68,7 @@ export default class UserController {
 
       return await usersService.update(uid, user);
     } catch {
-      console.log(error);
+      return { error: error.message };
     }
   };
 
@@ -77,7 +77,7 @@ export default class UserController {
     try {
       return await usersService.delete(uid);
     } catch {
-      console.log(error);
+      return { error: error.message };
     }
   };
 
@@ -86,8 +86,7 @@ export default class UserController {
     try {
       return await usersService.login(email, enteredPassword);
     } catch {
-      console.log(error);
-      return null;
+      return { error: error.message };
     }
   };
 }

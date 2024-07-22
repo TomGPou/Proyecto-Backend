@@ -2,6 +2,8 @@
 import { Router } from "express";
 import MessagesController from "../controllers/messages.controller.js";
 import { handlePolicies } from "../services/utils/utils.js";
+import CustomError from "../services/errors/CustomErrors.class.js";
+import errorsDictionary from "../services/errors/errrosDictionary.js";
 
 //* INIT
 const router = Router();
@@ -16,9 +18,15 @@ router.get(
     try {
       const messages = { messages: await messagesController.getChat() };
       res.status(200).send({ payload: messages });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ error: error.message });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        res.status(err.status).send({ error: err.message });
+      } else {
+        console.error(err);
+        res
+          .status(500)
+          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      }
     }
   }
 );
@@ -33,9 +41,13 @@ router.post("/", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
 
     const messages = await messagesController.getChat();
     io.emit("newMessage", { messages: messages });
-  } catch (error) {
-    console.log(error);
-    res.status(400).send({ error: error.message });
+  } catch (err) {
+    if (err instanceof CustomError) {
+      res.status(err.status).send({ error: err.message });
+    } else {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    }
   }
 });
 
