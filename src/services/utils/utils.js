@@ -16,15 +16,27 @@ export const isValidPassword = (password, hash) =>
 // Verificacion de session
 export const verifyReqBody = (requiredFields) => {
   return (req, res, next) => {
-    const allOk = requiredFields.every(
-      (field) =>
-        req.body.hasOwnProperty(field) &&
-        req.body[field] !== "" &&
-        req.body[field] !== null &&
-        req.body[field] !== undefined
-    );
+    const missingFields = [];
 
-    if (!allOk) throw new CustomError(errorsDictionary.FEW_PARAMETERS);
+    requiredFields.forEach((field) => {
+      if (
+        !req.body.hasOwnProperty(field) ||
+        req.body[field] === "" ||
+        req.body[field] === null ||
+        req.body[field] === undefined
+      ) {
+        missingFields.push(field);
+      }
+    });
+
+    if (missingFields.length > 0) {
+      const errData = {
+        missingFields: missingFields,
+        providedData: req.body,
+      };
+      console.log("Faltan ingresar una o más propiedades", errData);
+      throw new CustomError(errorsDictionary.FEW_PARAMETERS);
+    }
     next();
   };
 };
@@ -54,6 +66,12 @@ export const verifyMongoId = (id) => {
       next();
     }
   };
+};
+
+// Error handler de datos de schemas
+export const schemaErrorHandler = (err) => {
+  const errors = Object.values(err.errors).map((error) => error.message);
+  throw new CustomError(errorsDictionary.INVALID_PARAMETER, errors.join(", "));
 };
 
 // Lectura de archivo JSON

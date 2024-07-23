@@ -1,6 +1,7 @@
 import productsModel from "./models/products.model.js";
 import CustomError from "../../errors/CustomErrors.class.js";
 import errorsDictionary from "../../errors/errrosDictionary.js";
+import { schemaErrorHandler } from "../../utils/utils.js";
 
 export default class ProductService {
   constructor() {}
@@ -56,9 +57,16 @@ export default class ProductService {
 
       // Cargar a DB
       return await productsModel.create(newProduct);
+      // const product = new productsModel(newProduct);
+      // await product.save();
+      // return product;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+        if (err.name === "ValidationError") {
+          schemaErrorHandler(err);
+        } else {
+          throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+        }
       }
       throw err;
     }
@@ -100,7 +108,11 @@ export default class ProductService {
       return await productsModel.findByIdAndUpdate(pid, data, { new: true });
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+        if (err.name === "ValidationError") {
+          schemaErrorHandler(err);
+        } else {
+          throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+        }
       }
       throw err;
     }

@@ -1,6 +1,10 @@
 import CartService from "./cart.service.mdb.js";
 import usersModel from "./models/users.model.js";
-import { createHash, isValidPassword } from "../../utils/utils.js";
+import {
+  createHash,
+  isValidPassword,
+  schemaErrorHandler,
+} from "../../utils/utils.js";
 import CustomError from "../../errors/CustomErrors.class.js";
 import errorsDictionary from "../../errors/errrosDictionary.js";
 
@@ -71,7 +75,11 @@ export default class UsersService {
       return newUser;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+        if (err.name === "ValidationError") {
+          schemaErrorHandler(err);
+        } else {
+          throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+        }
       }
       throw err;
     }
@@ -86,7 +94,11 @@ export default class UsersService {
       return updatedUser;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+        if (err.name === "ValidationError") {
+          schemaErrorHandler(err);
+        } else {
+          throw new CustomError(errorsDictionary.UNHANDLED_ERROR, err.message);
+        }
       }
       throw err;
     }
