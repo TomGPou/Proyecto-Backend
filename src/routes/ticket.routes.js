@@ -16,14 +16,14 @@ router.param("tid", verifyMongoId("tid"));
 router.get("/", handlePolicies(["ADMIN"]), async (req, res) => {
   try {
     const tickets = await ticketController.getAll();
-    res.status(200).send({ payload: tickets });
-  } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
+    if (tickets instanceof CustomError) {
+      res.status(tickets.status).send({ error: tickets.message });
     } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      res.status(200).send({ payload: tickets });
     }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 
@@ -34,16 +34,14 @@ router.get(
   async (req, res) => {
     try {
       const ticket = await ticketController.getById(req.params.tid);
-      res.status(200).send({ payload: ticket });
-    } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
+      if (ticket instanceof CustomError) {
+        res.status(ticket.status).send({ error: ticket.message });
       } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+        res.status(200).send({ payload: ticket });
       }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -52,14 +50,14 @@ router.get(
 router.post("/", handlePolicies(["PREMIUM", "USER"]), async (req, res) => {
   try {
     const newTicket = await ticketController.create(req.body);
-    res.status(200).send({ payload: newTicket });
-  } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
+    if (newTicket instanceof CustomError) {
+      res.status(newTicket.status).send({ error: newTicket.message });
     } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      res.status(200).send({ payload: newTicket });
     }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 
@@ -70,14 +68,14 @@ router.put("/:tid", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
       req.params.tid,
       req.body.amount
     );
-    res.status(200).send({ payload: ticket });
-  } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
+    if (ticket instanceof CustomError) {
+      res.status(ticket.status).send({ error: ticket.message });
     } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      res.status(200).send({ payload: ticket });
     }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 
@@ -85,14 +83,14 @@ router.put("/:tid", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
 router.delete("/:tid", handlePolicies(["ADMIN"]), async (req, res) => {
   try {
     const ticket = await ticketController.delete(req.params.tid);
-    res.status(200).send({ payload: ticket });
-  } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
+    if (ticket instanceof CustomError) {
+      res.status(ticket.status).send({ error: ticket.message });
     } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      res.status(200).send({ payload: ticket });
     }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 

@@ -29,14 +29,8 @@ router.post(
       res.status(200);
       res.redirect("/login");
     } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
-      } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-      }
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -64,14 +58,8 @@ router.post(
         res.redirect("/");
       });
     } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
-      } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-      }
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -92,12 +80,8 @@ router.get("/logout", async (req, res) => {
       res.redirect("/login");
     });
   } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
-    } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-    }
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 
@@ -128,14 +112,8 @@ router.get(
         res.redirect("/");
       });
     } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
-      } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-      }
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -149,14 +127,8 @@ router.get(
       const user = new UsersDTO(req.session.user);
       res.status(200).send({ payload: user });
     } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
-      } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-      }
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );

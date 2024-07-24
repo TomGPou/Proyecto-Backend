@@ -35,16 +35,14 @@ router.get(
         inStock,
         sort
       );
-      res.status(200).send({ status: "success", payload: products });
-    } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
+      if (products instanceof CustomError) {
+        res.status(products.status).send({ error: products.message });
       } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+        res.status(200).send({ status: "success", payload: products });
       }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -58,16 +56,14 @@ router.get(
 
     try {
       const product = await productController.getById(pid);
-      res.status(200).send({ payload: product });
-    } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
+      if (product instanceof CustomError) {
+        res.status(product.status).send({ error: product.message });
       } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+        res.status(200).send({ payload: product });
       }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -90,19 +86,17 @@ router.post(
     const newProduct = req.body;
     try {
       const product = await productController.add(newProduct);
-      res.status(200).send({ payload: product });
+      if (product instanceof CustomError) {
+        res.status(product.status).send({ error: product.message });
+      } else {
+        res.status(200).send({ payload: product });
+      }
 
       const products = await productController.get();
       io.emit("products", { message: "producto agregado", products: products });
     } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
-      } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-      }
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -114,7 +108,11 @@ router.put("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
   const updatedData = req.body;
   try {
     const product = await productController.update(pid, updatedData);
-    res.status(200).send({ payload: product });
+    if (product instanceof CustomError) {
+      res.status(product.status).send({ error: product.message });
+    } else {
+      res.status(200).send({ payload: product });
+    }
 
     const products = await productController.get();
     io.emit("products", {
@@ -122,12 +120,8 @@ router.put("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
       products: products,
     });
   } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
-    } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-    }
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 
@@ -136,18 +130,18 @@ router.delete("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
   const io = req.app.get("io");
   const pid = req.params.pid;
   try {
-    await productController.deleteProduct(pid);
-    res.status(200).send({ payload: `Producto de ID: ${pid} eliminado` });
+    const result = await productController.deleteProduct(pid);
+    if (result instanceof CustomError) {
+      res.status(result.status).send({ error: result.message });
+    } else {
+      res.status(200).send({ payload: `Producto de ID: ${pid} eliminado` });
+    }
 
     const products = await productController.get();
     io.emit("products", { message: "producto eliminado", products: products });
   } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
-    } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-    }
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 

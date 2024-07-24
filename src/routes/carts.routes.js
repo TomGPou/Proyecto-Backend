@@ -17,14 +17,14 @@ router.param("pid", verifyMongoId("pid"));
 router.get("/", handlePolicies(["ADMIN"]), async (req, res) => {
   try {
     const procces = await cartController.getAll();
-    res.status(200).send({ payload: procces });
-  } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
+    if (procces instanceof CustomError) {
+      res.status(procces.status).send({ error: procces.message });
     } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      res.status(200).send({ payload: procces });
     }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 
@@ -32,14 +32,14 @@ router.get("/", handlePolicies(["ADMIN"]), async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const newCart = await cartController.create();
-    res.status(200).send({ payload: newCart });
-  } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
+    if (newCart instanceof CustomError) {
+      res.status(newCart.status).send({ error: newCart.message });
     } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      res.status(200).send({ payload: newCart });
     }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 
@@ -51,16 +51,14 @@ router.get(
     const cid = req.params.cid;
     try {
       const cart = await cartController.getById(cid);
-      res.status(200).send({ payload: cart });
-    } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
+      if (cart instanceof CustomError) {
+        res.status(cart.status).send({ error: cart.message });
       } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+        res.status(200).send({ payload: cart });
       }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -76,22 +74,22 @@ router.put(
     try {
       if (!qty) {
         const cart = await cartController.addProduct(cid, pid);
-        res.status(200);
-        res.send({ payload: cart });
+        if (cart instanceof CustomError) {
+          res.status(cart.status).send({ error: cart.message });
+        } else {
+          res.status(200).send({ payload: cart });
+        }
       } else {
         const cart = await cartController.updateQty(cid, pid, qty);
-        res.status(200);
-        res.send({ payload: cart });
+        if (cart instanceof CustomError) {
+          res.status(cart.status).send({ error: cart.message });
+        } else {
+          res.status(200).send({ payload: cart });
+        }
       }
     } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
-      } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-      }
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -105,16 +103,14 @@ router.delete(
     const pid = req.params.pid;
     try {
       const cart = await cartController.deleteProduct(cid, pid);
-      res.status(200).send({ payload: cart });
-    } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
+      if (cart instanceof CustomError) {
+        res.status(cart.status).send({ error: cart.message });
       } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+        res.status(200).send({ payload: cart });
       }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -125,14 +121,14 @@ router.put("/:cid", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
   const products = req.body;
   try {
     const cart = await cartController.update(cid, products);
-    res.status(200).send({ payload: cart });
-  } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
+    if (cart instanceof CustomError) {
+      res.status(cart.status).send({ error: cart.message });
     } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      res.status(200).send({ payload: cart });
     }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 
@@ -144,16 +140,14 @@ router.delete(
     const cid = req.params.cid;
     try {
       const cart = await cartController.empty(cid);
-      res.status(200).send({ payload: cart });
-    } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
+      if (cart instanceof CustomError) {
+        res.status(cart.status).send({ error: cart.message });
       } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+        res.status(200).send({ payload: cart });
       }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -167,16 +161,14 @@ router.post(
     const purchaser = req.body.purchaser;
     try {
       const cart = await cartController.purchase(cid, purchaser);
-      res.status(200).send({ payload: cart });
-    } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
+      if (cart instanceof CustomError) {
+        res.status(cart.status).send({ error: cart.message });
       } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+        res.status(200).send({ payload: cart });
       }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );

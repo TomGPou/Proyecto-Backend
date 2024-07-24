@@ -68,12 +68,6 @@ export const verifyMongoId = (id) => {
   };
 };
 
-// Error handler de datos de schemas
-export const schemaErrorHandler = (err) => {
-  const errors = Object.values(err.errors).map((error) => error.message);
-  throw new CustomError(errorsDictionary.INVALID_PARAMETER, errors.join(", "));
-};
-
 // Lectura de archivo JSON
 export const readFile = async (path) => {
   try {

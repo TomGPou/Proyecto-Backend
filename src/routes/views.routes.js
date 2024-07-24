@@ -45,14 +45,8 @@ router.get(
       );
       res.status(200).render("home", { products: products, user: user });
     } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
-      } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-      }
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -82,14 +76,8 @@ router.get(
         .status(200)
         .render("realtimeproducts", { products: products, user: user });
     } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
-      } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-      }
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -104,12 +92,8 @@ router.get("/mockingproducts", handlePolicies(["ADMIN"]), async (req, res) => {
       .status(200)
       .render("mockingproducts", { products: products, user: user });
   } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
-    } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-    }
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 
@@ -122,23 +106,21 @@ router.get(
     const purchaser = req.session.user.email;
     try {
       const cart = await cartController.getById(cid);
-      let total = 0;
-      cart.products.forEach((product) => {
-        total += product._id.price * product.quantity;
-      });
-
-      res
-        .status(200)
-        .render("cart", { cart: cart, total: total, purchaser: purchaser });
-    } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
+      if (cart instanceof CustomError) {
+        res.status(cart.status).send({ error: cart.message });
       } else {
-        console.error(err);
+        let total = 0;
+        cart.products.forEach((product) => {
+          total += product._id.price * product.quantity;
+        });
+
         res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+          .status(200)
+          .render("cart", { cart: cart, total: total, purchaser: purchaser });
       }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -152,14 +134,8 @@ router.get(
       const messages = { messages: await messagesController.getChat() };
       res.status(200).render("chat", messages);
     } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
-      } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-      }
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -173,12 +149,8 @@ router.get("/login", handlePolicies(["PUBLIC"]), async (req, res) => {
       error: req.query.error,
     });
   } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
-    } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-    }
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 
@@ -191,12 +163,8 @@ router.get("/register", handlePolicies(["PUBLIC"]), async (req, res) => {
       error: req.query.error,
     });
   } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
-    } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-    }
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 
@@ -210,14 +178,8 @@ router.get(
       if (user.role == "admin") user.isAdmin = true;
       res.render("profile", { user: user });
     } catch (err) {
-      if (err instanceof CustomError) {
-        res.status(err.status).send({ error: err.message });
-      } else {
-        console.error(err);
-        res
-          .status(500)
-          .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-      }
+      console.error(err);
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
 );
@@ -228,12 +190,8 @@ router.get("/admin", handlePolicies(["ADMIN"]), async (req, res) => {
     const user = new UsersDTO(req.session.user);
     res.render("profile", { user: user });
   } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.status).send({ error: err.message });
-    } else {
-      console.error(err);
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-    }
+    console.error(err);
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
 
