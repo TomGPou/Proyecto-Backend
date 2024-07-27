@@ -34,7 +34,7 @@ export const verifyReqBody = (requiredFields) => {
         missingFields: missingFields,
         providedData: req.body,
       };
-      console.log("Faltan ingresar una o más propiedades", errData);
+      req.logger.warn("Faltan ingresar una o más propiedades", errData);
       throw new CustomError(errorsDictionary.FEW_PARAMETERS);
     }
     next();
@@ -47,12 +47,25 @@ export const handlePolicies = (policies) => {
     // verificar ruta publica
     if (policies[0] === "PUBLIC") return next();
     // verificar si existe session
-    if (!req.session.user) return res.redirect("/login");
+    if (!req.session.user) {
+      req.logger.warn(
+        `${new Date().toDateString()} ${req.method} ${
+          req.url
+        } No existe sesion de usuario`
+      );
+      return res.redirect("/login");
+    }
 
     // verificar politicas de autorizacion
     const userRole = req.session.user.role.toUpperCase();
-    if (!policies.includes(userRole))
+    if (!policies.includes(userRole)) {
+      req.logger.warn(
+        `${new Date().toDateString()} ${req.method} ${
+          req.url
+        } Usuario no autorizado`
+      );
       throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+    }
     next();
   };
 };
@@ -61,6 +74,11 @@ export const handlePolicies = (policies) => {
 export const verifyMongoId = (id) => {
   return (req, res, next) => {
     if (!config.MONGODB_ID_REGEX.test(req.params[id])) {
+      req.logger.info(
+        `${new Date().toDateString()} ${req.method} ${
+          req.url
+        } ID de Mongo no valido`
+      );
       throw new CustomError(errorsDictionary.INVALID_MONGOID_FORMAT);
     } else {
       next();
@@ -92,4 +110,18 @@ export const writeFile = async (path, data) => {
 // Generar código unico
 export const generateCode = () => {
   return uuidv4();
+};
+
+// Verificar CustomError en respuestas
+export const handleResponse = (req, res, result) => {
+  if (result instanceof CustomError) {
+    req.logger.warn(
+      `${new Date().toDateString()} ${req.method} ${
+        req.url
+      } Error: ${result.message}`
+    );
+    res.status(result.status).send({ error: result.message });
+  } else {
+    res.status(200).send({ payload: result });
+  }
 };

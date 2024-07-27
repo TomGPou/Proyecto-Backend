@@ -12,6 +12,7 @@ import cors from "cors";
 // IMPORTS FILES
 import config from "./config.js";
 import errorsHandler from "./services/errors/errors.handler.js";
+import addLooger from "./services/utils/logger.js";
 import productsRoutes from "./routes/products.routes.js";
 import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
@@ -41,6 +42,9 @@ app.use(passport.session());
 
 app.set("views", `${config.DIRNAME}/views`);
 app.set("view engine", "handlebars");
+
+//* LOGGING
+app.use(addLooger);
 
 //* ROUTES
 app.use("/api/products", productsRoutes);

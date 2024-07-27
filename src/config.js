@@ -11,6 +11,7 @@ const clOptions = program.opts();
 // Config
 const config = {
   PORT: process.env.PORT || clOptions.port || 5050,
+  MODE: clOptions.mode || "dev",
   DIRNAME: url.fileURLToPath(new URL(".", import.meta.url)),
   get UPLOAD_DIR() {
     return `${this.DIRNAME}/public/img`;

@@ -19,10 +19,12 @@ router.get(
       const messages = { messages: await messagesController.getChat() };
       res.status(200).send({ payload: messages });
     } catch (err) {
+      req.logger.error(
+        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      );
       if (err instanceof CustomError) {
         res.status(err.status).send({ error: err.message });
       } else {
-        console.error(err);
         res
           .status(500)
           .send({ error: errorsDictionary.UNHANDLED_ERROR.message });
@@ -42,10 +44,12 @@ router.post("/", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
     const messages = await messagesController.getChat();
     io.emit("newMessage", { messages: messages });
   } catch (err) {
+    req.logger.error(
+      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+    );
     if (err instanceof CustomError) {
       res.status(err.status).send({ error: err.message });
     } else {
-      console.error(err);
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }

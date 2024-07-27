@@ -3,10 +3,10 @@ import { Router } from "express";
 import ProductController from "../controllers/products.controller.js";
 import {
   handlePolicies,
+  handleResponse,
   verifyMongoId,
   verifyReqBody,
 } from "../services/utils/utils.js";
-import CustomError from "../services/errors/CustomErrors.class.js";
 import errorsDictionary from "../services/errors/errrosDictionary.js";
 
 //* INIT
@@ -35,13 +35,11 @@ router.get(
         inStock,
         sort
       );
-      if (products instanceof CustomError) {
-        res.status(products.status).send({ error: products.message });
-      } else {
-        res.status(200).send({ status: "success", payload: products });
-      }
+      handleResponse(res, products);
     } catch (err) {
-      console.error(err);
+      req.logger.error(
+        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
@@ -56,13 +54,11 @@ router.get(
 
     try {
       const product = await productController.getById(pid);
-      if (product instanceof CustomError) {
-        res.status(product.status).send({ error: product.message });
-      } else {
-        res.status(200).send({ payload: product });
-      }
+      handleResponse(res, product);
     } catch (err) {
-      console.error(err);
+      req.logger.error(
+        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
@@ -71,7 +67,7 @@ router.get(
 // Agregar producto
 router.post(
   "/",
-  handlePolicies(["ADMIN"]),
+  // handlePolicies(["ADMIN"]),
   verifyReqBody([
     "title",
     "description",
@@ -86,16 +82,14 @@ router.post(
     const newProduct = req.body;
     try {
       const product = await productController.add(newProduct);
-      if (product instanceof CustomError) {
-        res.status(product.status).send({ error: product.message });
-      } else {
-        res.status(200).send({ payload: product });
-      }
+      handleResponse(res, product);
 
       const products = await productController.get();
       io.emit("products", { message: "producto agregado", products: products });
     } catch (err) {
-      console.error(err);
+      req.logger.error(
+        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
@@ -108,11 +102,7 @@ router.put("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
   const updatedData = req.body;
   try {
     const product = await productController.update(pid, updatedData);
-    if (product instanceof CustomError) {
-      res.status(product.status).send({ error: product.message });
-    } else {
-      res.status(200).send({ payload: product });
-    }
+    handleResponse(res, product);
 
     const products = await productController.get();
     io.emit("products", {
@@ -120,7 +110,9 @@ router.put("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
       products: products,
     });
   } catch (err) {
-    console.error(err);
+    req.logger.error(
+      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+    );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
@@ -131,16 +123,14 @@ router.delete("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
   const pid = req.params.pid;
   try {
     const result = await productController.deleteProduct(pid);
-    if (result instanceof CustomError) {
-      res.status(result.status).send({ error: result.message });
-    } else {
-      res.status(200).send({ payload: `Producto de ID: ${pid} eliminado` });
-    }
+    handleResponse(res, result);
 
     const products = await productController.get();
     io.emit("products", { message: "producto eliminado", products: products });
   } catch (err) {
-    console.error(err);
+    req.logger.error(
+      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+    );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });

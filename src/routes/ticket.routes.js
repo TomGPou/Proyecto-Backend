@@ -2,7 +2,6 @@
 import { Router } from "express";
 import TicketController from "../controllers/ticket.controller.js";
 import { handlePolicies, verifyMongoId } from "../services/utils/utils.js";
-import CustomError from "../services/errors/CustomErrors.class.js";
 import errorsDictionary from "../services/errors/errrosDictionary.js";
 
 //* INIT
@@ -16,13 +15,11 @@ router.param("tid", verifyMongoId("tid"));
 router.get("/", handlePolicies(["ADMIN"]), async (req, res) => {
   try {
     const tickets = await ticketController.getAll();
-    if (tickets instanceof CustomError) {
-      res.status(tickets.status).send({ error: tickets.message });
-    } else {
-      res.status(200).send({ payload: tickets });
-    }
+    handleResponse(res, tickets);
   } catch (err) {
-    console.error(err);
+    req.logger.error(
+      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+    );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
@@ -34,13 +31,11 @@ router.get(
   async (req, res) => {
     try {
       const ticket = await ticketController.getById(req.params.tid);
-      if (ticket instanceof CustomError) {
-        res.status(ticket.status).send({ error: ticket.message });
-      } else {
-        res.status(200).send({ payload: ticket });
-      }
+      handleResponse(res, ticket);
     } catch (err) {
-      console.error(err);
+      req.logger.error(
+        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
   }
@@ -50,13 +45,11 @@ router.get(
 router.post("/", handlePolicies(["PREMIUM", "USER"]), async (req, res) => {
   try {
     const newTicket = await ticketController.create(req.body);
-    if (newTicket instanceof CustomError) {
-      res.status(newTicket.status).send({ error: newTicket.message });
-    } else {
-      res.status(200).send({ payload: newTicket });
-    }
+    handleResponse(res, newTicket);
   } catch (err) {
-    console.error(err);
+    req.logger.error(
+      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+    );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
@@ -68,13 +61,11 @@ router.put("/:tid", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
       req.params.tid,
       req.body.amount
     );
-    if (ticket instanceof CustomError) {
-      res.status(ticket.status).send({ error: ticket.message });
-    } else {
-      res.status(200).send({ payload: ticket });
-    }
+    handleResponse(res, ticket);
   } catch (err) {
-    console.error(err);
+    req.logger.error(
+      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+    );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });
@@ -83,13 +74,11 @@ router.put("/:tid", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
 router.delete("/:tid", handlePolicies(["ADMIN"]), async (req, res) => {
   try {
     const ticket = await ticketController.delete(req.params.tid);
-    if (ticket instanceof CustomError) {
-      res.status(ticket.status).send({ error: ticket.message });
-    } else {
-      res.status(200).send({ payload: ticket });
-    }
+    handleResponse(res, ticket);
   } catch (err) {
-    console.error(err);
+    req.logger.error(
+      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+    );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
 });

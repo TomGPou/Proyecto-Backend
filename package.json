@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --env-file .env.dev --watch src/app.js",
-    "prod": "node --env-file .env.prod --watch src/app.js"
+    "dev": "node --mode=dev --env-file .env.dev --watch src/app.js",
+    "prod": "node --mode=prod --env-file .env.prod --watch src/app.js"
   },
   "keywords": [],
   "author": "",
@@ -32,7 +32,8 @@
     "passport-local": "^1.0.0",
     "session-file-store": "^1.5.0",
     "socket.io": "^4.7.5",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "winston": "^3.13.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1"
