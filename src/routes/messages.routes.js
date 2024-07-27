@@ -20,7 +20,9 @@ router.get(
       res.status(200).send({ payload: messages });
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       if (err instanceof CustomError) {
         res.status(err.status).send({ error: err.message });
@@ -45,7 +47,9 @@ router.post("/", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
     io.emit("newMessage", { messages: messages });
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     if (err instanceof CustomError) {
       res.status(err.status).send({ error: err.message });

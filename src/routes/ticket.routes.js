@@ -15,10 +15,12 @@ router.param("tid", verifyMongoId("tid"));
 router.get("/", handlePolicies(["ADMIN"]), async (req, res) => {
   try {
     const tickets = await ticketController.getAll();
-    handleResponse(res, tickets);
+    handleResponse(req, res, tickets);
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
@@ -31,10 +33,12 @@ router.get(
   async (req, res) => {
     try {
       const ticket = await ticketController.getById(req.params.tid);
-      handleResponse(res, ticket);
+      handleResponse(req, res, ticket);
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -45,10 +49,12 @@ router.get(
 router.post("/", handlePolicies(["PREMIUM", "USER"]), async (req, res) => {
   try {
     const newTicket = await ticketController.create(req.body);
-    handleResponse(res, newTicket);
+    handleResponse(req, res, newTicket);
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
@@ -61,10 +67,12 @@ router.put("/:tid", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
       req.params.tid,
       req.body.amount
     );
-    handleResponse(res, ticket);
+    handleResponse(req, res, ticket);
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
@@ -74,10 +82,12 @@ router.put("/:tid", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
 router.delete("/:tid", handlePolicies(["ADMIN"]), async (req, res) => {
   try {
     const ticket = await ticketController.delete(req.params.tid);
-    handleResponse(res, ticket);
+    handleResponse(req, res, ticket);
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }

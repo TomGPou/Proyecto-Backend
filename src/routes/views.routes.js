@@ -46,7 +46,9 @@ router.get(
       res.status(200).render("home", { products: products, user: user });
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -79,7 +81,9 @@ router.get(
         .render("realtimeproducts", { products: products, user: user });
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -97,7 +101,9 @@ router.get("/mockingproducts", handlePolicies(["ADMIN"]), async (req, res) => {
       .render("mockingproducts", { products: products, user: user });
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
@@ -126,7 +132,9 @@ router.get(
       }
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()}  ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -143,7 +151,9 @@ router.get(
       res.status(200).render("chat", messages);
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -160,7 +170,9 @@ router.get("/login", handlePolicies(["PUBLIC"]), async (req, res) => {
     });
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
@@ -176,7 +188,9 @@ router.get("/register", handlePolicies(["PUBLIC"]), async (req, res) => {
     });
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
@@ -193,7 +207,9 @@ router.get(
       res.render("profile", { user: user });
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -207,7 +223,54 @@ router.get("/admin", handlePolicies(["ADMIN"]), async (req, res) => {
     res.render("profile", { user: user });
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
+    );
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+  }
+});
+
+// Logger Test
+router.get("/loggerTest", async (req, res) => {
+  try {
+    req.logger.fatal(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} Logger Test Fatal`
+    );
+    req.logger.error(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} Logger Test Fatal`
+    );
+    req.logger.warning(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} Logger Test Fatal`
+    );
+    req.logger.info(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} Logger Test Fatal`
+    );
+    req.logger.http(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} Logger Test Fatal`
+    );
+    req.logger.debug(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} Logger Test Fatal`
+    );
+
+    res.status(200).send({ payload: "Logs enviados" });
+  } catch (err) {
+    req.logger.error(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }

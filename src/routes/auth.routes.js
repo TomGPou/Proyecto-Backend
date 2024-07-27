@@ -30,7 +30,9 @@ router.get("/logout", async (req, res) => {
     });
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
@@ -60,15 +62,17 @@ router.get(
             .status(500)
             .send({ origin: config.SERVER, payload: null, error: err.message });
         req.logger.info(
-          `${new Date().toDateString()} ${req.method} ${
-            req.url
-          } Usuario autenticado`
+          `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+            req.method
+          } ${req.url} Usuario autenticado`
         );
         res.redirect("/");
       });
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -85,7 +89,9 @@ router.get(
       res.status(200).send({ payload: user });
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -105,15 +111,17 @@ router.post(
     try {
       // Redirigir al usuario a /login
       req.logger.info(
-        `${new Date().toDateString()} ${req.method} ${
-          req.url
-        } Usuario registrado`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} Usuario registrado`
       );
       res.status(200);
       res.redirect("/login");
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -140,16 +148,18 @@ router.post(
           });
         // redirigir al home
         req.logger.info(
-          `${new Date().toDateString()} ${req.method} ${
-            req.url
-          } Usuario autenticado`
+          `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+            req.method
+          } ${req.url} Usuario autenticado`
         );
         res.status(200);
         res.redirect("/");
       });
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }

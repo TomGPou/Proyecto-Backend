@@ -20,10 +20,12 @@ router.param("pid", verifyMongoId("pid"));
 router.get("/", handlePolicies(["ADMIN"]), async (req, res) => {
   try {
     const procces = await cartController.getAll();
-    handleResponse(res, procces);
+    handleResponse(req, res, procces);
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
@@ -37,10 +39,12 @@ router.get(
     const cid = req.params.cid;
     try {
       const cart = await cartController.getById(cid);
-      handleResponse(res, cart);
+      handleResponse(req, res, cart);
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -51,10 +55,12 @@ router.get(
 router.post("/", async (req, res) => {
   try {
     const newCart = await cartController.create();
-    handleResponse(res, newCart);
+    handleResponse(req, res, newCart);
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
@@ -69,10 +75,12 @@ router.post(
     const purchaser = req.body.purchaser;
     try {
       const cart = await cartController.purchase(cid, purchaser);
-      handleResponse(res, cart);
+      handleResponse(req, res, cart);
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -90,14 +98,16 @@ router.put(
     try {
       if (!qty) {
         const cart = await cartController.addProduct(cid, pid);
-        handleResponse(res, cart);
+        handleResponse(req, res, cart);
       } else {
         const cart = await cartController.updateQty(cid, pid, qty);
-        handleResponse(res, cart);
+        handleResponse(req, res, cart);
       }
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -110,10 +120,12 @@ router.put("/:cid", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
   const products = req.body;
   try {
     const cart = await cartController.update(cid, products);
-    handleResponse(res, cart);
+    handleResponse(req, res, cart);
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
@@ -128,10 +140,12 @@ router.delete(
     const pid = req.params.pid;
     try {
       const cart = await cartController.deleteProduct(cid, pid);
-      handleResponse(res, cart);
+      handleResponse(req, res, cart);
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -146,10 +160,12 @@ router.delete(
     const cid = req.params.cid;
     try {
       const cart = await cartController.empty(cid);
-      handleResponse(res, cart);
+      handleResponse(req, res, cart);
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }

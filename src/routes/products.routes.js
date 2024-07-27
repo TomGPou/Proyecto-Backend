@@ -35,10 +35,12 @@ router.get(
         inStock,
         sort
       );
-      handleResponse(res, products);
+      handleResponse(req, res, products);
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -54,10 +56,12 @@ router.get(
 
     try {
       const product = await productController.getById(pid);
-      handleResponse(res, product);
+      handleResponse(req, res, product);
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -82,13 +86,15 @@ router.post(
     const newProduct = req.body;
     try {
       const product = await productController.add(newProduct);
-      handleResponse(res, product);
+      handleResponse(req, res, product);
 
       const products = await productController.get();
       io.emit("products", { message: "producto agregado", products: products });
     } catch (err) {
       req.logger.error(
-        `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
       );
       res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
     }
@@ -102,7 +108,7 @@ router.put("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
   const updatedData = req.body;
   try {
     const product = await productController.update(pid, updatedData);
-    handleResponse(res, product);
+    handleResponse(req, res, product);
 
     const products = await productController.get();
     io.emit("products", {
@@ -111,7 +117,9 @@ router.put("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
     });
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
@@ -123,13 +131,15 @@ router.delete("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
   const pid = req.params.pid;
   try {
     const result = await productController.deleteProduct(pid);
-    handleResponse(res, result);
+    handleResponse(req, res, result);
 
     const products = await productController.get();
     io.emit("products", { message: "producto eliminado", products: products });
   } catch (err) {
     req.logger.error(
-      `${new Date().toDateString()} ${req.method} ${req.url} ${err.message}`
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
     );
     res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
