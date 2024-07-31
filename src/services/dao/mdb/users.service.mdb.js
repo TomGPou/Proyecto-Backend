@@ -143,4 +143,25 @@ export default class UsersService {
       throw err;
     }
   }
+
+  // Actualizar rol
+  async chageRole(uid) {
+    try {
+      const user = await usersModel.findById(uid);
+      if (!user) return new CustomError(errorsDictionary.USER_NOT_FOUND);
+      if (user.role === "user") user.role = "premium";
+      else if (user.role === "premium") user.role = "user";
+      else return new CustomError(errorsDictionary.INVALID_PARAMETER);
+      const updatedUser = await usersModel.findByIdAndUpdate(uid, user, {
+        new: true,
+      });
+      return updatedUser;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
+    }
+  }
 }

@@ -18,7 +18,7 @@ export default class CartService {
     const cartIndex = carts.findIndex((item) => item.cid === cid);
 
     if (cartIndex < 0) {
-      throw new Error(`Carrito con ID: ${cid} no encontrado`);
+      return new CustomError(errorsDictionary.ID_NOT_FOUND);
     }
     return carts[cartIndex];
   }
@@ -27,7 +27,7 @@ export default class CartService {
   async validateProduct(pid) {
     const product = await productService.getById(pid);
 
-    if (!product) throw new Error(`Producto con ID: ${pid} no encontrado`);
+    if (!product) return new CustomError(errorsDictionary.ID_NOT_FOUND);
     return product;
   }
 
@@ -55,22 +55,27 @@ export default class CartService {
   async getById(cid) {
     try {
       const cart = this.validateCart(cid);
-      if (cart) {
-        return cart;
-      } else {
-        throw new Error(`Carrito con ${cid} no encontrado`);
-      }
+      if (!cart) return new CustomError(errorsDictionary.ID_NOT_FOUND);
+      return cart;
     } catch (err) {
-      return { error: err.message };
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 
   // AGREGAR PRODUCTO
-  async addProduct(cid, pid) {
+  async addProduct(cid, pid, user) {
     try {
       const carts = await readFile(this.path);
       const cart = await this.validateCart(cid);
-      await this.validateProduct(pid);
+      const product = await this.validateProduct(pid);
+      // Validar owner del producto
+      if (user !== "user" && user !== product.owner) {
+        return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+      }
 
       // Buscar producto en array
       const productIndex = cart.products.findIndex((item) => item.pid === pid);
@@ -83,17 +88,24 @@ export default class CartService {
       // actualizar carrito
       return await this.update(cid, cart.products);
     } catch (err) {
-      return { error: err.message };
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 
   //  ACTUALIZAR CANTIDAD DE PRODUCTO
-  async updateQty(cid, pid, qty) {
+  async updateQty(cid, pid, qty, user) {
     try {
       const carts = await readFile(this.path);
       const cart = await this.validateCart(cid);
-      await this.validateProduct(pid);
-
+      const product = await this.validateProduct(pid);
+      // Validar owner del producto
+      if (user !== "user" && user !== product.owner) {
+        return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+      }
       // Buscar producto en array
       const productIndex = cart.products.findIndex((item) => item.pid === pid);
       // actualizar cantidad
@@ -105,7 +117,11 @@ export default class CartService {
       // actualizar carrito
       return await this.update(cid, cart.products);
     } catch (err) {
-      return { error: err.message };
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 
@@ -123,7 +139,11 @@ export default class CartService {
       // actualizar
       return await this.update(cid, cart.products);
     } catch (err) {
-      return { error: err.message };
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 
@@ -139,7 +159,11 @@ export default class CartService {
       await writeFile(this.path, carts);
       return cart;
     } catch (err) {
-      return { error: err.message };
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 
@@ -153,7 +177,11 @@ export default class CartService {
 
       return await this.update(cid, cart.products);
     } catch (err) {
-      return { error: err.message };
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 
@@ -183,11 +211,15 @@ export default class CartService {
         purchaser: purchaser,
       };
       ticket.code = generateCode();
-      await ticketsModel.create(ticket);
+      await ticketsService.create(ticket);
 
       return await this.getById(cid);
     } catch {
-      return { error: err.message };
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 }

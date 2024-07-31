@@ -2,13 +2,14 @@
 import { Router } from "express";
 import passport from "passport";
 import config from "../config.js";
-import { verifyReqBody, handlePolicies } from "../services/utils/utils.js";
+import { verifyReqBody, handlePolicies, handleResponse } from "../services/utils/utils.js";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
-import { UsersDTO } from "../controllers/users.controller.js";
+import UserController, { UsersDTO } from "../controllers/users.controller.js";
 import errorsDictionary from "../services/errors/errrosDictionary.js";
 
 //* INIT
 const router = Router();
+const usersController = new UserController();
 initAuthStrategies();
 
 //* ENDPOINTS (/api/auth)
@@ -165,5 +166,21 @@ router.post(
     }
   }
 );
+
+// Cambio a rol premium
+router.put("/premium/:uid", handlePolicies(["ADMIN"]), async (req, res) => {
+  const uid = req.params.uid;
+  try {
+    const user = await usersController.changeRole(uid);
+    handleResponse(req, res, user);
+  } catch (err) {
+    req.logger.error(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
+    );
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+  }
+});
 
 export default router;

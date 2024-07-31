@@ -32,7 +32,7 @@ export default class ProductController {
         throw new Error("Falta completar datos del producto");
       }
 
-      return await productService.add(newProduct);
+      return await productService.add(newProduct, owner);
     } catch (error) {
       return { error: error.message };
     }
@@ -48,10 +48,10 @@ export default class ProductController {
   };
 
   //* ACTUALIZAR PRODUCTO
-  update = async (pid, data) => {
+  update = async (pid, data, user) => {
     try {
       if (data.code) {
-        return await productService.update(pid, data);
+        return await productService.update(pid, data, user);
       }
       return await productService.update(pid, data);
     } catch (error) {
@@ -62,7 +62,7 @@ export default class ProductController {
   //* BORRAR PRODUCTO
   deleteProduct = async (pid) => {
     try {
-      return await productService.deleteProduct(pid);
+      return await productService.deleteProduct(pid, user);
     } catch (error) {
       return { error: error.message };
     }

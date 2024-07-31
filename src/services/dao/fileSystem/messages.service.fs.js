@@ -2,13 +2,14 @@ import { readFile, writeFile } from "../../utils/utils.js";
 
 export default class ChatService {
   constructor() {
+    this.messages = [];
     this.path = "./src/services/utils/chatLog.json";
   }
 
   // OBTENER LOS MENSAJES
   async getChat() {
     if (!this.messages.length) {
-      const messages = await readFile(this.path);
+      messages = await readFile(this.path);
     }
     return messages;
   }
@@ -16,7 +17,7 @@ export default class ChatService {
   // AGREGAR MENSAJES
   async add(newMessage) {
     if (!this.messages.length) {
-      const messages = await readFile(this.path);
+      messages = await readFile(this.path);
     }
     // Validar mensaje vacio
     if (!newMessage.message) {

@@ -67,7 +67,7 @@ export default class UserController {
       }
 
       return await usersService.update(uid, user);
-    } catch {
+    } catch (error) {
       return { error: error.message };
     }
   };
@@ -76,7 +76,7 @@ export default class UserController {
   delete = async (uid) => {
     try {
       return await usersService.delete(uid);
-    } catch {
+    } catch (error) {
       return { error: error.message };
     }
   };
@@ -85,7 +85,16 @@ export default class UserController {
   login = async (email, enteredPassword) => {
     try {
       return await usersService.login(email, enteredPassword);
-    } catch {
+    } catch (error) {
+      return { error: error.message };
+    }
+  };
+
+  //* CAMBIAR ROL
+  changeRole = async (uid) => {
+    try {
+      return await usersService.changeRole(uid);
+    } catch (error) {
       return { error: error.message };
     }
   };

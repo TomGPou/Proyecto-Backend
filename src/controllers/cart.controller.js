@@ -35,7 +35,7 @@ export default class CartController {
   };
 
   //* AGREGAR PRODUCTO
-  addProduct = async (cid, pid) => {
+  addProduct = async (cid, pid, user) => {
     try {
       return await cartService.addProduct(cid, pid);
     } catch (error) {
@@ -44,7 +44,7 @@ export default class CartController {
   };
 
   //* ACTUALIZAR CANTIDAD DE PRODUCTO
-  updateQty = async (cid, pid, qty) => {
+  updateQty = async (cid, pid, qty, user) => {
     try {
       return await cartService.updateQty(cid, pid, qty);
     } catch (error) {

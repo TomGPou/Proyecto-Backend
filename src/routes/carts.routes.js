@@ -95,12 +95,13 @@ router.put(
     const cid = req.params.cid;
     const pid = req.params.pid;
     const qty = req.body.qty;
+    const user = req.user.role === "user" ? "user" : req.user.email;
     try {
       if (!qty) {
-        const cart = await cartController.addProduct(cid, pid);
+        const cart = await cartController.addProduct(cid, pid, user);
         handleResponse(req, res, cart);
       } else {
-        const cart = await cartController.updateQty(cid, pid, qty);
+        const cart = await cartController.updateQty(cid, pid, qty, user);
         handleResponse(req, res, cart);
       }
     } catch (err) {

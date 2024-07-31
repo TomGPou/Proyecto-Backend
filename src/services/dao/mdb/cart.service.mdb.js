@@ -57,11 +57,15 @@ export default class CartService {
   }
 
   //* AGREGAR PRODUCTO
-  async addProduct(cid, pid) {
+  async addProduct(cid, pid, user) {
     try {
+      // Validar carrito
       const cart = await this.validateCart(cid);
-      await this.validateProduct(pid);
-
+      const product = await this.validateProduct(pid);
+      // Validar owner del producto
+      if (user !== "user" && user !== product.owner) {
+        return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+      }
       // Buscar producto en array
       const productId = new mongoose.Types.ObjectId(pid);
       const productIndex = cart.products.findIndex((item) =>
@@ -85,11 +89,14 @@ export default class CartService {
   }
 
   //* ACTUALIZAR CANTIDAD DE PRODUCTO
-  async updateQty(cid, pid, qty) {
+  async updateQty(cid, pid, qty, user) {
     try {
       const cart = await this.validateCart(cid);
-      await this.validateProduct(pid);
-
+      const product = await this.validateProduct(pid);
+      // Validar owner del producto
+      if (user !== "user" && user !== product.owner) {
+        return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+      }
       // Buscar producto en array
       const productId = new mongoose.Types.ObjectId(pid);
       const productIndex = cart.products.findIndex((item) =>

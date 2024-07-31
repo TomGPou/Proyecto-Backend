@@ -90,11 +90,17 @@ export default class ProductService {
   }
 
   // ACTUALIZAR PRODUCTO
-  async update(pid, data) {
+  async update(pid, data, user) {
     try {
       // validar si existe el ID
       const exist = await productsModel.findById(pid);
       if (!exist) return new CustomError(errorsDictionary.ID_NOT_FOUND);
+      // verificar autorizacion para editar
+      if (user !== "admin" && exist.owner !== user) {
+        return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+      }
+      //si existe owner, eliminar
+      if (data.owner) delete data.owner;
       // validar si el código ya existe
       if (data.code) {
         const isDuplicated = await productsModel.findOne({
@@ -123,11 +129,15 @@ export default class ProductService {
   }
 
   // BORRAR PRODUCTO
-  async deleteProduct(pid) {
+  async deleteProduct(pid, user) {
     try {
       // validar si existe el ID
       const exist = await productsModel.findById(pid);
       if (!exist) return new CustomError(errorsDictionary.ID_NOT_FOUND);
+      // verificar autorizacion para editar
+      if (user !== "admin" && exist.owner !== user) {
+        return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+      }
       // buscar y borrar
       return await productsModel.findByIdAndDelete(pid);
     } catch (err) {

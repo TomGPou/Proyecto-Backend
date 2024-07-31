@@ -71,7 +71,7 @@ router.get(
 // Agregar producto
 router.post(
   "/",
-  // handlePolicies(["ADMIN"]),
+  handlePolicies(["ADMIN","PREMIUM"]),
   verifyReqBody([
     "title",
     "description",
@@ -84,6 +84,7 @@ router.post(
   async (req, res) => {
     const io = req.app.get("io");
     const newProduct = req.body;
+    newProduct.owner = req.user.role === "admin" ? "admin" : req.user.email;
     try {
       const product = await productController.add(newProduct);
       handleResponse(req, res, product);
@@ -102,12 +103,13 @@ router.post(
 );
 
 // Actualizar producto
-router.put("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
+router.put("/:pid", handlePolicies(["ADMIN","PREMIUM"]), async (req, res) => {
   const io = req.app.get("io");
   const pid = req.params.pid;
   const updatedData = req.body;
+  const user = req.user.role === "admin" ? "admin" : req.user.email;
   try {
-    const product = await productController.update(pid, updatedData);
+    const product = await productController.update(pid, updatedData, user);
     handleResponse(req, res, product);
 
     const products = await productController.get();
@@ -126,11 +128,12 @@ router.put("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
 });
 
 //Eliminar producto
-router.delete("/:pid", handlePolicies(["ADMIN"]), async (req, res) => {
+router.delete("/:pid", handlePolicies(["ADMIN","PREMIUM"]), async (req, res) => {
   const io = req.app.get("io");
   const pid = req.params.pid;
+  const user = req.user.role === "admin" ? "admin" : req.user.email;
   try {
-    const result = await productController.deleteProduct(pid);
+    const result = await productController.deleteProduct(pid, user);
     handleResponse(req, res, result);
 
     const products = await productController.get();

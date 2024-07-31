@@ -19,8 +19,12 @@ export default class UsersService {
     try {
       const users = await readFile(this.path);
       return users;
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 
@@ -29,10 +33,14 @@ export default class UsersService {
     try {
       const users = await readFile(this.path);
       const user = users.find((user) => user.uid === id);
-      if (!user) throw new Error("Usuario no encontrado");
+      if (!user) return new CustomError(errorsDictionary.ID_NOT_FOUND);
       return user;
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 
@@ -43,11 +51,15 @@ export default class UsersService {
       const user = users.find((user) =>
         Object.keys(query).every((key) => user[key] === query[key])
       );
-      if (!user) throw new Error("Usuario no encontrado");
+      if (!user) return new CustomError(errorsDictionary.USER_NOT_FOUND);
       delete user.password;
       return user;
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 
@@ -57,7 +69,8 @@ export default class UsersService {
       const users = await readFile(this.path);
       // validar email
       const emailExists = users.find((user) => user.email === newUser.email);
-      if (emailExists) throw new Error("Email ya registrado");
+      if (emailExists)
+        return new CustomError(errorsDictionary.EMAIL_ALREADY_EXISTS);
 
       // hash de password
       newUser.password = createHash(newUser.password);
@@ -71,9 +84,12 @@ export default class UsersService {
       users.push(newUser);
       await writeFile(this.path, users);
       return newUser;
-    } catch (error) {
-      console.log(error);
-      return null;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 
@@ -84,7 +100,7 @@ export default class UsersService {
       const i = this.users.findIndex((item) => item.uid === uid);
       // verificar que exista el ID
       if (i < 0) {
-        throw new Error(`Usuario con ID: ${uid} no encontrado`);
+        return new CustomError(errorsDictionary.ID_NOT_FOUND);
       }
       // verificar que no elimine el ID
       if ("uid" in user) {
@@ -94,8 +110,12 @@ export default class UsersService {
       users[i] = { ...users[i], ...user };
       await writeFile(this.path, users);
       return users[i];
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 
@@ -107,14 +127,18 @@ export default class UsersService {
 
       // verificar que exista el ID
       if (i < 0) {
-        throw new Error(`Usuario con ID: ${uid} no encontrado`);
+        return new CustomError(errorsDictionary.ID_NOT_FOUND);
       }
       // Quitar usuario del array y actualizar DB
       users.splice(i, 1);
       await writeFile(this.path, users);
       return console.log(`Usuario de ID: ${uid} eliminado`);
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 
@@ -125,13 +149,41 @@ export default class UsersService {
       const user = users.find((user) => user.email === email);
 
       if (!user || !isValidPassword(enteredPassword, user.password))
-        throw new Error("Datos de acceso no válidos");
+        return new CustomError(errorsDictionary.INVALID_PARAMETER);
 
       delete user.password;
       return user;
-    } catch (error) {
-      console.log(error);
-      return null;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
+    }
+  }
+
+  // Actualizar rol
+  async changeRole(uid) {
+    try {
+      const users = await readFile(this.path);
+      const i = users.findIndex((item) => item.uid === uid);
+
+      // verificar que exista el ID
+      if (i < 0) {
+        return new CustomError(errorsDictionary.ID_NOT_FOUND);
+      }
+      // modificar usuario y actualizar DB
+      if (users[i].role === "user") users[i].role = "premium";
+      else if (users[i].role === "premium") users[i].role = "user";
+      else return new CustomError(errorsDictionary.INVALID_PARAMETER);
+      await writeFile(this.path, users);
+      return users[i];
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
     }
   }
 }

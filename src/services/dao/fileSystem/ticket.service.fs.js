@@ -11,24 +11,34 @@ export default class TicketService {
   }
 
   async getById(id) {
-    const ticketsList = await this.getAll();
-    const ticket = ticketsList.find((t) => t.id === id);
+    try {
+      const ticketsList = await this.getAll();
+      const ticket = ticketsList.find((t) => t.id === id);
 
-    return ticket || null;
+      return ticket || null;
+    } catch (err) {
+      console.log(err.message);
+      return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+    }
   }
 
   async getByCode(code) {
-    const ticketsList = await this.getAll();
-    const ticket = ticketsList.find((t) => t.code === code);
+    try {
+      const ticketsList = await this.getAll();
+      const ticket = ticketsList.find((t) => t.code === code);
 
-    return ticket || null;
+      return ticket || null;
+    } catch (err) {
+      console.log(err.message);
+      return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+    }
   }
 
   async create(newTicket) {
     try {
       // Validar la carga de datos
       if (!newTicket.code || !newTicket.amount || !newTicket.purchaser) {
-        throw new Error("Falta datos del ticket");
+        return new CustomError(errorsDictionary.FEW_PARAMETERS);
       }
       // Validar ticket code
       let maxTries = 10;
@@ -39,33 +49,39 @@ export default class TicketService {
         tries++;
       }
       if (tries === maxTries) {
-        throw new Error("No se pudo generar el código del ticket");
+        return new CustomError(errorsDictionary.RECORD_CREATION_ERROR);
       }
       // Crear
       const ticketsList = await this.getAll();
       const tickets = [...ticketsList, newTicket];
       await writeFile(this.path, tickets);
       return newTicket;
-    } catch (error) {
-      return { error: error.message };
+    } catch (err) {
+      console.log(err.message);
+      return new CustomError(errorsDictionary.UNHANDLED_ERROR);
     }
   }
 
   async updateAmount(id, amount) {
-    // validar id
-    const ticket = await this.getById(id);
-    if (!ticket) {
-      throw new Error("No existe el ticket con id " + id);
+    try {
+      const ticket = await this.getById(id);
+      if (!ticket) {
+        return new CustomError(errorsDictionary.ID_NOT_FOUND);
+      }
+
+      const tickets = await this.getAll();
+      // buscar ticket
+      const i = tickets.findIndex((item) => item.id === id);
+      // actualizar
+      tickets[i].amount = amount;
+
+      await writeFile(this.path, tickets);
+      return tickets[i];
+    } catch (err) {
+      console.log(err.message);
+      return new CustomError(errorsDictionary.UNHANDLED_ERROR);
     }
-
-    const tickets = await this.getAll();
-    // buscar ticket
-    const i = tickets.findIndex((item) => item.id === id);
-    // actualizar
-    tickets[i].amount = amount;
-
-    await writeFile(this.path, tickets);
-    return tickets[i];
+    // validar id
   }
 
   // async update(id, data) {
@@ -86,19 +102,24 @@ export default class TicketService {
   // }
 
   async delete(id) {
-    // validar id
-    const ticket = await this.getById(id);
-    if (!ticket) {
-      throw new Error("No existe el ticket con id " + id);
+    try {
+      // validar id
+      const ticket = await this.getById(id);
+      if (!ticket) {
+        return new CustomError(errorsDictionary.ID_NOT_FOUND);
+      }
+
+      const tickets = await this.getAll();
+      // buscar ticket
+      const i = tickets.findIndex((item) => item.id === id);
+      // borrar
+      tickets.splice(i, 1);
+
+      await writeFile(this.path, tickets);
+      return console.log(`Ticket de ID: ${id} eliminado`);
+    } catch (err) {
+      console.log(err.message);
+      return new CustomError(errorsDictionary.UNHANDLED_ERROR);
     }
-
-    const tickets = await this.getAll();
-    // buscar ticket
-    const i = tickets.findIndex((item) => item.id === id);
-    // borrar
-    tickets.splice(i, 1);
-
-    await writeFile(this.path, tickets);
-    return console.log(`Ticket de ID: ${id} eliminado`);
   }
 }
