@@ -276,4 +276,37 @@ router.get("/loggerTest", async (req, res) => {
   }
 });
 
+// Reestablecer contraseña
+router.get("/restore", handlePolicies(["PUBLIC"]), async (req, res) => {
+  try {
+    res.render("restore", {
+      showError: req.query.error ? true : false,
+      error: req.query.error,
+    });
+  } catch (err) {
+    req.logger.error(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
+    );
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+  }
+});
+
+// Cambiar contraseña
+router.get("/restore/:token", handlePolicies(["PUBLIC"]), async (req, res) => {
+  try {
+    const token = req.params.token;
+    res.render("restorePassword", { token: token });
+  } catch (err) {
+    req.logger.error(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
+    );
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+  }
+});
+
+
 export default router;

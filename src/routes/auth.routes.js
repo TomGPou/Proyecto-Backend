@@ -2,7 +2,11 @@
 import { Router } from "express";
 import passport from "passport";
 import config from "../config.js";
-import { verifyReqBody, handlePolicies, handleResponse } from "../services/utils/utils.js";
+import {
+  verifyReqBody,
+  handlePolicies,
+  handleResponse,
+} from "../services/utils/utils.js";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
 import UserController, { UsersDTO } from "../controllers/users.controller.js";
 import errorsDictionary from "../services/errors/errrosDictionary.js";
@@ -166,6 +170,26 @@ router.post(
     }
   }
 );
+
+// Link de reestablecimiento de contraseña
+router.post("/restore", verifyReqBody(["email"]), async (req, res) => {
+  try {
+    const user = await usersController.restoreLink(req.body.email);
+    handleResponse(req, res, user);
+    req.logger.info(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} Link enviado`
+    );
+  } catch (err) {
+    req.logger.error(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
+    );
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+  }
+});
 
 // Cambio a rol premium
 router.put("/premium/:uid", handlePolicies(["ADMIN"]), async (req, res) => {

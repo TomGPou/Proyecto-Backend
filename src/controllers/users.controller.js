@@ -98,4 +98,13 @@ export default class UserController {
       return { error: error.message };
     }
   };
+
+  //* RESTORE LINK
+  restoreLink = async (email) => {
+    try {
+      return await usersService.restoreLink(email);
+    } catch (error) {
+      return { error: error.message };
+    }
+  };
 }

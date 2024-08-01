@@ -22,3 +22,16 @@ export const purchaseMail = async (ticket) => {
     `,
   });
 };
+
+export const restoreMail = async (link, email) => {
+  return await transport.sendMail({
+    from: `Proyecto Ecommerce <${config.GMAIL_APP_USER}>`,
+    to: email,
+    subject: `Reestablecimiento de contraseña`,
+    html: `
+    <h1>Reestablecer contraseña</h1>
+    <p>Ingresa en el siguient link para reestablecer la contraseña</p>
+    <a href="${link}">${link}</a></p>
+    `,
+  })
+}

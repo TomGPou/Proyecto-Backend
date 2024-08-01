@@ -3,6 +3,8 @@ import usersModel from "./models/users.model.js";
 import { createHash, isValidPassword } from "../../utils/utils.js";
 import CustomError from "../../errors/CustomErrors.class.js";
 import errorsDictionary from "../../errors/errrosDictionary.js";
+import jwt from "jsonwebtoken";
+import config from "../../../config.js";
 
 // INIT
 const cartService = new CartService();
@@ -156,6 +158,30 @@ export default class UsersService {
         new: true,
       });
       return updatedUser;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
+    }
+  }
+
+  // Restablecer contraseña
+  async restoreLink(email) {
+    try {
+      // validar email
+      const user = await usersModel.findOne({ email });
+      if (!user) return new CustomError(errorsDictionary.USER_NOT_FOUND);
+      // Generar JWT
+      const payload = {
+        email: user.email,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60,
+      };
+      const token = jwt.sign(payload, config.JWT_SECRET)
+      const link = `http://localhost:${config.PORT}/restore/${token}`
+
+      return link;
     } catch (err) {
       if (!(err instanceof CustomError)) {
         console.log(err.message);
