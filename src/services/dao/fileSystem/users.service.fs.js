@@ -5,6 +5,8 @@ import {
   isValidPassword,
 } from "../../utils/utils.js";
 import CartService from "./cart.service.fs.js";
+import jwt from "jsonwebtoken";
+import config from "../../../config.js";
 
 //INIT
 const cartService = new CartService();
@@ -178,6 +180,48 @@ export default class UsersService {
       else return new CustomError(errorsDictionary.INVALID_PARAMETER);
       await writeFile(this.path, users);
       return users[i];
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
+    }
+  }
+
+  // Link con token
+  async restoreLink(email) {
+    try {
+      const users = await readFile(this.path);
+      const user = users.find((user) => user.email === email);
+      if (!user) return new CustomError(errorsDictionary.USER_NOT_FOUND);
+      // Generar JWT
+      const payload = {
+        id: user._id,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60,
+      };
+      const token = jwt.sign(payload, config.JWT_SECRET);
+      const link = `http://localhost:${config.PORT}/restore/${token}`;
+
+      return link;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
+    }
+  }
+
+  // Cambiar contraseña
+  async changePassword(id, newPassword) {
+    try {
+      const user = await this.getById(id)
+      if (!user) return new CustomError(errorsDictionary.USER_NOT_FOUND);
+      user.password = createHash(newPassword);
+      const updatedUser = await this.update(id, updatedUser);
+      
+      return updatedUser;
     } catch (err) {
       if (!(err instanceof CustomError)) {
         console.log(err.message);

@@ -190,4 +190,23 @@ export default class UsersService {
       throw err;
     }
   }
+
+  // Cambiar contraseña
+  async changePassword(id, newPassword) {
+    try {
+      const user = await usersModel.findById(id);
+      if (!user) return new CustomError(errorsDictionary.USER_NOT_FOUND);
+      user.password = createHash(newPassword);
+      const updatedUser = await usersModel.findByIdAndUpdate(id, user, {
+        new: true,
+      });
+      return updatedUser;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        console.log(err.message);
+        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
+    }
+  }
 }

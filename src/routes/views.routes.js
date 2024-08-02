@@ -11,9 +11,12 @@ import CustomError from "../services/errors/CustomErrors.class.js";
 import errorsDictionary from "../services/errors/errrosDictionary.js";
 import passport from "passport";
 import jwt from "jsonwebtoken";
+import initAuthStrategies from "../services/auth/passport.strategies.js";
 
-//* ROUTER
+//* INIT
+
 const router = Router();
+initAuthStrategies();
 router.use(compression({ brotli: { enabled: true }, zlib: {} }));
 
 //* CONTROLLERS

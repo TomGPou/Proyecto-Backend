@@ -207,4 +207,34 @@ router.put("/premium/:uid", handlePolicies(["ADMIN"]), async (req, res) => {
   }
 });
 
+// Cambio de contraseña
+router.put(
+  "/changepassword/:id",
+  handlePolicies(["PUBLIC"]),
+  async (req, res) => {
+    const id = req.params.id;
+    const newPassword = req.body.password;
+    try {
+      await usersController.changePassword(id, newPassword);
+
+      req.logger.info(
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} Contraseña cambiada`
+      );
+
+      alert('Contraseña cambiada con exito')
+      res.status(200);
+      res.redirect("/login");
+    } catch (err) {
+      req.logger.error(
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
+      );
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    }
+  }
+);
+
 export default router;

@@ -107,4 +107,12 @@ export default class UserController {
       return { error: error.message };
     }
   };
+  //* CAMBIAR CONTRASEÑA
+  changePassword = async (id, newPassword) => {
+    try {
+      return await usersService.changePassword(id, newPassword);
+    } catch (error) {
+      return { error: error.message };
+    }
+  };
 }
