@@ -167,7 +167,7 @@ export default class UsersService {
     }
   }
 
-  // Restablecer contraseña
+  // Link con token
   async restoreLink(email) {
     try {
       // validar email
@@ -175,7 +175,7 @@ export default class UsersService {
       if (!user) return new CustomError(errorsDictionary.USER_NOT_FOUND);
       // Generar JWT
       const payload = {
-        email: user.email,
+        id: user._id,
         exp: Math.floor(Date.now() / 1000) + 60 * 60,
       };
       const token = jwt.sign(payload, config.JWT_SECRET)

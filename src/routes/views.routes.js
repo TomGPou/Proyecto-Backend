@@ -9,6 +9,8 @@ import { UsersDTO } from "../controllers/users.controller.js";
 import { generateFakeProducts } from "../services/utils/mocking.js";
 import CustomError from "../services/errors/CustomErrors.class.js";
 import errorsDictionary from "../services/errors/errrosDictionary.js";
+import passport from "passport";
+import jwt from "jsonwebtoken";
 
 //* ROUTER
 const router = Router();
@@ -294,10 +296,14 @@ router.get("/restore", handlePolicies(["PUBLIC"]), async (req, res) => {
 });
 
 // Cambiar contraseña
-router.get("/restore/:token", handlePolicies(["PUBLIC"]), async (req, res) => {
+router.get("/restore/:token", handlePolicies(["PUBLIC"]),
+  passport.authenticate("jwt", { session: false }),
+   async (req, res) => {
   try {
     const token = req.params.token;
-    res.render("restorePassword", { token: token });
+    const decoded = jwt.verify(token, config.JWT_SECRET);
+    const id = decoded.id;
+    res.render("restorePassword", { id: id });
   } catch (err) {
     req.logger.error(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${

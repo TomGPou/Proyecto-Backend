@@ -2,6 +2,8 @@
 import passport from "passport";
 import local from "passport-local";
 import GHStrategy from "passport-github2";
+import JwtStrategy from "passport-jwt";
+import { ExtractJwt } from "passport-jwt";
 
 import config from "../../config.js";
 import UserController from "../../controllers/users.controller.js";
@@ -9,6 +11,11 @@ import UserController from "../../controllers/users.controller.js";
 // INIT
 const localStrategy = local.Strategy;
 const userController = new UserController();
+
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: config.JWT_SECRET,
+};
 
 // STRATEGIES
 
@@ -87,6 +94,22 @@ const initAuthStrategies = () => {
         }
       }
     )
+  );
+
+  // Verify JWT
+  passport.use(
+    "jwt",
+    new JwtStrategy(opts, async (jwt_payload, done) => {
+      try {
+        const user = await userController.getById(jwt_payload.id);
+        if (!user) {
+          return done(null, false);
+        }
+        return done(null, user);
+      } catch (err) {
+        return done(err, false);
+      }
+    })
   );
 
   passport.serializeUser((user, done) => {
