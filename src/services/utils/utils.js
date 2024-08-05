@@ -112,16 +112,12 @@ export const generateCode = () => {
   return uuidv4();
 };
 
-// Verificar CustomError en respuestas
-export const handleResponse = (req, res, result) => {
-  if (result instanceof CustomError) {
-    req.logger.warning(
-      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-        req.method
-      } ${req.url} Error: ${result.message}`
-    );
-    res.status(result.status).send({ error: result.message });
-  } else {
-    res.status(200).send({ payload: result });
-  }
+//Manager de errores en rutas
+export const handleError = (req, res, result) => {
+  req.logger.warning(
+    `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+      req.method
+    } ${req.url} Error: ${result.message}`
+  );
+  res.status(result.status).send({ error: result.message });
 };

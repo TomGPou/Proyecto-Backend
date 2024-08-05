@@ -3,11 +3,12 @@ import { Router } from "express";
 import ProductController from "../controllers/products.controller.js";
 import {
   handlePolicies,
-  handleResponse,
+  handleError,
   verifyMongoId,
   verifyReqBody,
 } from "../services/utils/utils.js";
 import errorsDictionary from "../services/errors/errrosDictionary.js";
+import CustomError from "../services/errors/CustomErrors.class.js";
 
 //* INIT
 const router = Router();
@@ -35,7 +36,9 @@ router.get(
         inStock,
         sort
       );
-      handleResponse(req, res, products);
+      if (products instanceof CustomError)
+        return handleError(req, res, products);
+      res.status(200).send({ payload: products });
     } catch (err) {
       req.logger.error(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -56,7 +59,8 @@ router.get(
 
     try {
       const product = await productController.getById(pid);
-      handleResponse(req, res, product);
+      if (product instanceof CustomError) return handleError(req, res, product);
+      res.status(200).send({ payload: product });
     } catch (err) {
       req.logger.error(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -71,7 +75,7 @@ router.get(
 // Agregar producto
 router.post(
   "/",
-  handlePolicies(["ADMIN","PREMIUM"]),
+  handlePolicies(["ADMIN", "PREMIUM"]),
   verifyReqBody([
     "title",
     "description",
@@ -87,10 +91,11 @@ router.post(
     newProduct.owner = req.user.role === "admin" ? "admin" : req.user.email;
     try {
       const product = await productController.add(newProduct);
-      handleResponse(req, res, product);
+      if (product instanceof CustomError) return handleError(req, res, product);
 
       const products = await productController.get();
       io.emit("products", { message: "producto agregado", products: products });
+      res.status(200).send({ payload: product });
     } catch (err) {
       req.logger.error(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -103,20 +108,21 @@ router.post(
 );
 
 // Actualizar producto
-router.put("/:pid", handlePolicies(["ADMIN","PREMIUM"]), async (req, res) => {
+router.put("/:pid", handlePolicies(["ADMIN", "PREMIUM"]), async (req, res) => {
   const io = req.app.get("io");
   const pid = req.params.pid;
   const updatedData = req.body;
   const user = req.user.role === "admin" ? "admin" : req.user.email;
   try {
     const product = await productController.update(pid, updatedData, user);
-    handleResponse(req, res, product);
+    if (product instanceof CustomError) return handleError(req, res, product);
 
     const products = await productController.get();
     io.emit("products", {
       message: "producto actualizado",
       products: products,
     });
+    res.status(200).send({ payload: product });
   } catch (err) {
     req.logger.error(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -128,24 +134,32 @@ router.put("/:pid", handlePolicies(["ADMIN","PREMIUM"]), async (req, res) => {
 });
 
 //Eliminar producto
-router.delete("/:pid", handlePolicies(["ADMIN","PREMIUM"]), async (req, res) => {
-  const io = req.app.get("io");
-  const pid = req.params.pid;
-  const user = req.user.role === "admin" ? "admin" : req.user.email;
-  try {
-    const result = await productController.deleteProduct(pid, user);
-    handleResponse(req, res, result);
+router.delete(
+  "/:pid",
+  handlePolicies(["ADMIN", "PREMIUM"]),
+  async (req, res) => {
+    const io = req.app.get("io");
+    const pid = req.params.pid;
+    const user = req.user.role === "admin" ? "admin" : req.user.email;
+    try {
+      const result = await productController.deleteProduct(pid, user);
+      if (result instanceof CustomError) return handleError(req, res, result);
 
-    const products = await productController.get();
-    io.emit("products", { message: "producto eliminado", products: products });
-  } catch (err) {
-    req.logger.error(
-      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-        req.method
-      } ${req.url} ${err.message}`
-    );
-    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      const products = await productController.get();
+      io.emit("products", {
+        message: "producto eliminado",
+        products: products,
+      });
+      res.status(200).send({ payload: result });
+    } catch (err) {
+      req.logger.error(
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
+      );
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    }
   }
-});
+);
 
 export default router;

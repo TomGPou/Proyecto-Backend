@@ -4,9 +4,10 @@ import CartController from "../controllers/cart.controller.js";
 import {
   handlePolicies,
   verifyMongoId,
-  handleResponse,
+  handleError,
 } from "../services/utils/utils.js";
 import errorsDictionary from "../services/errors/errrosDictionary.js";
+import CustomError from "../services/errors/CustomErrors.class.js";
 
 //* INIT
 const router = Router();
@@ -20,7 +21,8 @@ router.param("pid", verifyMongoId("pid"));
 router.get("/", handlePolicies(["ADMIN"]), async (req, res) => {
   try {
     const procces = await cartController.getAll();
-    handleResponse(req, res, procces);
+    if (procces instanceof CustomError) return handleError(req, res, procces);
+    res.status(200).send({ payload: procces });
   } catch (err) {
     req.logger.error(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -39,7 +41,8 @@ router.get(
     const cid = req.params.cid;
     try {
       const cart = await cartController.getById(cid);
-      handleResponse(req, res, cart);
+      if (cart instanceof CustomError) return handleError(req, res, cart);
+      res.status(200).send({ payload: cart });
     } catch (err) {
       req.logger.error(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -55,7 +58,8 @@ router.get(
 router.post("/", async (req, res) => {
   try {
     const newCart = await cartController.create();
-    handleResponse(req, res, newCart);
+    if (newCart instanceof CustomError) return handleError(req, res, newCart);
+    res.status(200).send({ payload: newCart });
   } catch (err) {
     req.logger.error(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -75,7 +79,8 @@ router.post(
     const purchaser = req.body.purchaser;
     try {
       const cart = await cartController.purchase(cid, purchaser);
-      handleResponse(req, res, cart);
+      if (cart instanceof CustomError) return handleError(req, res, cart);
+      res.status(200).send({ payload: cart });
     } catch (err) {
       req.logger.error(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -99,10 +104,12 @@ router.put(
     try {
       if (!qty) {
         const cart = await cartController.addProduct(cid, pid, user);
-        handleResponse(req, res, cart);
+        if (cart instanceof CustomError) return handleError(req, res, cart);
+        res.status(200).send({ payload: cart });
       } else {
         const cart = await cartController.updateQty(cid, pid, qty, user);
-        handleResponse(req, res, cart);
+        if (cart instanceof CustomError) return handleError(req, res, cart);
+        res.status(200).send({ payload: cart });
       }
     } catch (err) {
       req.logger.error(
@@ -121,7 +128,8 @@ router.put("/:cid", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
   const products = req.body;
   try {
     const cart = await cartController.update(cid, products);
-    handleResponse(req, res, cart);
+    if (cart instanceof CustomError) return handleError(req, res, cart);
+    res.status(200).send({ payload: cart });
   } catch (err) {
     req.logger.error(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -141,7 +149,8 @@ router.delete(
     const pid = req.params.pid;
     try {
       const cart = await cartController.deleteProduct(cid, pid);
-      handleResponse(req, res, cart);
+      if (cart instanceof CustomError) return handleError(req, res, cart);
+      res.status(200).send({ payload: cart });
     } catch (err) {
       req.logger.error(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -161,7 +170,8 @@ router.delete(
     const cid = req.params.cid;
     try {
       const cart = await cartController.empty(cid);
-      handleResponse(req, res, cart);
+      if (cart instanceof CustomError) return handleError(req, res, cart);
+      res.status(200).send({ payload: cart });
     } catch (err) {
       req.logger.error(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${

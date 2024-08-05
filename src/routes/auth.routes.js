@@ -5,11 +5,12 @@ import config from "../config.js";
 import {
   verifyReqBody,
   handlePolicies,
-  handleResponse,
+  handleError,
 } from "../services/utils/utils.js";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
 import UserController, { UsersDTO } from "../controllers/users.controller.js";
 import errorsDictionary from "../services/errors/errrosDictionary.js";
+import CustomError from "../services/errors/CustomErrors.class.js";
 
 //* INIT
 const router = Router();
@@ -174,8 +175,8 @@ router.post(
 // Link de reestablecimiento de contraseña
 router.post("/restore", verifyReqBody(["email"]), async (req, res) => {
   try {
-    const user = await usersController.restoreLink(req.body.email);
-    handleResponse(req, res, user);
+    const link = await usersController.restoreLink(req.body.email);
+    if (link instanceof CustomError) return handleError(req, res, link);
     req.logger.info(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
         req.method
@@ -196,7 +197,8 @@ router.put("/premium/:uid", handlePolicies(["ADMIN"]), async (req, res) => {
   const uid = req.params.uid;
   try {
     const user = await usersController.changeRole(uid);
-    handleResponse(req, res, user);
+    if (user instanceof CustomError) return handleError(req, res, user);
+    res.status(200).send({ payload: user });
   } catch (err) {
     req.logger.error(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -223,7 +225,7 @@ router.put(
         } ${req.url} Contraseña cambiada`
       );
 
-      alert('Contraseña cambiada con exito')
+      alert("Contraseña cambiada con exito");
       res.status(200);
       res.redirect("/login");
     } catch (err) {

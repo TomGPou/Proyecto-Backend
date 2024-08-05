@@ -2,7 +2,7 @@
 import passport from "passport";
 import local from "passport-local";
 import GHStrategy from "passport-github2";
-import JwtStrategy from "passport-jwt";
+import { Strategy as JwtStrategy } from "passport-jwt";
 import { ExtractJwt } from "passport-jwt";
 
 import config from "../../config.js";
