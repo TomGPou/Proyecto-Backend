@@ -178,8 +178,8 @@ export default class UsersService {
         id: user._id,
         exp: Math.floor(Date.now() / 1000) + 60 * 60,
       };
-      const token = jwt.sign(payload, config.JWT_SECRET)
-      const link = `http://localhost:${config.PORT}/restore/${token}`
+      const token = jwt.sign(payload, config.JWT_SECRET);
+      const link = `http://localhost:${config.PORT}/restore/${token}`;
 
       return link;
     } catch (err) {
@@ -196,6 +196,9 @@ export default class UsersService {
     try {
       const user = await usersModel.findById(id);
       if (!user) return new CustomError(errorsDictionary.USER_NOT_FOUND);
+      // verificar que las contraseñas no sean iguales
+      if (isValidPassword(newPassword, user.password))
+        return new CustomError(errorsDictionary.PASSWORD_ALREADY_EXISTS);
       user.password = createHash(newPassword);
       const updatedUser = await usersModel.findByIdAndUpdate(id, user, {
         new: true,

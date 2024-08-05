@@ -11,6 +11,7 @@ import initAuthStrategies from "../services/auth/passport.strategies.js";
 import UserController, { UsersDTO } from "../controllers/users.controller.js";
 import errorsDictionary from "../services/errors/errrosDictionary.js";
 import CustomError from "../services/errors/CustomErrors.class.js";
+import { restoreMail } from "../services/utils/nodemailer.js";
 
 //* INIT
 const router = Router();
@@ -176,29 +177,21 @@ router.post(
 router.post("/restore", verifyReqBody(["email"]), async (req, res) => {
   try {
     const link = await usersController.restoreLink(req.body.email);
-    if (link instanceof CustomError) return handleError(req, res, link);
-    req.logger.info(
-      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-        req.method
-      } ${req.url} Link enviado`
-    );
-  } catch (err) {
-    req.logger.error(
-      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-        req.method
-      } ${req.url} ${err.message}`
-    );
-    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
-  }
-});
+    if (link instanceof CustomError) {
+      return handleError(req, res, link);
+    } else {
+      await restoreMail(link, req.body.email);
+      req.logger.info(
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} Link enviado`
+      );
 
-// Cambio a rol premium
-router.put("/premium/:uid", handlePolicies(["ADMIN"]), async (req, res) => {
-  const uid = req.params.uid;
-  try {
-    const user = await usersController.changeRole(uid);
-    if (user instanceof CustomError) return handleError(req, res, user);
-    res.status(200).send({ payload: user });
+      res.status(200);
+      res.redirect(
+        `/login?error=${encodeURI("Se ha enviado un email a su correo")}`
+      );
+    }
   } catch (err) {
     req.logger.error(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -210,24 +203,25 @@ router.put("/premium/:uid", handlePolicies(["ADMIN"]), async (req, res) => {
 });
 
 // Cambio de contraseña
-router.put(
+router.post(
   "/changepassword/:id",
   handlePolicies(["PUBLIC"]),
   async (req, res) => {
     const id = req.params.id;
     const newPassword = req.body.password;
     try {
-      await usersController.changePassword(id, newPassword);
-
-      req.logger.info(
-        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-          req.method
-        } ${req.url} Contraseña cambiada`
-      );
-
-      alert("Contraseña cambiada con exito");
-      res.status(200);
-      res.redirect("/login");
+      const updatedUser = await usersController.changePassword(id, newPassword);
+      if (updatedUser instanceof CustomError) {
+        handleError(req, res, updatedUser);
+      } else {
+        req.logger.info(
+          `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+            req.method
+          } ${req.url} Contraseña cambiada`
+        );
+        res.status(200);
+        res.redirect(`/login?error=${encodeURI("Contraseña actualizada")}`);
+      }
     } catch (err) {
       req.logger.error(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -238,5 +232,25 @@ router.put(
     }
   }
 );
+
+// Cambio a rol premium
+router.put("/premium/:uid", handlePolicies(["ADMIN"]), async (req, res) => {
+  const uid = req.params.uid;
+  try {
+    const user = await usersController.changeRole(uid);
+    if (user instanceof CustomError) {
+      return handleError(req, res, user);
+    } else {
+      res.status(200).send({ payload: user });
+    }
+  } catch (err) {
+    req.logger.error(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
+    );
+    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+  }
+});
 
 export default router;

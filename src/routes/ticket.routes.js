@@ -20,8 +20,11 @@ router.param("tid", verifyMongoId("tid"));
 router.get("/", handlePolicies(["ADMIN"]), async (req, res) => {
   try {
     const tickets = await ticketController.getAll();
-    if (tickets instanceof CustomError) return handleError(req, res, tickets);
-    res.status(200).send({ payload: tickets });
+    if (tickets instanceof CustomError) {
+      return handleError(req, res, tickets);
+    } else {
+      res.status(200).send({ payload: tickets });
+    }
   } catch (err) {
     req.logger.error(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -39,8 +42,11 @@ router.get(
   async (req, res) => {
     try {
       const ticket = await ticketController.getById(req.params.tid);
-      if (ticket instanceof CustomError) return handleError(req, res, ticket);
-      res.status(200).send({ payload: ticket });
+      if (ticket instanceof CustomError) {
+        return handleError(req, res, ticket);
+      } else {
+        res.status(200).send({ payload: ticket });
+      }
     } catch (err) {
       req.logger.error(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -56,9 +62,11 @@ router.get(
 router.post("/", handlePolicies(["PREMIUM", "USER"]), async (req, res) => {
   try {
     const newTicket = await ticketController.create(req.body);
-    if (newTicket instanceof CustomError)
+    if (newTicket instanceof CustomError) {
       return handleError(req, res, newTicket);
-    res.status(200).send({ payload: newTicket });
+    } else {
+      res.status(200).send({ payload: newTicket });
+    }
   } catch (err) {
     req.logger.error(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -76,8 +84,11 @@ router.put("/:tid", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
       req.params.tid,
       req.body.amount
     );
-    if (ticket instanceof CustomError) return handleError(req, res, ticket);
-    res.status(200).send({ payload: ticket });
+    if (ticket instanceof CustomError) {
+      return handleError(req, res, ticket);
+    } else {
+      res.status(200).send({ payload: ticket });
+    }
   } catch (err) {
     req.logger.error(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -92,8 +103,11 @@ router.put("/:tid", handlePolicies(["USER", "PREMIUM"]), async (req, res) => {
 router.delete("/:tid", handlePolicies(["ADMIN"]), async (req, res) => {
   try {
     const ticket = await ticketController.delete(req.params.tid);
-    if (ticket instanceof CustomError) return handleError(req, res, ticket);
-    res.status(200).send({ payload: ticket });
+    if (ticket instanceof CustomError) {
+      return handleError(req, res, ticket);
+    } else {
+      res.status(200).send({ payload: ticket });
+    }
   } catch (err) {
     req.logger.error(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${

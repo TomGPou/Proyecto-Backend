@@ -1,7 +1,13 @@
 //* IMPORTS
 import { Router } from "express";
 import compression from "express-compression";
-import { handlePolicies, verifyMongoId } from "../services/utils/utils.js";
+import passport from "passport";
+import jwt from "jsonwebtoken";
+import {
+  handleError,
+  handlePolicies,
+  verifyMongoId,
+} from "../services/utils/utils.js";
 import ProductController from "../controllers/products.controller.js";
 import CartController from "../controllers/cart.controller.js";
 import MessagesController from "../controllers/messages.controller.js";
@@ -9,9 +15,8 @@ import { UsersDTO } from "../controllers/users.controller.js";
 import { generateFakeProducts } from "../services/utils/mocking.js";
 import CustomError from "../services/errors/CustomErrors.class.js";
 import errorsDictionary from "../services/errors/errrosDictionary.js";
-import passport from "passport";
-import jwt from "jsonwebtoken";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
+import config from "../config.js";
 
 //* INIT
 
@@ -124,7 +129,7 @@ router.get(
     try {
       const cart = await cartController.getById(cid);
       if (cart instanceof CustomError) {
-        res.status(cart.status).send({ error: cart.message });
+        handleError(req, res, cart);
       } else {
         let total = 0;
         cart.products.forEach((product) => {
@@ -299,23 +304,25 @@ router.get("/restore", handlePolicies(["PUBLIC"]), async (req, res) => {
 });
 
 // Cambiar contraseña
-router.get("/restore/:token", handlePolicies(["PUBLIC"]),
-  passport.authenticate("jwt", { session: false }),
-   async (req, res) => {
-  try {
-    const token = req.params.token;
-    const decoded = jwt.verify(token, config.JWT_SECRET);
-    const id = decoded.id;
-    res.render("restorePassword", { id: id });
-  } catch (err) {
-    req.logger.error(
-      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-        req.method
-      } ${req.url} ${err.message}`
-    );
-    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+router.get(
+  "/restore/:token",
+  handlePolicies(["PUBLIC"]),
+  // passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const token = req.params.token;
+      const decoded = jwt.verify(token, config.JWT_SECRET);
+      const id = decoded.id;
+      res.render("changePassword", { id: id });
+    } catch (err) {
+      req.logger.error(
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
+      );
+      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    }
   }
-});
-
+);
 
 export default router;

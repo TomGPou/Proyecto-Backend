@@ -57,8 +57,13 @@ const errorsDictionary = {
     status: 400,
     message: "Email ya registrado",
   },
-  NOT_FOUND: {
+  PASSWORD_ALREADY_EXISTS: {
     code: 17,
+    status: 400,
+    message: "La contraseña debe ser diferente a la anterior",
+  },
+  NOT_FOUND: {
+    code: 18,
     status: 404,
     message: "No encontrado",
   },

@@ -30,8 +30,8 @@ export const restoreMail = async (link, email) => {
     subject: `Reestablecimiento de contraseña`,
     html: `
     <h1>Reestablecer contraseña</h1>
-    <p>Ingresa en el siguient link para reestablecer la contraseña</p>
+    <p>Ingresa en el siguient link para reestablecer su contraseña</p>
     <a href="${link}">${link}</a></p>
     `,
-  })
-}
+  });
+};

@@ -36,9 +36,11 @@ router.get(
         inStock,
         sort
       );
-      if (products instanceof CustomError)
+      if (products instanceof CustomError) {
         return handleError(req, res, products);
-      res.status(200).send({ payload: products });
+      } else {
+        res.status(200).send({ payload: products });
+      }
     } catch (err) {
       req.logger.error(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -59,8 +61,11 @@ router.get(
 
     try {
       const product = await productController.getById(pid);
-      if (product instanceof CustomError) return handleError(req, res, product);
-      res.status(200).send({ payload: product });
+      if (product instanceof CustomError) {
+        return handleError(req, res, product);
+      } else {
+        res.status(200).send({ payload: product });
+      }
     } catch (err) {
       req.logger.error(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -91,11 +96,16 @@ router.post(
     newProduct.owner = req.user.role === "admin" ? "admin" : req.user.email;
     try {
       const product = await productController.add(newProduct);
-      if (product instanceof CustomError) return handleError(req, res, product);
-
-      const products = await productController.get();
-      io.emit("products", { message: "producto agregado", products: products });
-      res.status(200).send({ payload: product });
+      if (product instanceof CustomError) {
+        return handleError(req, res, product);
+      } else {
+        const products = await productController.get();
+        io.emit("products", {
+          message: "producto agregado",
+          products: products,
+        });
+        res.status(200).send({ payload: product });
+      }
     } catch (err) {
       req.logger.error(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -115,14 +125,16 @@ router.put("/:pid", handlePolicies(["ADMIN", "PREMIUM"]), async (req, res) => {
   const user = req.user.role === "admin" ? "admin" : req.user.email;
   try {
     const product = await productController.update(pid, updatedData, user);
-    if (product instanceof CustomError) return handleError(req, res, product);
-
-    const products = await productController.get();
-    io.emit("products", {
-      message: "producto actualizado",
-      products: products,
-    });
-    res.status(200).send({ payload: product });
+    if (product instanceof CustomError) {
+      return handleError(req, res, product);
+    } else {
+      const products = await productController.get();
+      io.emit("products", {
+        message: "producto actualizado",
+        products: products,
+      });
+      res.status(200).send({ payload: product });
+    }
   } catch (err) {
     req.logger.error(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -143,14 +155,16 @@ router.delete(
     const user = req.user.role === "admin" ? "admin" : req.user.email;
     try {
       const result = await productController.deleteProduct(pid, user);
-      if (result instanceof CustomError) return handleError(req, res, result);
-
-      const products = await productController.get();
-      io.emit("products", {
-        message: "producto eliminado",
-        products: products,
-      });
-      res.status(200).send({ payload: result });
+      if (result instanceof CustomError) {
+        return handleError(req, res, result);
+      } else {
+        const products = await productController.get();
+        io.emit("products", {
+          message: "producto eliminado",
+          products: products,
+        });
+        res.status(200).send({ payload: result });
+      }
     } catch (err) {
       req.logger.error(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
