@@ -32,7 +32,7 @@ export default class ProductController {
         throw new Error("Falta completar datos del producto");
       }
 
-      return await productService.add(newProduct, owner);
+      return await productService.add(newProduct);
     } catch (error) {
       throw error;
     }

@@ -74,14 +74,16 @@ router.post(
     const io = req.app.get("io");
     const newProduct = req.body;
     newProduct.owner = req.user.role === "admin" ? "admin" : req.user.email;
+
     try {
       const product = await productController.add(newProduct);
-      const products = await productController.get();
-      io.emit("products", {
-        message: "producto agregado",
-        products: products,
-      });
       res.status(200).send({ payload: product });
+
+      // const products = await productController.get();
+      // io.emit("products", {
+      //   message: "producto agregado",
+      //   products: products,
+      // });
     } catch (err) {
       next(err);
     }

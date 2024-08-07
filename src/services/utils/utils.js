@@ -48,7 +48,7 @@ export const handlePolicies = (policies) => {
     if (policies[0] === "PUBLIC") return next();
     // verificar si existe session
     if (!req.session.user) {
-      req.logger.warning(
+      req.logger.info(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
           req.method
         } ${req.url} No existe sesion de usuario`

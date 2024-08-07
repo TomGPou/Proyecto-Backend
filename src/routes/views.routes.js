@@ -261,7 +261,15 @@ router.get(
       const id = decoded.id;
       res.render("changePassword", { id: id });
     } catch (err) {
-      next(err);
+      if (err.name === "TokenExpiredError") {
+        res.redirect(
+          `/restore?error=${encodeURI(
+            "El token ha expirado, genere uno nuevo"
+          )}`
+        );
+      } else {
+        next(err);
+      }
     }
   }
 );
