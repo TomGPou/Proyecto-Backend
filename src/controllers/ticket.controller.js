@@ -15,7 +15,7 @@ export default class TicketController {
     try {
       return await ticketService.getAll();
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -24,7 +24,7 @@ export default class TicketController {
     try {
       return await ticketService.getById(id);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -33,7 +33,7 @@ export default class TicketController {
     try {
       return await ticketService.getByCode(code);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -42,7 +42,7 @@ export default class TicketController {
     try {
       return await ticketService.create(newTicket);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -51,7 +51,7 @@ export default class TicketController {
     try {
       return await ticketService.updateAmount(id, amount);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -60,7 +60,7 @@ export default class TicketController {
     try {
       return await ticketService.delete(id);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 }

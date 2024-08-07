@@ -12,6 +12,58 @@ const errorsHandler = (err, req, res, next) => {
       }
     }
   }
+
+  switch (customErr.log) {
+    case "fatal":
+      req.logger.fatal(
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
+      );
+      break;
+    case "error":
+      req.logger.error(
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
+      );
+      break;
+    case "warning":
+      req.logger.warning(
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
+      );
+      break;
+    case "info":
+      req.logger.info(
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
+      );
+      break;
+    case "http":
+      req.logger.http(
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
+      );
+      break;
+    case "debug":
+      req.logger.debug(
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
+      );
+      break;
+    default:
+      req.logger.error(
+        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+          req.method
+        } ${req.url} ${err.message}`
+      );
+  }
+
   return res.status(customErr.status).send({
     origin: config.SERVER,
     payload: "",

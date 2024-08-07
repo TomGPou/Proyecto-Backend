@@ -24,7 +24,7 @@ export default class UserController {
     try {
       return await usersService.getAll();
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -33,7 +33,7 @@ export default class UserController {
     try {
       return await usersService.getById(uid);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -42,7 +42,7 @@ export default class UserController {
     try {
       return await usersService.getOne(query);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -55,7 +55,7 @@ export default class UserController {
 
       return await usersService.create(user);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -68,7 +68,7 @@ export default class UserController {
 
       return await usersService.update(uid, user);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -77,7 +77,7 @@ export default class UserController {
     try {
       return await usersService.delete(uid);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -86,7 +86,7 @@ export default class UserController {
     try {
       return await usersService.login(email, enteredPassword);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -95,7 +95,7 @@ export default class UserController {
     try {
       return await usersService.changeRole(uid);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -104,7 +104,7 @@ export default class UserController {
     try {
       return await usersService.restoreLink(email);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
   //* CAMBIAR CONTRASEÑA
@@ -112,7 +112,7 @@ export default class UserController {
     try {
       return await usersService.changePassword(id, newPassword);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 }

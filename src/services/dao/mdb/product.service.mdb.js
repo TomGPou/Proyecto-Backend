@@ -38,8 +38,7 @@ export default class ProductService {
       return products;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -53,19 +52,16 @@ export default class ProductService {
         code: newProduct.code,
       });
       if (isDuplicated)
-        return new CustomError(errorsDictionary.PRODUCT_CODE_EXISTS);
+        throw new CustomError(errorsDictionary.PRODUCT_CODE_EXISTS);
 
       // Cargar a DB
       return await productsModel.create(newProduct);
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.name);
         if (err.name === "ValidationError") {
-          console.log(err.message);
-          return new CustomError(errorsDictionary.INVALID_TYPE);
+          throw new CustomError(errorsDictionary.INVALID_TYPE);
         } else {
-          console.log(err.message);
-          return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+          throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
         }
       }
       throw err;
@@ -77,13 +73,12 @@ export default class ProductService {
     try {
       const product = await productsModel.findOne({ _id: pid }).lean();
       if (!product) {
-        return new CustomError(errorsDictionary.ID_NOT_FOUND);
+        throw new CustomError(errorsDictionary.ID_NOT_FOUND);
       }
       return product;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -94,10 +89,10 @@ export default class ProductService {
     try {
       // validar si existe el ID
       const exist = await productsModel.findById(pid);
-      if (!exist) return new CustomError(errorsDictionary.ID_NOT_FOUND);
+      if (!exist) throw new CustomError(errorsDictionary.ID_NOT_FOUND);
       // verificar autorizacion para editar
       if (user !== "admin" && exist.owner !== user) {
-        return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+        throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
       }
       //si existe owner, eliminar
       if (data.owner) delete data.owner;
@@ -108,20 +103,17 @@ export default class ProductService {
           _id: { $ne: pid },
         });
         if (isDuplicated)
-          return new CustomError(errorsDictionary.PRODUCT_CODE_EXISTS);
+          throw new CustomError(errorsDictionary.PRODUCT_CODE_EXISTS);
       }
 
       // Actualizar
       return await productsModel.findByIdAndUpdate(pid, data, { new: true });
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.name);
         if (err.name === "ValidationError") {
-          console.log(err.message);
-          return new CustomError(errorsDictionary.INVALID_TYPE);
+          throw new CustomError(errorsDictionary.INVALID_TYPE);
         } else {
-          console.log(err.message);
-          return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+          throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
         }
       }
       throw err;
@@ -133,17 +125,16 @@ export default class ProductService {
     try {
       // validar si existe el ID
       const exist = await productsModel.findById(pid);
-      if (!exist) return new CustomError(errorsDictionary.ID_NOT_FOUND);
+      if (!exist) throw new CustomError(errorsDictionary.ID_NOT_FOUND);
       // verificar autorizacion para editar
       if (user !== "admin" && exist.owner !== user) {
-        return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+        throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
       }
       // buscar y borrar
       return await productsModel.findByIdAndDelete(pid);
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -157,8 +148,7 @@ export default class ProductService {
       return product.stock;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }

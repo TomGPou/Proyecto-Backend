@@ -36,7 +36,7 @@ router.param("cid", verifyMongoId("cid"));
 router.get(
   "/",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
-  async (req, res) => {
+  async (req, res, next) => {
     const limit = req.query.limit;
     const page = req.query.page;
     const category = req.query.category;
@@ -55,12 +55,7 @@ router.get(
       );
       res.status(200).render("home", { products: products, user: user });
     } catch (err) {
-      req.logger.error(
-        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-          req.method
-        } ${req.url} ${err.message}`
-      );
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      next(err);
     }
   }
 );
@@ -69,7 +64,7 @@ router.get(
 router.get(
   "/realtimeproducts",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
-  async (req, res) => {
+  async (req, res, next) => {
     const limit = req.query.limit;
     const page = req.query.page;
     const category = req.query.category;
@@ -90,63 +85,49 @@ router.get(
         .status(200)
         .render("realtimeproducts", { products: products, user: user });
     } catch (err) {
-      req.logger.error(
-        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-          req.method
-        } ${req.url} ${err.message}`
-      );
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      next(err);
     }
   }
 );
 
 // Mocking
-router.get("/mockingproducts", handlePolicies(["ADMIN"]), async (req, res) => {
-  const user = req.session.user;
+router.get(
+  "/mockingproducts",
+  handlePolicies(["ADMIN"]),
+  async (req, res, next) => {
+    const user = req.session.user;
 
-  try {
-    const products = await generateFakeProducts(100);
-    res
-      .status(200)
-      .render("mockingproducts", { products: products, user: user });
-  } catch (err) {
-    req.logger.error(
-      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-        req.method
-      } ${req.url} ${err.message}`
-    );
-    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    try {
+      const products = await generateFakeProducts(100);
+      res
+        .status(200)
+        .render("mockingproducts", { products: products, user: user });
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 // Carrito
 router.get(
   "/cart/:cid",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
-  async (req, res) => {
+  async (req, res, next) => {
     const cid = req.params.cid;
     const purchaser = req.session.user.email;
     try {
       const cart = await cartController.getById(cid);
-      if (cart instanceof CustomError) {
-        handleError(req, res, cart);
-      } else {
-        let total = 0;
-        cart.products.forEach((product) => {
-          total += product._id.price * product.quantity;
-        });
 
-        res
-          .status(200)
-          .render("cart", { cart: cart, total: total, purchaser: purchaser });
-      }
+      let total = 0;
+      cart.products.forEach((product) => {
+        total += product._id.price * product.quantity;
+      });
+
+      res
+        .status(200)
+        .render("cart", { cart: cart, total: total, purchaser: purchaser });
     } catch (err) {
-      req.logger.error(
-        `${new Date().toDateString()} ${new Date().toLocaleTimeString()}  ${
-          req.method
-        } ${req.url} ${err.message}`
-      );
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      next(err);
     }
   }
 );
@@ -155,23 +136,18 @@ router.get(
 router.get(
   "/chat",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const messages = { messages: await messagesController.getChat() };
       res.status(200).render("chat", messages);
     } catch (err) {
-      req.logger.error(
-        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-          req.method
-        } ${req.url} ${err.message}`
-      );
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      next(err);
     }
   }
 );
 
 // Login
-router.get("/login", handlePolicies(["PUBLIC"]), async (req, res) => {
+router.get("/login", handlePolicies(["PUBLIC"]), async (req, res, next) => {
   try {
     if (req.session.user) return res.redirect("/");
     res.render("login", {
@@ -179,17 +155,12 @@ router.get("/login", handlePolicies(["PUBLIC"]), async (req, res) => {
       error: req.query.error,
     });
   } catch (err) {
-    req.logger.error(
-      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-        req.method
-      } ${req.url} ${err.message}`
-    );
-    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    next(err);
   }
 });
 
 // Register
-router.get("/register", handlePolicies(["PUBLIC"]), async (req, res) => {
+router.get("/register", handlePolicies(["PUBLIC"]), async (req, res, next) => {
   try {
     if (req.session.user) return res.redirect("/");
     res.render("register", {
@@ -197,12 +168,7 @@ router.get("/register", handlePolicies(["PUBLIC"]), async (req, res) => {
       error: req.query.error,
     });
   } catch (err) {
-    req.logger.error(
-      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-        req.method
-      } ${req.url} ${err.message}`
-    );
-    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    next(err);
   }
 });
 
@@ -210,39 +176,29 @@ router.get("/register", handlePolicies(["PUBLIC"]), async (req, res) => {
 router.get(
   "/profile",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const user = new UsersDTO(req.session.user);
       if (user.role == "admin") user.isAdmin = true;
       res.render("profile", { user: user });
     } catch (err) {
-      req.logger.error(
-        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-          req.method
-        } ${req.url} ${err.message}`
-      );
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      next(err);
     }
   }
 );
 
 // Admin
-router.get("/admin", handlePolicies(["ADMIN"]), async (req, res) => {
+router.get("/admin", handlePolicies(["ADMIN"]), async (req, res, next) => {
   try {
     const user = new UsersDTO(req.session.user);
     res.render("profile", { user: user });
   } catch (err) {
-    req.logger.error(
-      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-        req.method
-      } ${req.url} ${err.message}`
-    );
-    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    next(err);
   }
 });
 
 // Logger Test
-router.get("/loggerTest", async (req, res) => {
+router.get("/loggerTest", async (req, res, next) => {
   try {
     req.logger.fatal(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
@@ -277,29 +233,19 @@ router.get("/loggerTest", async (req, res) => {
 
     res.status(200).send({ payload: "Logs enviados" });
   } catch (err) {
-    req.logger.error(
-      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-        req.method
-      } ${req.url} ${err.message}`
-    );
-    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    next(err);
   }
 });
 
 // Reestablecer contraseña
-router.get("/restore", handlePolicies(["PUBLIC"]), async (req, res) => {
+router.get("/restore", handlePolicies(["PUBLIC"]), async (req, res, next) => {
   try {
     res.render("restore", {
       showError: req.query.error ? true : false,
       error: req.query.error,
     });
   } catch (err) {
-    req.logger.error(
-      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-        req.method
-      } ${req.url} ${err.message}`
-    );
-    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    next(err);
   }
 });
 
@@ -308,19 +254,14 @@ router.get(
   "/restore/:token",
   handlePolicies(["PUBLIC"]),
   // passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const token = req.params.token;
       const decoded = jwt.verify(token, config.JWT_SECRET);
       const id = decoded.id;
       res.render("changePassword", { id: id });
     } catch (err) {
-      req.logger.error(
-        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-          req.method
-        } ${req.url} ${err.message}`
-      );
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      next(err);
     }
   }
 );

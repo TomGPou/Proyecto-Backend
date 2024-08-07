@@ -16,21 +16,18 @@ export default class UsersService {
     try {
       const users = await usersModel.find();
       return users;
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   // Obtener por id
   async getById(id) {
     try {
       const user = await usersModel.findById(id);
-      if (!user) return new CustomError(errorsDictionary.ID_NOT_FOUND);
+      if (!user) throw new CustomError(errorsDictionary.ID_NOT_FOUND);
       return user;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -40,14 +37,13 @@ export default class UsersService {
   async getOne(query) {
     try {
       const user = await usersModel.findOne(query);
-      if (!user) return new CustomError(errorsDictionary.USER_NOT_FOUND);
+      if (!user) throw new CustomError(errorsDictionary.USER_NOT_FOUND);
       delete user.password;
 
       return user;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -59,9 +55,8 @@ export default class UsersService {
       // validar email
       const existingUser = await usersModel.findOne({ email: user.email });
       if (existingUser)
-        return new CustomError(errorsDictionary.EMAIL_ALREADY_EXISTS);
+        throw new CustomError(errorsDictionary.EMAIL_ALREADY_EXISTS);
       // crear hash de contraseña
-      console.log(user);
       user.password = createHash(user.password);
 
       // crear carrito asignarlo al usuario
@@ -75,8 +70,7 @@ export default class UsersService {
       return newUser;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -91,8 +85,7 @@ export default class UsersService {
       return updatedUser;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -101,12 +94,11 @@ export default class UsersService {
   async delete(uid) {
     try {
       const deletedUser = await usersModel.findByIdAndDelete(uid);
-      if (!deletedUser) return new CustomError(errorsDictionary.USER_NOT_FOUND);
+      if (!deletedUser) throw new CustomError(errorsDictionary.USER_NOT_FOUND);
       return deletedUser;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -118,14 +110,13 @@ export default class UsersService {
       const user = await usersModel.findOne({ email }).lean();
 
       if (!user || !isValidPassword(enteredPassword, user.password))
-        return new CustomError(errorsDictionary.INVALID_PARAMETER);
+        throw new CustomError(errorsDictionary.INVALID_PARAMETER);
 
       delete user.password;
       return user;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -135,12 +126,11 @@ export default class UsersService {
   async getByCart(cid) {
     try {
       const user = await usersModel.findOne({ cart: cid });
-      if (!user) return new CustomError(errorsDictionary.USER_NOT_FOUND);
+      if (!user) throw new CustomError(errorsDictionary.USER_NOT_FOUND);
       return user;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -150,18 +140,17 @@ export default class UsersService {
   async chageRole(uid) {
     try {
       const user = await usersModel.findById(uid);
-      if (!user) return new CustomError(errorsDictionary.USER_NOT_FOUND);
+      if (!user) throw new CustomError(errorsDictionary.USER_NOT_FOUND);
       if (user.role === "user") user.role = "premium";
       else if (user.role === "premium") user.role = "user";
-      else return new CustomError(errorsDictionary.INVALID_PARAMETER);
+      else throw new CustomError(errorsDictionary.INVALID_PARAMETER);
       const updatedUser = await usersModel.findByIdAndUpdate(uid, user, {
         new: true,
       });
       return updatedUser;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -172,7 +161,7 @@ export default class UsersService {
     try {
       // validar email
       const user = await usersModel.findOne({ email });
-      if (!user) return new CustomError(errorsDictionary.USER_NOT_FOUND);
+      if (!user) throw new CustomError(errorsDictionary.USER_NOT_FOUND);
       // Generar JWT
       const payload = {
         id: user._id,
@@ -184,8 +173,7 @@ export default class UsersService {
       return link;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -195,10 +183,10 @@ export default class UsersService {
   async changePassword(id, newPassword) {
     try {
       const user = await usersModel.findById(id);
-      if (!user) return new CustomError(errorsDictionary.USER_NOT_FOUND);
+      if (!user) throw new CustomError(errorsDictionary.USER_NOT_FOUND);
       // verificar que las contraseñas no sean iguales
       if (isValidPassword(newPassword, user.password))
-        return new CustomError(errorsDictionary.PASSWORD_ALREADY_EXISTS);
+        throw new CustomError(errorsDictionary.PASSWORD_ALREADY_EXISTS);
       user.password = createHash(newPassword);
       const updatedUser = await usersModel.findByIdAndUpdate(id, user, {
         new: true,
@@ -206,8 +194,7 @@ export default class UsersService {
       return updatedUser;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }

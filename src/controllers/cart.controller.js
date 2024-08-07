@@ -21,7 +21,7 @@ export default class CartController {
     try {
       return await cartService.getAll();
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -30,7 +30,7 @@ export default class CartController {
     try {
       return await cartService.getById(cid);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -39,7 +39,7 @@ export default class CartController {
     try {
       return await cartService.addProduct(cid, pid);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -48,7 +48,7 @@ export default class CartController {
     try {
       return await cartService.updateQty(cid, pid, qty);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -57,7 +57,7 @@ export default class CartController {
     try {
       return await cartService.deleteProduct(cid, pid);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -66,7 +66,7 @@ export default class CartController {
     try {
       return await cartService.update(cid, cart);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -75,7 +75,7 @@ export default class CartController {
     try {
       return await cartService.empty(cid);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -84,7 +84,7 @@ export default class CartController {
     try {
       return await cartService.purchase(cid, purchaser);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 }

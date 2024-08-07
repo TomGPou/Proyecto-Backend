@@ -16,12 +16,11 @@ export default class TicketService {
   async getById(id) {
     try {
       const ticket = await ticketModel.findById(id);
-      if (!ticket) return new CustomError(errorsDictionary.ID_NOT_FOUND);
+      if (!ticket) throw new CustomError(errorsDictionary.ID_NOT_FOUND);
       return ticket;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -30,12 +29,11 @@ export default class TicketService {
   async getByCode(code) {
     try {
       const ticket = await ticketModel.findOne({ code: code });
-      if (!ticket) return new CustomError(errorsDictionary.NOT_FOUND);
+      if (!ticket) throw new CustomError(errorsDictionary.NOT_FOUND);
       return ticket;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -45,7 +43,7 @@ export default class TicketService {
     try {
       // Validar la carga de datos
       if (!newTicket.code || !newTicket.amount || !newTicket.purchaser) {
-        return new CustomError(errorsDictionary.FEW_PARAMETERS);
+        throw new CustomError(errorsDictionary.FEW_PARAMETERS);
       }
       // Validar ticket code
       let maxTries = 10;
@@ -56,7 +54,7 @@ export default class TicketService {
         tries++;
       }
       if (tries === maxTries) {
-        return new CustomError(errorsDictionary.RECORD_CREATION_ERROR);
+        throw new CustomError(errorsDictionary.RECORD_CREATION_ERROR);
       }
       // Crear
       const ticket = await ticketModel.create(newTicket);
@@ -64,8 +62,7 @@ export default class TicketService {
       return ticket;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -84,8 +81,7 @@ export default class TicketService {
       return ticket;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -108,8 +104,7 @@ export default class TicketService {
       return ticket;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }

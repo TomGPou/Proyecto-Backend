@@ -13,7 +13,7 @@ export default class ProductController {
     try {
       return await productService.get(limit, page, category, inStock, sort);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -34,7 +34,7 @@ export default class ProductController {
 
       return await productService.add(newProduct, owner);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -43,7 +43,7 @@ export default class ProductController {
     try {
       return await productService.getById(pid);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -55,7 +55,7 @@ export default class ProductController {
       }
       return await productService.update(pid, data);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 
@@ -64,7 +64,7 @@ export default class ProductController {
     try {
       return await productService.deleteProduct(pid, user);
     } catch (error) {
-      return { error: error.message };
+      throw error;
     }
   };
 }

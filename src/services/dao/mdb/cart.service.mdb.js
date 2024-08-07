@@ -19,13 +19,13 @@ export default class CartService {
   // Validar ID carrito
   async validateCart(cid) {
     const cart = await cartsModel.findById(cid);
-    if (!cart) return new CustomError(errorsDictionary.ID_NOT_FOUND);
+    if (!cart) throw new CustomError(errorsDictionary.ID_NOT_FOUND);
     return cart;
   }
   // Validar ID de producto
   async validateProduct(pid) {
     const product = await productService.getById(pid);
-    if (!product) return new CustomError(errorsDictionary.ID_NOT_FOUND);
+    if (!product) throw new CustomError(errorsDictionary.ID_NOT_FOUND);
     return product;
   }
 
@@ -44,13 +44,12 @@ export default class CartService {
     try {
       const cart = await cartsModel.findOne({ _id: cid }).lean();
       if (!cart) {
-        return new CustomError(errorsDictionary.ID_NOT_FOUND);
+        throw new CustomError(errorsDictionary.ID_NOT_FOUND);
       }
       return cart;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -64,7 +63,7 @@ export default class CartService {
       const product = await this.validateProduct(pid);
       // Validar owner del producto
       if (user !== "user" && user !== product.owner) {
-        return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+        throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
       }
       // Buscar producto en array
       const productId = new mongoose.Types.ObjectId(pid);
@@ -81,8 +80,7 @@ export default class CartService {
       return await this.update(cid, cart.products);
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -95,7 +93,7 @@ export default class CartService {
       const product = await this.validateProduct(pid);
       // Validar owner del producto
       if (user !== "user" && user !== product.owner) {
-        return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+        throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
       }
       // Buscar producto en array
       const productId = new mongoose.Types.ObjectId(pid);
@@ -112,8 +110,7 @@ export default class CartService {
       return await this.update(cid, cart.products);
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -136,8 +133,7 @@ export default class CartService {
       return await this.update(cid, cart.products);
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -154,8 +150,7 @@ export default class CartService {
       });
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -172,8 +167,7 @@ export default class CartService {
       });
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -208,8 +202,7 @@ export default class CartService {
       return await this.getById(cid);
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }

@@ -2,15 +2,9 @@
 import { Router } from "express";
 import passport from "passport";
 import config from "../config.js";
-import {
-  verifyReqBody,
-  handlePolicies,
-  handleError,
-} from "../services/utils/utils.js";
+import { verifyReqBody, handlePolicies } from "../services/utils/utils.js";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
 import UserController, { UsersDTO } from "../controllers/users.controller.js";
-import errorsDictionary from "../services/errors/errrosDictionary.js";
-import CustomError from "../services/errors/CustomErrors.class.js";
 import { restoreMail } from "../services/utils/nodemailer.js";
 
 //* INIT
@@ -20,7 +14,7 @@ initAuthStrategies();
 
 //* ENDPOINTS (/api/auth)
 // Logout
-router.get("/logout", async (req, res) => {
+router.get("/logout", async (req, res, next) => {
   try {
     // destruir session
     req.session.destroy((err) => {
@@ -36,12 +30,7 @@ router.get("/logout", async (req, res) => {
       res.redirect("/login");
     });
   } catch (err) {
-    req.logger.error(
-      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-        req.method
-      } ${req.url} ${err.message}`
-    );
-    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+    next(err);
   }
 });
 
@@ -59,7 +48,7 @@ router.get(
       "Error al identificar con Github"
     )}`,
   }),
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       req.user.password = null;
       req.session.user = req.user;
@@ -76,12 +65,7 @@ router.get(
         res.redirect("/");
       });
     } catch (err) {
-      req.logger.error(
-        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-          req.method
-        } ${req.url} ${err.message}`
-      );
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      next(err);
     }
   }
 );
@@ -90,17 +74,12 @@ router.get(
 router.get(
   "/current",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const user = new UsersDTO(req.session.user);
       res.status(200).send({ payload: user });
     } catch (err) {
-      req.logger.error(
-        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-          req.method
-        } ${req.url} ${err.message}`
-      );
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      next(err);
     }
   }
 );
@@ -114,7 +93,7 @@ router.post(
       "Datos de registro no válidos"
     )}`,
   }),
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       // Redirigir al usuario a /login
       req.logger.info(
@@ -125,12 +104,7 @@ router.post(
       res.status(200);
       res.redirect("/login");
     } catch (err) {
-      req.logger.error(
-        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-          req.method
-        } ${req.url} ${err.message}`
-      );
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      next(err);
     }
   }
 );
@@ -142,7 +116,7 @@ router.post(
   passport.authenticate("login", {
     failureRedirect: `/login?error=${encodeURI("Datos de acceso no válidos")}`,
   }),
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       // crear session y guardarla
       req.session.user = req.user;
@@ -163,42 +137,28 @@ router.post(
         res.redirect("/");
       });
     } catch (err) {
-      req.logger.error(
-        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-          req.method
-        } ${req.url} ${err.message}`
-      );
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      next(err);
     }
   }
 );
 
 // Link de reestablecimiento de contraseña
-router.post("/restore", verifyReqBody(["email"]), async (req, res) => {
+router.post("/restore", verifyReqBody(["email"]), async (req, res, next) => {
   try {
     const link = await usersController.restoreLink(req.body.email);
-    if (link instanceof CustomError) {
-      return handleError(req, res, link);
-    } else {
-      await restoreMail(link, req.body.email);
-      req.logger.info(
-        `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-          req.method
-        } ${req.url} Link enviado`
-      );
-
-      res.status(200);
-      res.redirect(
-        `/login?error=${encodeURI("Se ha enviado un email a su correo")}`
-      );
-    }
-  } catch (err) {
-    req.logger.error(
+    await restoreMail(link, req.body.email);
+    req.logger.info(
       `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
         req.method
-      } ${req.url} ${err.message}`
+      } ${req.url} Link enviado`
     );
-    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+
+    res.status(200);
+    res.redirect(
+      `/login?error=${encodeURI("Se ha enviado un email a su correo")}`
+    );
+  } catch (err) {
+    next(err);
   }
 });
 
@@ -206,51 +166,38 @@ router.post("/restore", verifyReqBody(["email"]), async (req, res) => {
 router.post(
   "/changepassword/:id",
   handlePolicies(["PUBLIC"]),
-  async (req, res) => {
+  async (req, res, next) => {
     const id = req.params.id;
     const newPassword = req.body.password;
     try {
       const updatedUser = await usersController.changePassword(id, newPassword);
-      if (updatedUser instanceof CustomError) {
-        handleError(req, res, updatedUser);
-      } else {
-        req.logger.info(
-          `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-            req.method
-          } ${req.url} Contraseña cambiada`
-        );
-        res.status(200);
-        res.redirect(`/login?error=${encodeURI("Contraseña actualizada")}`);
-      }
-    } catch (err) {
-      req.logger.error(
+      req.logger.info(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
           req.method
-        } ${req.url} ${err.message}`
+        } ${req.url} Contraseña cambiada`
       );
-      res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
+      res.status(200);
+      res.redirect(`/login?error=${encodeURI("Contraseña actualizada")}`);
+    } catch (err) {
+      next(err);
     }
   }
 );
 
 // Cambio a rol premium
-router.put("/premium/:uid", handlePolicies(["ADMIN"]), async (req, res) => {
-  const uid = req.params.uid;
-  try {
-    const user = await usersController.changeRole(uid);
-    if (user instanceof CustomError) {
-      return handleError(req, res, user);
-    } else {
+router.put(
+  "/premium/:uid",
+  handlePolicies(["ADMIN"]),
+  async (req, res, next) => {
+    const uid = req.params.uid;
+    try {
+      const user = await usersController.changeRole(uid);
+
       res.status(200).send({ payload: user });
+    } catch (err) {
+      next(err);
     }
-  } catch (err) {
-    req.logger.error(
-      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-        req.method
-      } ${req.url} ${err.message}`
-    );
-    res.status(500).send({ error: errorsDictionary.UNHANDLED_ERROR.message });
   }
-});
+);
 
 export default router;
