@@ -77,13 +77,13 @@ router.post(
 
     try {
       const product = await productController.add(newProduct);
-      res.status(200).send({ payload: product });
+      res.status(200).send({ message: "producto agregado", payload: product });
 
-      // const products = await productController.get();
-      // io.emit("products", {
-      //   message: "producto agregado",
-      //   products: products,
-      // });
+      const products = await productController.get();
+      io.emit("products", {
+        message: "producto agregado",
+        products: products,
+      });
     } catch (err) {
       next(err);
     }
@@ -106,7 +106,9 @@ router.put(
         message: "producto actualizado",
         products: products,
       });
-      res.status(200).send({ payload: product });
+      res
+        .status(200)
+        .send({ message: "producto actualizado", payload: product });
     } catch (err) {
       next(err);
     }
@@ -129,7 +131,7 @@ router.delete(
         message: "producto eliminado",
         products: products,
       });
-      res.status(200).send({ payload: result });
+      res.status(200).send({ message: "producto eliminado", payload: result });
     } catch (err) {
       next(err);
     }

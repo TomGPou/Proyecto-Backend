@@ -16,7 +16,12 @@ export default class UsersService {
     try {
       const users = await usersModel.find();
       return users;
-    } catch (error) {}
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
+    }
   }
 
   // Obtener por id
@@ -137,7 +142,7 @@ export default class UsersService {
   }
 
   // Actualizar rol
-  async chageRole(uid) {
+  async changeRole(uid) {
     try {
       const user = await usersModel.findById(uid);
       if (!user) throw new CustomError(errorsDictionary.USER_NOT_FOUND);

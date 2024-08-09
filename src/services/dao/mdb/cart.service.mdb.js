@@ -62,7 +62,7 @@ export default class CartService {
       const cart = await this.validateCart(cid);
       const product = await this.validateProduct(pid);
       // Validar owner del producto
-      if (user !== "user" && user !== product.owner) {
+      if (user !== "user" && user === product.owner) {
         throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
       }
       // Buscar producto en array
@@ -92,7 +92,7 @@ export default class CartService {
       const cart = await this.validateCart(cid);
       const product = await this.validateProduct(pid);
       // Validar owner del producto
-      if (user !== "user" && user !== product.owner) {
+      if (user !== "user" && user === product.owner) {
         throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
       }
       // Buscar producto en array
@@ -117,10 +117,14 @@ export default class CartService {
   }
 
   //* BORRAR PRODUCTO
-  async deleteProduct(cid, pid) {
+  async deleteProduct(cid, pid, user) {
     try {
       const cart = await this.validateCart(cid);
-      await this.validateProduct(pid);
+      const product = await this.validateProduct(pid);
+      // Validar owner del producto
+      if (user !== "admin" && user !== product.owner) {
+        throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+      }
 
       // Buscar producto en array
       const productId = new mongoose.Types.ObjectId(pid);

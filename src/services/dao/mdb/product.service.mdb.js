@@ -5,7 +5,19 @@ import errorsDictionary from "../../errors/errrosDictionary.js";
 export default class ProductService {
   constructor() {}
   // OBTENER TODOS LOS PRODUCTOS
-  async get(limit, page, category, inStock, sort) {
+  async get() {
+    try {
+      const products = await productsModel.find();
+      return products;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
+    }
+  }
+
+  async getPaginate(limit, page, category, inStock, sort) {
     try {
       // opciones de paginado y ordenamiento
       const options = {

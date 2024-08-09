@@ -13,8 +13,6 @@ import CartController from "../controllers/cart.controller.js";
 import MessagesController from "../controllers/messages.controller.js";
 import { UsersDTO } from "../controllers/users.controller.js";
 import { generateFakeProducts } from "../services/utils/mocking.js";
-import CustomError from "../services/errors/CustomErrors.class.js";
-import errorsDictionary from "../services/errors/errrosDictionary.js";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
 import config from "../config.js";
 
@@ -46,7 +44,7 @@ router.get(
     const user = req.session.user;
 
     try {
-      const products = await productController.get(
+      const products = await productController.getPaginate(
         limit,
         page,
         category,

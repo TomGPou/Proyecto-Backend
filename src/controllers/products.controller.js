@@ -9,9 +9,23 @@ export default class ProductController {
   constructor() {}
 
   //* OBTENER PRODUCTOS
-  get = async (limit, page, category, inStock, sort) => {
+  get = async () => {
     try {
-      return await productService.get(limit, page, category, inStock, sort);
+      return await productService.get();
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  getPaginate = async (limit, page, category, inStock, sort) => {
+    try {
+      return await productService.getPaginate(
+        limit,
+        page,
+        category,
+        inStock,
+        sort
+      );
     } catch (error) {
       throw error;
     }
@@ -60,10 +74,12 @@ export default class ProductController {
   };
 
   //* BORRAR PRODUCTO
-  deleteProduct = async (pid) => {
+  deleteProduct = async (pid, user) => {
     try {
       return await productService.deleteProduct(pid, user);
     } catch (error) {
+      console.log(error);
+
       throw error;
     }
   };
