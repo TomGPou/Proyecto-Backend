@@ -1,4 +1,7 @@
 import { readFile, writeFile } from "../../utils/utils.js";
+import CustomError from "../../errors/CustomErrors.class.js";
+import errorsDictionary from "../../errors/errrosDictionary.js";
+import { purchaseMail } from "../../utils/nodemailer.js";
 
 export default class TicketService {
   constructor() {
@@ -18,7 +21,7 @@ export default class TicketService {
       return ticket || null;
     } catch (err) {
       console.log(err.message);
-      return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
     }
   }
 
@@ -30,7 +33,7 @@ export default class TicketService {
       return ticket || null;
     } catch (err) {
       console.log(err.message);
-      return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
     }
   }
 
@@ -38,7 +41,7 @@ export default class TicketService {
     try {
       // Validar la carga de datos
       if (!newTicket.code || !newTicket.amount || !newTicket.purchaser) {
-        return new CustomError(errorsDictionary.FEW_PARAMETERS);
+        throw new CustomError(errorsDictionary.FEW_PARAMETERS);
       }
       // Validar ticket code
       let maxTries = 10;
@@ -49,16 +52,17 @@ export default class TicketService {
         tries++;
       }
       if (tries === maxTries) {
-        return new CustomError(errorsDictionary.RECORD_CREATION_ERROR);
+        throw new CustomError(errorsDictionary.RECORD_CREATION_ERROR);
       }
       // Crear
       const ticketsList = await this.getAll();
       const tickets = [...ticketsList, newTicket];
       await writeFile(this.path, tickets);
+      await purchaseMail(newTicket);
       return newTicket;
     } catch (err) {
       console.log(err.message);
-      return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
     }
   }
 
@@ -66,7 +70,7 @@ export default class TicketService {
     try {
       const ticket = await this.getById(id);
       if (!ticket) {
-        return new CustomError(errorsDictionary.ID_NOT_FOUND);
+        throw new CustomError(errorsDictionary.ID_NOT_FOUND);
       }
 
       const tickets = await this.getAll();
@@ -79,7 +83,7 @@ export default class TicketService {
       return tickets[i];
     } catch (err) {
       console.log(err.message);
-      return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
     }
     // validar id
   }
@@ -106,7 +110,7 @@ export default class TicketService {
       // validar id
       const ticket = await this.getById(id);
       if (!ticket) {
-        return new CustomError(errorsDictionary.ID_NOT_FOUND);
+        throw new CustomError(errorsDictionary.ID_NOT_FOUND);
       }
 
       const tickets = await this.getAll();
@@ -119,7 +123,7 @@ export default class TicketService {
       return console.log(`Ticket de ID: ${id} eliminado`);
     } catch (err) {
       console.log(err.message);
-      return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
     }
   }
 }

@@ -1,31 +1,73 @@
-<h1 align="center">Proyecto de Backend - Ecommerce</h1>
+# Backend Project - Ecommerce
 
-###
+## Introduction
 
-<p align="center">Proyecto de backend basado en un ecommerce para curso de Coderhouse</p>
+This project is a backend system for an e-commerce platform, developed as part of the Backend course at Coderhouse. The system is built with Node.js and includes various features to manage an online store.
 
-###
+## Table of Contents
 
-<h2 align="center">Se utilizan las siguientes tecnologías y herramientas:</h2>
+- [Introduction](#introduction)
+- [Technologies](#technologies)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+- [Contributing](#contributing)
+- [License](#license)
 
-###
+## Technologies
 
-<div align="center">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-plain.svg" height="40" alt="javascript logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-plain-wordmark.svg" height="40" alt="nodejs logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg" height="40" alt="express logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/handlebars/handlebars-original-wordmark.svg" height="40" alt="handlebars logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/socketio/socketio-original.svg" height="40" alt="socketio logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-plain-wordmark.svg" height="40" alt="mongodb logo"  />
-</div>
+The following technologies and tools are used in this project:
 
-###
+- **JavaScript**: Programming language used for backend development.
+- **Node.js**: JavaScript runtime for building the backend.
+- **Express**: Node.js framework for building web applications and APIs.
+- **Handlebars**: Templating engine for rendering dynamic views.
+- **Socket.io**: Library for real-time communication between client and server.
+- **MongoDB**: NoSQL database used to store application data.
+- **Mongoose**: Node.js library for modeling and managing MongoDB data.
+- **Bcrypt**: Tool for password hashing.
+- **JWT (JSON Web Tokens)**: Used for authentication and authorization.
+- **Dotenv**: Loads environment variables from a `.env` file.
 
-<p align="center">Inicio del servidor</p>
-<p align="center">Modo development: `npm run dev`</p>
-<p align="center">Modo production: `npm run prod`</p>
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/TomGPou/Proyecto-Backend.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd Proyecto-Backend
+   ```
+3. Install the dependencies:
+   ```bash
+   npm install
+   ```
+
+## Usage
+
+### Starting the Server
+
+- **Development Mode:**
+  ```bash
+  npm run dev
+  ```
+- **Production Mode:**
+  ```bash
+  npm run prod
+  ```
+
+## Features
+
+- RESTful API for managing products, users, and orders.
+- Real-time communication with Socket.io.
+- Dynamic views rendered with Handlebars.
+- Integration with MongoDB database.
+
+## Contributing
+
+Contributions are welcome! Please fork this repository and submit a pull request with your changes.
+
+## License
+
+This project is licensed under the MIT License.

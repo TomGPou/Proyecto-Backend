@@ -12,14 +12,15 @@ import cors from "cors";
 // IMPORTS FILES
 import config from "./config.js";
 import errorsHandler from "./services/errors/errors.handler.js";
-import addLooger from "./services/utils/logger.js";
+import addLogger from "./services/utils/logger.js";
+// ROUTES
 import productsRoutes from "./routes/products.routes.js";
+import MongoSingleton from "./services/mongo.singleton.js";
 import cartsRoutes from "./routes/carts.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
 import messagesRoutes from "./routes/messages.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import ticketRoutes from "./routes/ticket.routes.js";
-import MongoSingleton from "./services/mongo.singleton.js";
 
 //* INIT AND CONFIG
 const app = express();
@@ -43,8 +44,8 @@ app.use(passport.session());
 app.set("views", `${config.DIRNAME}/views`);
 app.set("view engine", "handlebars");
 
-//* LOGGING
-app.use(addLooger);
+//* LOGGER
+app.use(addLogger);
 
 //* ROUTES
 app.use("/api/products", productsRoutes);
@@ -61,7 +62,6 @@ app.use(errorsHandler);
 //* SERVER
 const httpServer = app.listen(config.PORT, async () => {
   MongoSingleton.getInstance();
-
   console.log(`Servidor activo en el puerto ${config.PORT} conectado a DB`);
 });
 

@@ -1,4 +1,6 @@
 import { readFile, writeFile } from "../../utils/utils.js";
+import CustomError from "../../errors/CustomErrors.class.js";
+import errorsDictionary from "../../errors/errrosDictionary.js";
 
 export default class ProductService {
   constructor() {
@@ -9,6 +11,17 @@ export default class ProductService {
     const products = await readFile(this.path);
     return products;
   }
+
+  // async getPaginate(limit, page, category, inStock, sort) {
+  //   try {
+
+  //   } catch (err) {
+  //     if (!(err instanceof CustomError)) {
+  //       throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
+  //     }
+  //     throw err;
+  //   }
+  // }
 
   // AGREGAR PRODUCTO
   async add(newProduct) {
@@ -24,7 +37,7 @@ export default class ProductService {
         !newProduct.price ||
         !newProduct.stock
       )
-        return new CustomError(errorsDictionary.FEW_PARAMETERS);
+        throw new CustomError(errorsDictionary.FEW_PARAMETERS);
 
       // Validar productos duplicados
       const isDuplicated = products.some((p) => p.code === newProduct.code);
@@ -41,7 +54,7 @@ export default class ProductService {
     } catch (err) {
       if (!(err instanceof CustomError)) {
         console.log(err.name);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -57,7 +70,7 @@ export default class ProductService {
     } catch (err) {
       if (!(err instanceof CustomError)) {
         console.log(err.name);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -71,11 +84,11 @@ export default class ProductService {
       const i = products.findIndex((item) => item.pid === pid);
       // verificar que exista el ID
       if (i < 0) {
-        return new CustomError(errorsDictionary.ID_NOT_FOUND);
+        throw new CustomError(errorsDictionary.ID_NOT_FOUND);
       } else {
         // verificar autorizacion para editar
         if (user !== "admin" && products[i].owner !== user) {
-          return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+          throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
         }
         // verificar que no modifique el ID owner o code
         if (data.owner) delete data.owner;
@@ -91,7 +104,7 @@ export default class ProductService {
     } catch (err) {
       if (!(err instanceof CustomError)) {
         console.log(err.name);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -105,11 +118,11 @@ export default class ProductService {
       const i = products.findIndex((item) => item.pid === pid);
       // verificar que exista el ID
       if (i < 0) {
-        return new CustomError(errorsDictionary.ID_NOT_FOUND);
+        throw new CustomError(errorsDictionary.ID_NOT_FOUND);
       } else {
         // verificar autorizacion para editar
         if (user !== "admin" && products[i].owner !== user) {
-          return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+          throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
         }
         // Quitar producto del array y actualizar DB
         products.splice(i, 1);
@@ -120,7 +133,7 @@ export default class ProductService {
     } catch (err) {
       if (!(err instanceof CustomError)) {
         console.log(err.name);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
@@ -134,7 +147,7 @@ export default class ProductService {
     } catch (err) {
       if (!(err instanceof CustomError)) {
         console.log(err.name);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }

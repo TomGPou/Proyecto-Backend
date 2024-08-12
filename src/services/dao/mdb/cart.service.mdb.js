@@ -193,7 +193,6 @@ export default class CartService {
           await this.deleteProduct(cid, product._id);
         }
       }
-
       // generar ticket
       const ticket = {
         purchase_datetime: Date.now(),
@@ -202,7 +201,6 @@ export default class CartService {
       };
       ticket.code = generateCode();
       await ticketService.create(ticket);
-
       return await this.getById(cid);
     } catch (err) {
       if (!(err instanceof CustomError)) {

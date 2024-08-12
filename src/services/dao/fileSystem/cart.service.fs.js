@@ -1,11 +1,13 @@
-import { readFile, writeFile } from "../../utils/utils.js";
+import { generateCode, readFile, writeFile } from "../../utils/utils.js";
 import ProductService from "./product.service.fs.js";
 import TicketService from "./ticket.service.fs.js";
+import CustomError from "../../errors/CustomErrors.class.js";
+import errorsDictionary from "../../errors/errrosDictionary.js";
 
 const productService = new ProductService();
 const ticketService = new TicketService();
 
-// MANAGER DE CARRITO
+//* MANAGER DE CARRITO
 
 export default class CartService {
   constructor() {
@@ -31,52 +33,48 @@ export default class CartService {
     return product;
   }
 
-  // CREAR CARRITO
+  //* CREAR CARRITO
   async create() {
     const carts = await readFile(this.path);
     const newCart = {
       cid: carts.length + 1,
       products: [],
     };
-
     carts.push(newCart);
     await writeFile(this.path, carts);
-
     return newCart;
   }
 
-  // BUSCAR TODOS
+  //* BUSCAR TODOS
   async getAll() {
     const carts = await readFile(this.path);
     return carts;
   }
 
-  // BUSCAR POR ID
+  //* BUSCAR POR ID
   async getById(cid) {
     try {
       const cart = this.validateCart(cid);
-      if (!cart) return new CustomError(errorsDictionary.ID_NOT_FOUND);
+      if (!cart) throw new CustomError(errorsDictionary.ID_NOT_FOUND);
       return cart;
     } catch (err) {
       if (!(err instanceof CustomError)) {
         console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
   }
 
-  // AGREGAR PRODUCTO
+  //* AGREGAR PRODUCTO
   async addProduct(cid, pid, user) {
     try {
-      const carts = await readFile(this.path);
       const cart = await this.validateCart(cid);
       const product = await this.validateProduct(pid);
       // Validar owner del producto
-      if (user !== "user" && user !== product.owner) {
-        return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+      if (user !== "user" && user === product.owner) {
+        throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
       }
-
       // Buscar producto en array
       const productIndex = cart.products.findIndex((item) => item.pid === pid);
       // Agregarlo o sumar uno
@@ -90,21 +88,20 @@ export default class CartService {
     } catch (err) {
       if (!(err instanceof CustomError)) {
         console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
   }
 
-  //  ACTUALIZAR CANTIDAD DE PRODUCTO
+  //* ACTUALIZAR CANTIDAD DE PRODUCTO
   async updateQty(cid, pid, qty, user) {
     try {
-      const carts = await readFile(this.path);
       const cart = await this.validateCart(cid);
       const product = await this.validateProduct(pid);
       // Validar owner del producto
-      if (user !== "user" && user !== product.owner) {
-        return new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+      if (user !== "user" && user === product.owner) {
+        throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
       }
       // Buscar producto en array
       const productIndex = cart.products.findIndex((item) => item.pid === pid);
@@ -119,59 +116,54 @@ export default class CartService {
     } catch (err) {
       if (!(err instanceof CustomError)) {
         console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
   }
 
-  // BORRAR PRODUCTO
+  //* BORRAR PRODUCTO
   async deleteProduct(cid, pid) {
     try {
-      const carts = await readFile(this.path);
       const cart = await this.validateCart(cid);
       await this.validateProduct(pid);
-
       // Buscar producto en array y eliminar
       const productIndex = cart.products.findIndex((item) => item.pid === pid);
       cart.products.splice(productIndex, 1);
-
       // actualizar
       return await this.update(cid, cart.products);
     } catch (err) {
       if (!(err instanceof CustomError)) {
         console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
   }
 
-  // ACTUALIZAR CARRITO
+  //* ACTUALIZAR CARRITO
   async update(cid, products) {
     try {
       const carts = await readFile(this.path);
       const cart = await this.validateCart(cid);
-
+      // Buscar producto en array
       const cartIndex = carts.findIndex((c) => c.cid === cid);
       carts[cartIndex].products = products;
-
+      // actualizar
       await writeFile(this.path, carts);
       return cart;
     } catch (err) {
       if (!(err instanceof CustomError)) {
         console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
   }
 
-  // VACIAR CARRITO
+  //* VACIAR CARRITO
   async empty(cid) {
     try {
-      this.carts = await readFile(this.path);
-
       const cart = await this.validateCart(cid);
       cart.products = [];
 
@@ -179,19 +171,18 @@ export default class CartService {
     } catch (err) {
       if (!(err instanceof CustomError)) {
         console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
   }
 
-  // COMPRAR CARRITO
+  //* COMPRAR CARRITO
   async purchase(cid, purchaser) {
     try {
-      const carts = await readFile(this.path);
+      // const carts = await readFile(this.path);
       const cart = await this.validateCart(cid);
       let amount = 0;
-
       // verificar stock
       for (const product of cart.products) {
         const stock = await productService.getStock(product.pid);
@@ -203,7 +194,6 @@ export default class CartService {
           await this.deleteProduct(cid, product.pid);
         }
       }
-
       // generar ticket
       const ticket = {
         purchase_datetime: Date.now(),
@@ -211,13 +201,12 @@ export default class CartService {
         purchaser: purchaser,
       };
       ticket.code = generateCode();
-      await ticketsService.create(ticket);
-
+      await ticketService.create(ticket);
       return await this.getById(cid);
     } catch {
       if (!(err instanceof CustomError)) {
         console.log(err.message);
-        return new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
       throw err;
     }
