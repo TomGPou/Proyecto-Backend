@@ -14,7 +14,7 @@ const productController = new ProductController();
 //* ENDPOINTS (/api/products)
 router.param("pid", verifyMongoId("pid"));
 
-// Obtener todos los productos con parginacion y ordenamiento
+// Obtener todos los productos con paginación y ordenamiento
 router.get(
   "/",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
@@ -77,7 +77,7 @@ router.post(
 
     try {
       const product = await productController.add(newProduct);
-      res.status(200).send({ message: "producto agregado", payload: product });
+      res.status(201).send({ message: "producto agregado", payload: product });
 
       const products = await productController.get();
       io.emit("products", {

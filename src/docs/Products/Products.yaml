@@ -1,0 +1,200 @@
+paths:
+  /api/products:
+    get:
+      tags:
+        - Product
+      sumary: Obtiene todos los productos
+      descripction: Retorna lista de productos con paginación y ordenamiento
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          descripction: Límite de productos por página (10 por defecto).
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Número de página.
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Categoría de los productos.
+        - in: query
+          name: inStock
+          schema:
+            type: boolean
+          description: Filtrar por productos en stock.
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [asc, desc]
+          description: Orden de los productos (ascendente o descendente).
+      responses:
+        "200":
+          description: Lista de productos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Product"
+        "500":
+          description: Error del servidor.
+    post:
+      tags:
+        - Product
+      summary: Agrega un nuevo producto.
+      description: Crea un nuevo producto en la base de datos.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "201":
+          description: Producto creado exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payload:
+                    $ref: "#/components/schemas/Product"
+        "400":
+          description: Datos del producto inválidos.
+        "500":
+          description: Error del servidor.
+  /api/products/{pid}:
+    get:
+      tags:
+        - Product
+      summary: Obtiene un producto por ID.
+      description: Retorna un producto específico por su ID.
+      parameters:
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: ID del producto.
+      responses:
+        "200":
+          description: Producto encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payload:
+                    $ref: "#/components/schemas/Product"
+        "404":
+          description: Producto no encontrado.
+        "500":
+          description: Error del servidor.
+    put:
+      tags:
+        - Product
+      summary: Actualiza un producto.
+      description: Actualiza un producto existente.
+      parameters:
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: ID del producto.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          description: Producto actualizado exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payload:
+                    $ref: "#/components/schemas/Product"
+        "400":
+          description: Datos del producto inválidos.
+        "404":
+          description: Producto no encontrado.
+        "500":
+          description: Error del servidor.
+    delete:
+      tags:
+        - Product
+      summary: Elimina un producto.
+      description: Elimina un producto por su ID.
+      parameters:
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: ID del producto.
+      responses:
+        "200":
+          description: Producto eliminado exitosamente.
+        "404":
+          description: Producto no encontrado.
+        "500":
+          description: Error del servidor.
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID único generado por MongoDB
+        title:
+          type: string
+          description: Nombre del producto.
+        description:
+          type: string
+          description: Descripción del producto.
+        category:
+          type: string
+          description: Categoría del producto.
+        code:
+          type: string
+          description: Código del producto.
+        price:
+          type: number
+          description: Precio del producto.
+        thumbnail:
+          type: string
+          description: URL de la imagen del producto.
+        stock:
+          type: integer
+          description: Stock disponible del producto.
+        status:
+          type: boolean
+          description: Estado del producto (activo o inactivo).
+        owner:
+          type: string
+          description: Propietario del producto.
+      example:
+        _id: ObjectID("6644b0e68596dd1a84b039bf")
+        title: Risk
+        description: Un juego de mesa de estrategia en el que los jugadores deben conquistar territorios y dominar el mundo.
+        category: Estrategia
+        code: E001
+        price: 50
+        thumbnail: static/img/risk.jpg
+        stock ": 10
+        status: true
+        owner: admin

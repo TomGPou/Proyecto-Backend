@@ -16,7 +16,6 @@ import errorsHandler from "./services/errors/errors.handler.js";
 import addLogger from "./services/utils/logger.js";
 import swaggerSpec from "./docs/swagger.config.js";
 
-
 // ROUTES
 import productsRoutes from "./routes/products.routes.js";
 import MongoSingleton from "./services/mongo.singleton.js";
@@ -51,6 +50,9 @@ app.set("view engine", "handlebars");
 //* LOGGER
 app.use(addLogger);
 
+//* SWAGGER
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 //* ROUTES
 app.use("/api/products", productsRoutes);
 app.use("/api/carts", cartsRoutes);
@@ -59,9 +61,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/ticket", ticketRoutes);
 app.use("/", viewsRoutes);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
-
-// SWAGGER
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //* ERROR HANDLER
 app.use(errorsHandler);

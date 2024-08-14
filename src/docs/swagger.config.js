@@ -4,9 +4,9 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Documentacion de API",
+      title: "Documentación de API",
       version: "1.0.0",
-      description: "Api de productos y carrito de compras"
+      description: "API de productos y carrito de compras",
     },
   },
   apis: ["./src/docs/**/*.yaml"],
