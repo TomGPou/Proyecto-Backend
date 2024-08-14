@@ -8,11 +8,15 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import cors from "cors";
+import swaggerUi from "swagger-ui-express";
 
 // IMPORTS FILES
 import config from "./config.js";
 import errorsHandler from "./services/errors/errors.handler.js";
 import addLogger from "./services/utils/logger.js";
+import swaggerSpec from "./docs/swagger.config.js";
+
+
 // ROUTES
 import productsRoutes from "./routes/products.routes.js";
 import MongoSingleton from "./services/mongo.singleton.js";
@@ -56,6 +60,9 @@ app.use("/api/ticket", ticketRoutes);
 app.use("/", viewsRoutes);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
 
+// SWAGGER
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 //* ERROR HANDLER
 app.use(errorsHandler);
 
@@ -64,7 +71,6 @@ const httpServer = app.listen(config.PORT, async () => {
   MongoSingleton.getInstance();
   console.log(`Servidor activo en el puerto ${config.PORT} conectado a DB`);
 });
-
 // SOCKET
 const io = new Server(httpServer);
 app.set("io", io);
