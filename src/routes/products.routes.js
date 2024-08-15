@@ -19,20 +19,21 @@ router.get(
   "/",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
   async (req, res, next) => {
-    const limit = req.query.limit;
-    const page = req.query.page;
-    const category = req.query.category;
-    const inStock = req.query.inStock;
-    const sort = req.query.sort || "asc";
+    // const limit = req.query.limit;
+    // const page = req.query.page;
+    // const category = req.query.category;
+    // const inStock = req.query.inStock;
+    // const sort = req.query.sort || "asc";
 
     try {
-      const products = await productController.get(
-        limit,
-        page,
-        category,
-        inStock,
-        sort
-      );
+      const products = await productController
+        .get
+        // limit,
+        // page,
+        // category,
+        // inStock,
+        // sort
+        ();
 
       res.status(200).send({ payload: products });
     } catch (err) {

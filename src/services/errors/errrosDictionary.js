@@ -38,7 +38,7 @@ const errorsDictionary = {
   },
   ID_NOT_FOUND: {
     code: 6,
-    status: 400,
+    status: 404,
     log: "warning",
     message: "Id no encontrado",
   },

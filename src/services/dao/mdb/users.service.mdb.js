@@ -75,7 +75,11 @@ export default class UsersService {
       return newUser;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        if (err.name === "CastError" || err.name === "ValidationError") {
+          throw new CustomError(errorsDictionary.INVALID_TYPE);
+        } else {
+          throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        }
       }
       throw err;
     }
@@ -90,7 +94,11 @@ export default class UsersService {
       return updatedUser;
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        if (err.name === "CastError" || err.name === "ValidationError") {
+          throw new CustomError(errorsDictionary.INVALID_TYPE);
+        } else {
+          throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
+        }
       }
       throw err;
     }

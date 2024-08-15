@@ -64,10 +64,7 @@ export default class ProductController {
   //* ACTUALIZAR PRODUCTO
   update = async (pid, data, user) => {
     try {
-      if (data.code) {
-        return await productService.update(pid, data, user);
-      }
-      return await productService.update(pid, data);
+      return await productService.update(pid, data, user);
     } catch (error) {
       throw error;
     }

@@ -24,6 +24,7 @@ import viewsRoutes from "./routes/views.routes.js";
 import messagesRoutes from "./routes/messages.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import ticketRoutes from "./routes/ticket.routes.js";
+import { handlePolicies } from "./services/utils/utils.js";
 
 //* INIT AND CONFIG
 const app = express();
@@ -51,7 +52,12 @@ app.set("view engine", "handlebars");
 app.use(addLogger);
 
 //* SWAGGER
-app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(
+  "/api/docs",
+  handlePolicies(["ADMIN", "PREMIUM"]),
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec)
+);
 
 //* ROUTES
 app.use("/api/products", productsRoutes);

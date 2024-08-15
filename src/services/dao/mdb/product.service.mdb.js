@@ -70,7 +70,7 @@ export default class ProductService {
       return await productsModel.create(newProduct);
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        if (err.name === "ValidationError") {
+        if (err.name === "CastError" || err.name === "ValidationError") {
           throw new CustomError(errorsDictionary.INVALID_TYPE);
         } else {
           throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
@@ -122,7 +122,7 @@ export default class ProductService {
       return await productsModel.findByIdAndUpdate(pid, data, { new: true });
     } catch (err) {
       if (!(err instanceof CustomError)) {
-        if (err.name === "ValidationError") {
+        if (err.name === "CastError" || err.name === "ValidationError") {
           throw new CustomError(errorsDictionary.INVALID_TYPE);
         } else {
           throw new CustomError(errorsDictionary.UNHANDLED_ERROR);

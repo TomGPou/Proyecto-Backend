@@ -4,34 +4,7 @@ paths:
       tags:
         - Product
       sumary: Obtiene todos los productos
-      descripction: Retorna lista de productos con paginación y ordenamiento
-      parameters:
-        - in: query
-          name: limit
-          schema:
-            type: integer
-          descripction: Límite de productos por página (10 por defecto).
-        - in: query
-          name: page
-          schema:
-            type: integer
-          description: Número de página.
-        - in: query
-          name: category
-          schema:
-            type: string
-          description: Categoría de los productos.
-        - in: query
-          name: inStock
-          schema:
-            type: boolean
-          description: Filtrar por productos en stock.
-        - in: query
-          name: sort
-          schema:
-            type: string
-            enum: [asc, desc]
-          description: Orden de los productos (ascendente o descendente).
+      description: Retorna lista de productos con paginación y ordenamiento
       responses:
         "200":
           description: Lista de productos.
@@ -44,6 +17,8 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/Product"
+        "401":
+          description: Usuario no autorizado.
         "500":
           description: Error del servidor.
     post:
@@ -69,6 +44,8 @@ paths:
                     $ref: "#/components/schemas/Product"
         "400":
           description: Datos del producto inválidos.
+        "401":
+          description: Usuario no autorizado.
         "500":
           description: Error del servidor.
   /api/products/{pid}:
@@ -94,6 +71,8 @@ paths:
                 properties:
                   payload:
                     $ref: "#/components/schemas/Product"
+        "401":
+          description: Usuario no autorizado.
         "404":
           description: Producto no encontrado.
         "500":
@@ -128,6 +107,8 @@ paths:
                     $ref: "#/components/schemas/Product"
         "400":
           description: Datos del producto inválidos.
+        "401":
+          description: Usuario no autorizado.
         "404":
           description: Producto no encontrado.
         "500":
@@ -147,6 +128,8 @@ paths:
       responses:
         "200":
           description: Producto eliminado exitosamente.
+        "401":
+          description: Usuario no autorizado.
         "404":
           description: Producto no encontrado.
         "500":
@@ -195,6 +178,6 @@ components:
         code: E001
         price: 50
         thumbnail: static/img/risk.jpg
-        stock ": 10
+        stock: 10
         status: true
         owner: admin
