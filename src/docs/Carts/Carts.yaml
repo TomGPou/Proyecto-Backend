@@ -1,0 +1,247 @@
+paths:
+  /api/carts:
+    get:
+      summary: Obtiene todos los carritos
+      description: Devuelve una lista de todos los carritos.
+      tags:
+        - Carritos
+      responses:
+        '200':
+          description: Lista de carritos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cart'
+        "401":
+          description: Usuario no autorizado.
+        "500":
+          description: Error del servidor.
+    post:
+      summary: Crea un nuevo carrito
+      description: Crea un nuevo carrito en la base de datos.
+      tags:
+        - Carritos
+      responses:
+        '200':
+          description: Carrito creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        "401":
+          description: Usuario no autorizado.
+        "500":
+          description: Error del servidor.
+  /api/carts/{cid}:
+    get:
+      summary: Obtiene un carrito por su ID
+      description: Devuelve un carrito específico según su ID.
+      tags:
+        - Carritos
+      parameters:
+        - in: path
+          name: cid
+          schema:
+            type: string
+          required: true
+          description: ID del carrito
+      responses:
+        '200':
+          description: Carrito encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        "401":
+          description: Usuario no autorizado.
+        "404":
+          description: Carrito no encontrado.
+        "500":
+          description: Error del servidor.
+    put:
+      summary: Actualiza un carrito
+      description: Actualiza un carrito existente con nuevos productos.
+      tags:
+        - Carritos
+      parameters:
+        - in: path
+          name: cid
+          schema:
+            type: string
+          required: true
+          description: ID del carrito
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+
+              items:
+                $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Carrito actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        "401":
+          description: Usuario no autorizado.
+        "404":
+          description: Carrito no encontrado.
+        "500":
+          description: Error del servidor.
+    delete:
+      summary: Vacía un carrito
+      description: Elimina todos los productos de un carrito.
+      tags:
+        - Carritos
+      parameters:
+        - in: path
+          name: cid
+          schema:
+            type: string
+          required: true
+          description: ID del carrito
+      responses:
+        '200':
+          description: Carrito vaciado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        "401":
+          description: Usuario no autorizado.
+        "404":
+          description: Carrito no encontrado.
+        "500":
+          description: Error del servidor.
+  /api/carts/{cid}/product/{pid}:
+    put:
+      summary: Agrega o actualiza la cantidad de un producto en un carrito
+      description: Si no se especifica la cantidad, agrega el producto. Si se especifica, actualiza la cantidad.
+      tags:
+        - Carritos
+      parameters:
+        - in: path
+          name: cid
+          schema:
+            type: string
+          required: true
+          description: ID del carrito
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: ID del producto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                qty:
+                  type: integer
+                  description: Cantidad del producto (opcional)
+      responses:
+        '200':
+          description: Carrito actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        "401":
+          description: Usuario no autorizado.
+        "404":
+          description: Carrito o producto no encontrado.
+        "500":
+          description: Error del servidor.
+    delete:
+      summary: Elimina un producto del carrito
+      description: Elimina un producto específico de un carrito.
+      tags:
+        - Carritos
+      parameters:
+        - in: path
+          name: cid
+          schema:
+            type: string
+          required: true
+          description: ID del carrito
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: ID del producto
+      responses:
+        '200':
+          description: Producto eliminado del carrito exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        "401":
+          description: Usuario no autorizado.
+        "404":
+          description: Carrito o producto no encontrado.
+        "500":
+          description: Error del servidor.
+  /api/carts/{cid}/purchase:
+    post:
+      summary: Realiza la compra de un carrito
+      description: Genera una orden de compra con los productos del carrito.
+      tags:
+        - Carritos
+      parameters:
+        - in: path
+          name: cid
+          schema:
+            type: string
+          required: true
+          description: ID del carrito
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: 
+                purchaser:
+                  type: string
+                  description: Email del usuario que realiza la compra
+      responses:
+        '200':
+          description: Compra realizada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        "401":
+          description: Usuario no autorizado.
+        "404":
+          description: Carrito no encontrado.
+        "500":
+          description: Error del servidor.
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                $ref: '#/components/schemas/Product'
+              quantity:
+                type: integer
+        _id:
+          type: string
+          description: ID del carrito
