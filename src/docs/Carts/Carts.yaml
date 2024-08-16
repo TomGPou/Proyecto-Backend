@@ -4,16 +4,16 @@ paths:
       summary: Obtiene todos los carritos
       description: Devuelve una lista de todos los carritos.
       tags:
-        - Carritos
+        - Carts
       responses:
-        '200':
+        "200":
           description: Lista de carritos
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Cart'
+                  $ref: "#/components/schemas/Cart"
         "401":
           description: Usuario no autorizado.
         "500":
@@ -22,14 +22,14 @@ paths:
       summary: Crea un nuevo carrito
       description: Crea un nuevo carrito en la base de datos.
       tags:
-        - Carritos
+        - Carts
       responses:
-        '200':
+        "200":
           description: Carrito creado exitosamente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Cart'
+                $ref: "#/components/schemas/Cart"
         "401":
           description: Usuario no autorizado.
         "500":
@@ -39,7 +39,7 @@ paths:
       summary: Obtiene un carrito por su ID
       description: Devuelve un carrito específico según su ID.
       tags:
-        - Carritos
+        - Carts
       parameters:
         - in: path
           name: cid
@@ -48,12 +48,12 @@ paths:
           required: true
           description: ID del carrito
       responses:
-        '200':
+        "200":
           description: Carrito encontrado
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Cart'
+                $ref: "#/components/schemas/Cart"
         "401":
           description: Usuario no autorizado.
         "404":
@@ -64,7 +64,7 @@ paths:
       summary: Actualiza un carrito
       description: Actualiza un carrito existente con nuevos productos.
       tags:
-        - Carritos
+        - Carts
       parameters:
         - in: path
           name: cid
@@ -80,14 +80,14 @@ paths:
               type: array
 
               items:
-                $ref: '#/components/schemas/Product'
+                $ref: "#/components/schemas/Product"
       responses:
-        '200':
+        "200":
           description: Carrito actualizado exitosamente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Cart'
+                $ref: "#/components/schemas/Cart"
         "401":
           description: Usuario no autorizado.
         "404":
@@ -98,7 +98,7 @@ paths:
       summary: Vacía un carrito
       description: Elimina todos los productos de un carrito.
       tags:
-        - Carritos
+        - Carts
       parameters:
         - in: path
           name: cid
@@ -107,12 +107,12 @@ paths:
           required: true
           description: ID del carrito
       responses:
-        '200':
+        "200":
           description: Carrito vaciado exitosamente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Cart'
+                $ref: "#/components/schemas/Cart"
         "401":
           description: Usuario no autorizado.
         "404":
@@ -124,7 +124,7 @@ paths:
       summary: Agrega o actualiza la cantidad de un producto en un carrito
       description: Si no se especifica la cantidad, agrega el producto. Si se especifica, actualiza la cantidad.
       tags:
-        - Carritos
+        - Carts
       parameters:
         - in: path
           name: cid
@@ -148,12 +148,12 @@ paths:
                   type: integer
                   description: Cantidad del producto (opcional)
       responses:
-        '200':
+        "200":
           description: Carrito actualizado exitosamente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Cart'
+                $ref: "#/components/schemas/Cart"
         "401":
           description: Usuario no autorizado.
         "404":
@@ -164,7 +164,7 @@ paths:
       summary: Elimina un producto del carrito
       description: Elimina un producto específico de un carrito.
       tags:
-        - Carritos
+        - Carts
       parameters:
         - in: path
           name: cid
@@ -179,12 +179,12 @@ paths:
           required: true
           description: ID del producto
       responses:
-        '200':
+        "200":
           description: Producto eliminado del carrito exitosamente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Cart'
+                $ref: "#/components/schemas/Cart"
         "401":
           description: Usuario no autorizado.
         "404":
@@ -196,7 +196,7 @@ paths:
       summary: Realiza la compra de un carrito
       description: Genera una orden de compra con los productos del carrito.
       tags:
-        - Carritos
+        - Carts
       parameters:
         - in: path
           name: cid
@@ -210,17 +210,17 @@ paths:
           application/json:
             schema:
               type: object
-              properties: 
+              properties:
                 purchaser:
                   type: string
                   description: Email del usuario que realiza la compra
       responses:
-        '200':
+        "200":
           description: Compra realizada exitosamente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Cart'
+                $ref: "#/components/schemas/Cart"
         "401":
           description: Usuario no autorizado.
         "404":
@@ -239,7 +239,7 @@ components:
             type: object
             properties:
               _id:
-                $ref: '#/components/schemas/Product'
+                $ref: "#/components/schemas/Product"
               quantity:
                 type: integer
         _id:

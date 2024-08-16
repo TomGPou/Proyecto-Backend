@@ -36,7 +36,7 @@ app.engine("handlebars", handlebars.engine());
 app.use(
   session({
     // store: new fileStorage({ path: "./sessions", ttl: 60, retries: 0 }),
-    store: MongoStore.create({ mongoUrl: config.MONGODB_URI, ttl: 60 }),
+    store: MongoStore.create({ mongoUrl: config.MONGODB_URI, ttl: 360 }),
     secret: config.SECRET,
     resave: false,
     saveUninitialized: false,

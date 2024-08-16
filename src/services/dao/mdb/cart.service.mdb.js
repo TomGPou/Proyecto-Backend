@@ -65,16 +65,21 @@ export default class CartService {
       if (user !== "user" && user === product.owner) {
         throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
       }
-      // Buscar producto en array
       const productId = new mongoose.Types.ObjectId(pid);
-      const productIndex = cart.products.findIndex((item) =>
-        item._id.equals(productId)
-      );
-      // Agregarlo o sumar uno
-      if (productIndex < 0) {
+      //Si carrito esta vacio
+      if (cart.products.length === 0) {
         cart.products.push({ _id: productId, quantity: 1 });
       } else {
-        cart.products[productIndex].quantity++;
+        // Sino buscar producto en array
+        const productIndex = cart.products.findIndex((item) =>
+          item._id.equals(productId)
+        );
+        // Agregarlo o sumar uno
+        if (productIndex < 0) {
+          cart.products.push({ _id: productId, quantity: 1 });
+        } else {
+          cart.products[productIndex].quantity++;
+        }
       }
       // actualizar carrito
       return await this.update(cid, cart.products);
@@ -95,16 +100,21 @@ export default class CartService {
       if (user !== "user" && user === product.owner) {
         throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
       }
-      // Buscar producto en array
       const productId = new mongoose.Types.ObjectId(pid);
-      const productIndex = cart.products.findIndex((item) =>
-        item._id.equals(productId)
-      );
-      // actualizar cantidad
-      if (productIndex < 0) {
-        cart.products.push({ _id: productId, quantity: qty });
+      //Si carrito esta vacio
+      if (cart.products.length === 0) {
+        cart.products.push({ _id: productId, quantity: 1 });
       } else {
-        cart.products[productIndex].quantity = qty;
+        // Sino buscar producto en array
+        const productIndex = cart.products.findIndex((item) =>
+          item._id.equals(productId)
+        );
+        // actualizar cantidad
+        if (productIndex < 0) {
+          cart.products.push({ _id: productId, quantity: qty });
+        } else {
+          cart.products[productIndex].quantity = qty;
+        }
       }
       // actualizar carrito
       return await this.update(cid, cart.products);

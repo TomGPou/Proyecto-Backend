@@ -2,7 +2,7 @@ paths:
   /api/products:
     get:
       tags:
-        - Product
+        - Products
       sumary: Obtiene todos los productos
       description: Retorna lista de productos con paginación y ordenamiento
       responses:
@@ -23,7 +23,7 @@ paths:
           description: Error del servidor.
     post:
       tags:
-        - Product
+        - Products
       summary: Agrega un nuevo producto.
       description: Crea un nuevo producto en la base de datos.
       requestBody:
@@ -51,7 +51,7 @@ paths:
   /api/products/{pid}:
     get:
       tags:
-        - Product
+        - Products
       summary: Obtiene un producto por ID.
       description: Retorna un producto específico por su ID.
       parameters:
@@ -79,7 +79,7 @@ paths:
           description: Error del servidor.
     put:
       tags:
-        - Product
+        - Products
       summary: Actualiza un producto.
       description: Actualiza un producto existente.
       parameters:
@@ -115,7 +115,7 @@ paths:
           description: Error del servidor.
     delete:
       tags:
-        - Product
+        - Products
       summary: Elimina un producto.
       description: Elimina un producto por su ID.
       parameters:
