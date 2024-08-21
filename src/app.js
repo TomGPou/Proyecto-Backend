@@ -15,6 +15,7 @@ import config from "./config.js";
 import errorsHandler from "./services/errors/errors.handler.js";
 import addLogger from "./services/utils/logger.js";
 import swaggerSpec from "./docs/swagger.config.js";
+import { handlePolicies } from "./services/utils/utils.js";
 
 // ROUTES
 import productsRoutes from "./routes/products.routes.js";
@@ -24,7 +25,6 @@ import viewsRoutes from "./routes/views.routes.js";
 import messagesRoutes from "./routes/messages.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import ticketRoutes from "./routes/ticket.routes.js";
-import { handlePolicies } from "./services/utils/utils.js";
 
 //* INIT AND CONFIG
 const app = express();

@@ -7,6 +7,8 @@ import { ExtractJwt } from "passport-jwt";
 
 import config from "../../config.js";
 import UserController from "../../controllers/users.controller.js";
+import CustomError from "../errors/CustomErrors.class.js";
+import errorsDictionary from "../errors/errrosDictionary.js";
 
 // INIT
 const localStrategy = local.Strategy;
@@ -51,6 +53,12 @@ const initAuthStrategies = () => {
           }
           return done(null, user);
         } catch (err) {
+          if (err instanceof CustomError && err.type === errorsDictionary.EMAIL_ALREADY_EXISTS) {
+            console.log(err);
+            return done(null, false, { redirectUrl: `/login?error=${encodeURI("El usuario ya existe")}` });
+          } else if (err instanceof CustomError && err.type === errorsDictionary.INVALID_TYPE) {
+            return done(null, false, { redirectUrl: `/register?error=${encodeURI("Datos incompletos")}` });
+          }
           return done(err, false);
         }
       }

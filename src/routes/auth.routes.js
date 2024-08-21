@@ -88,13 +88,17 @@ router.get(
 router.post(
   "/register",
   verifyReqBody(["first_name", "last_name", "email", "password"]),
-  passport.authenticate("register", {
-    failureRedirect: `/register?error=${encodeURI(
-      "Datos de registro no válidos"
-    )}`,
-  }),
+  passport.authenticate('register'),
   async (req, res, next) => {
     try {
+      // // Si se produjo un error en el registro
+      // if (!req.user) {
+      //   if (req.session.messages && req.session.messages.length > 0) {
+      //     console.log(req.session.message)
+      //     const errorMessage = req.session.message[0];
+      //     return res.redirect(`/login?error=${encodeURI(errorMessage)}`)
+      //   }
+      // }
       // Redirigir al usuario a /login
       req.logger.info(
         `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
