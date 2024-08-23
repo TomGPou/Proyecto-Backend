@@ -4,14 +4,14 @@ import CustomError from "./CustomErrors.class.js";
 
 const errorsHandler = (err, req, res, next) => {
   // Redireccion a login si usuario ya existe cuando se registra
-  // if (err instanceof CustomError && err.type === errorsDictionary.EMAIL_ALREADY_EXISTS) {
-  //   req.logger.warning(
-  //     `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
-  //       req.method
-  //     } ${req.url} ${err.message}`
-  //   )
-  //   return res.redirect(`/register?error=${encodeURI(err.message)}`);
-  // }
+  if (err instanceof CustomError && err.type === errorsDictionary.EMAIL_ALREADY_EXISTS) {
+    req.logger.warning(
+      `${new Date().toDateString()} ${new Date().toLocaleTimeString()} ${
+        req.method
+      } ${req.url} ${err.message}`
+    )
+    return res.redirect(`/login?error=${encodeURI(err.message)}`);
+  }
 
   let customErr = errorsDictionary.UNHANDLED_ERROR;
   if (err instanceof CustomError) {
