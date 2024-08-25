@@ -11,6 +11,9 @@ This project is a backend system for an e-commerce platform, developed as part o
 - [Installation](#installation)
 - [Usage](#usage)
 - [Features](#features)
+- [Running Tests](#running-tests)
+- [Environment Variables](#environment-variables)
+- [API Documentation](#api-documentation)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -56,6 +59,38 @@ The following technologies and tools are used in this project:
   ```bash
   npm run prod
   ```
+
+## Running Tests
+
+To run tests, use the following command:
+
+```bash
+npm run test
+```
+
+Ensure all dependencies are installed before running tests. The test framework used is Mocha (replace with the actual framework if different).
+
+## Environment Variables
+
+The project requires the following environment variables. Create a .env file in the root directory and add:
+
+```bash
+DB_URI=<your-mongodb-uri>
+JWT_SECRET=<your-jwt-secret>
+PORT=<your-preferred-port>
+```
+
+Replace <your-mongodb-uri>, <your-jwt-secret>, and <your-preferred-port> with your actual credentials.
+
+## API Documentation
+
+The API documentation is available via Swagger. Once the server is running, you can access it at:
+
+```bash
+http://localhost:<PORT>/api-docs
+```
+
+This documentation provides detailed information on all available endpoints, their parameters, and responses.
 
 ## Features
 
