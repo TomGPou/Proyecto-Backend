@@ -1,5 +1,7 @@
 //* IMPORTS
 import ProductService from "../services/dao/mdb/product.service.mdb.js";
+import CustomError from "../services/errors/CustomErrors.class.js";
+import errorsDictionary from "../services/errors/errrosDictionary.js";
 // import ProductService from "../services/dao/fileSystem/product.service.fs.js";
 //* INIT
 const productService = new ProductService();
@@ -43,9 +45,8 @@ export default class ProductController {
         !newProduct.price ||
         !newProduct.stock
       ) {
-        throw new Error("Falta completar datos del producto");
+        throw new CustomError(errorsDictionary.FEW_PARAMETERS);
       }
-
       return await productService.add(newProduct);
     } catch (error) {
       throw error;

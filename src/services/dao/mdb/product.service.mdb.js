@@ -103,7 +103,7 @@ export default class ProductService {
       const exist = await productsModel.findById(pid);
       if (!exist) throw new CustomError(errorsDictionary.ID_NOT_FOUND);
       // verificar autorizacion para editar
-      if (user !== "admin" && exist.owner !== user) {
+      if (user !== "admin" && user !== "premium") {
         throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
       }
       //si existe owner, eliminar

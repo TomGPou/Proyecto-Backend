@@ -5,7 +5,7 @@
   "main": "/src/app.js",
   "type": "module",
   "scripts": {
-    "test": "mocha test/auth.test.js",
+    "test": "mocha test/auth.test.js test/products.test.js test/carts.test.js",
     "dev": "node --env-file .env.dev --watch src/app.js --mode dev",
     "prod": "node --env-file .env.prod --watch src/app.js --mode prod"
   },

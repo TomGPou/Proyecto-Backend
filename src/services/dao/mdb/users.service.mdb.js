@@ -106,8 +106,11 @@ export default class UsersService {
   // Eliminar
   async delete(uid) {
     try {
+      const user = await usersModel.findById(uid);
+      if (!user) throw new CustomError(errorsDictionary.USER_NOT_FOUND);
+      // eliminar carrito
+      await cartService.delete(user.cart);
       const deletedUser = await usersModel.findByIdAndDelete(uid);
-      if (!deletedUser) throw new CustomError(errorsDictionary.USER_NOT_FOUND);
       return deletedUser;
     } catch (err) {
       if (!(err instanceof CustomError)) {

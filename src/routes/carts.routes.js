@@ -66,7 +66,7 @@ router.post(
   }
 );
 
-// Actualizar cantidad
+// Agregar al carrito
 router.put(
   "/:cid/product/:pid",
   handlePolicies(["USER", "PREMIUM"]),

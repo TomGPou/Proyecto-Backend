@@ -87,4 +87,13 @@ export default class CartController {
       throw error;
     }
   };
+
+  //* ELIMINAR CARRITO
+  delete = async (cid) => {
+    try {
+      return await cartService.delete(cid);
+    } catch (error) {
+      throw error;
+    }
+  };
 }

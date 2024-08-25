@@ -15,6 +15,7 @@ const testUser = {
   last_name: "Perez",
   email: "pepeperez@gmail.com",
   password: "abc123",
+  role: "premium"
 };
 const invalidUser = {
   first_name: "Pepe",
@@ -22,6 +23,7 @@ const invalidUser = {
   email: "pepeperez@gmail.com",
   password: "abc124",
 };
+let userId;
 let cookie;
 
 describe("Test de sesiones de API", () => {
@@ -30,7 +32,7 @@ describe("Test de sesiones de API", () => {
   });
   beforeEach(async function () {});
   after(async function () {
-    await usersModel.findOneAndDelete({ email: testUser.email });
+    await userController.delete(userId);
     await mongoose.disconnect();
   });
   afterEach(async function () {});
@@ -42,6 +44,7 @@ describe("Test de sesiones de API", () => {
     expect(res.headers.location).to.be.eql("/login");
 
     const user = await userController.getOne({ email: testUser.email });
+    userId = user._id;
     expect(user).to.not.be.null
     expect(user.email).to.be.eql(testUser.email);
     expect(user.first_name).to.be.eql(testUser.first_name);
@@ -76,6 +79,9 @@ describe("Test de sesiones de API", () => {
     cookie = res.headers["set-cookie"][0];
     expect(cookie).to.include('connect.sid=');
     expect(cookie).to.include('HttpOnly');
+
+    // Guardar cookie en variable global
+    global.cookie = cookie;
   });
 
   it("GET /api/auth/current Debe devolver el usuario logueado", async function () {

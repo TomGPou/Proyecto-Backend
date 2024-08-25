@@ -223,4 +223,16 @@ export default class CartService {
       throw err;
     }
   }
+
+  async delete(cid) {
+    try {
+      const cart = await this.validateCart(cid);
+      return await cartsModel.findByIdAndDelete(cid);
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
+    }
+  }
 }
