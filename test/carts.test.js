@@ -12,6 +12,7 @@ const request = supertest("http://localhost:5050");
 
 let cart;
 let cartId;
+const fakeId = "66b0d571cf67e043da97d597";
 const testProduct = {
   title: "Test",
   description: "Descripción del producto de prueba",
@@ -22,16 +23,29 @@ const testProduct = {
   stock: 10,
 };
 let prodId;
+const testProduct2 = {
+  title: "Test2",
+  description: "Descripción del producto de prueba",
+  category: "Categoría de prueba",
+  price: 100,
+  thumbnail: "https://via.placeholder.com/150",
+  code: "PROD-002",
+  stock: 10,
+};
+let prodId2;
 
 describe("Test de rutas de Carritos", () => {
   before(async function () {
     await mongoose.connect(process.env.MONGODB_URI);
     const product = await productController.add(testProduct);
+    const product2 = await productController.add(testProduct2);
     prodId = product._id;
+    prodId2 = product2._id;
   });
   beforeEach(async function () {});
   after(async function () {
     await productController.deleteProduct(prodId, "admin");
+    await productController.deleteProduct(prodId2, "admin");
     await cartController.delete(cartId);
     await mongoose.disconnect();
   });
@@ -71,14 +85,28 @@ describe("Test de rutas de Carritos", () => {
     expect(cart.products[0].quantity).to.be.eql(2);
   });
 
+  it("PUT /api/carts/:cid/product/:pid Debe agregar otro producto al carrito con qty", async function () {
+    const res = await request
+      .put(`/api/carts/${cartId}/product/${prodId2}`)
+      .set("Cookie", global.cookie)
+      .send({ qty: 2 });
+
+    expect(res.statusCode).to.be.eql(200);
+    cart = res.body.payload;
+    expect(cart.products[1]._id).to.be.eql(prodId2.toString());
+    expect(cart.products[1].quantity).to.be.eql(2)
+  })
+  
   it("GET /api/carts/:cid Debe devolver un carrito", async function () {
     const res = await request
       .get(`/api/carts/${cartId}`)
       .set("Cookie", global.cookie);
 
     expect(res.statusCode).to.be.eql(200);
-    expect(res.body.payload).to.have.property("_id", cartId);
-    expect(res.body.payload).to.have.property("products");
+    expect(res.body.payload.products[0]._id._id).to.be.eql(prodId.toString());
+    expect(res.body.payload.products[0].quantity).to.be.eql(2);
+    expect(res.body.payload.products[1]._id._id).to.be.eql(prodId2.toString());
+    expect(res.body.payload.products[1].quantity).to.be.eql(2);
   });
 
   it("DELETE /api/carts/:cid Debe vaciar un carrito", async function () {
