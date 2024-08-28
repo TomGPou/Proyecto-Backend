@@ -13,22 +13,16 @@ export const createHash = (password) =>
 export const isValidPassword = (password, hash) =>
   bcrypt.compareSync(password, hash);
 
-// Verificacion de session
+// Verificacion de req body
 export const verifyReqBody = (requiredFields) => {
   return (req, res, next) => {
     const missingFields = [];
-
     requiredFields.forEach((field) => {
-      if (
-        !req.body.hasOwnProperty(field) ||
-        req.body[field] === "" ||
-        req.body[field] === null ||
-        req.body[field] === undefined
-      ) {
+      // Verificar si el campo existe en req.body y no está vacío
+      if (!(field in req.body) || !req.body[field]) {
         missingFields.push(field);
       }
     });
-
     if (missingFields.length > 0) {
       const errData = {
         missingFields: missingFields,

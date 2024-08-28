@@ -49,20 +49,15 @@ router.get(
 router.post(
   "/",
   handlePolicies(["ADMIN", "PREMIUM"]),
-  verifyReqBody([
-    "title",
-    "description",
-    "category",
-    "code",
-    "price",
-    "stock",
-  ]), productUploader.single("file"),
+  productUploader.single("file"),
+  verifyReqBody(["title", "description", "category", "code", "price", "stock"]),
   async (req, res, next) => {
     const io = req.app.get("io");
     const newProduct = req.body;
     newProduct.owner = req.user.role === "admin" ? "admin" : req.user.email;
-    if (req.file) newProduct.thumbnail = req.file.path;
-    
+    if (req.file)
+      newProduct.thumbnail = `static/img/products/${req.file.filename}`;
+
     try {
       const product = await productController.add(newProduct);
       res.status(201).send({ message: "producto agregado", payload: product });

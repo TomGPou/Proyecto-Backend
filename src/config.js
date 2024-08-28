@@ -1,5 +1,6 @@
 import * as url from "url";
 import { Command } from "commander";
+import path from "path";
 
 // CL Options
 const program = new Command();
@@ -12,7 +13,10 @@ const clOptions = program.opts();
 const config = {
   PORT: process.env.PORT || clOptions.port || 5050,
   MODE: clOptions.mode || "dev",
-  DIRNAME: path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:\/)/, '$1')),
+  DIRNAME: url.fileURLToPath(new URL(".", import.meta.url)),
+  // DIRNAME: path.dirname(
+  //   new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:\/)/, "$1")
+  // ),
   MONGODB_URI: process.env.MONGODB_URI,
   MONGODB_ID_REGEX: /^[a-fA-F0-9]{24}$/,
   SECRET: process.env.SECRET,
