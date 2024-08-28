@@ -16,6 +16,9 @@ initAuthStrategies();
 // Logout
 router.get("/logout", async (req, res, next) => {
   try {
+    // actualizar last_connection
+    req.session.user.last_connection = new Date();
+    await usersController.update(req.session.user._id, req.session.user);
     // destruir session
     req.session.destroy((err) => {
       if (err)

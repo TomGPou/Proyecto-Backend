@@ -84,6 +84,8 @@ const initAuthStrategies = () => {
 
               return done(null, process);
             } else {
+              foundUser.last_connection = new Date();
+              await userController.update(foundUser._id, foundUser);
               return done(null, foundUser);
             }
           } else {

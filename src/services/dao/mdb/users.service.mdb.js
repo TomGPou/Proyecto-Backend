@@ -124,10 +124,13 @@ export default class UsersService {
   async login(email, enteredPassword) {
     try {
       const user = await usersModel.findOne({ email }).lean();
-
+      // validar user y password
       if (!user || !isValidPassword(enteredPassword, user.password))
         throw new CustomError(errorsDictionary.INVALID_PARAMETER);
-
+      // Actualizar last_connection
+      user.last_connection = new Date();
+      await usersModel.findByIdAndUpdate(user._id, user, { new: true });
+      // No mostrar password
       delete user.password;
       return user;
     } catch (err) {
