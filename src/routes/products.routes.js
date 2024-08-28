@@ -6,6 +6,7 @@ import {
   verifyMongoId,
   verifyReqBody,
 } from "../services/utils/utils.js";
+import { productUploader } from "../services/utils/uploader.js";
 
 //* INIT
 const router = Router();
@@ -54,14 +55,14 @@ router.post(
     "category",
     "code",
     "price",
-    "thumbnail",
     "stock",
-  ]),
+  ]), productUploader.single("file"),
   async (req, res, next) => {
     const io = req.app.get("io");
     const newProduct = req.body;
     newProduct.owner = req.user.role === "admin" ? "admin" : req.user.email;
-
+    if (req.file) newProduct.thumbnail = req.file.path;
+    
     try {
       const product = await productController.add(newProduct);
       res.status(201).send({ message: "producto agregado", payload: product });

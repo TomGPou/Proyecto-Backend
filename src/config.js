@@ -12,10 +12,7 @@ const clOptions = program.opts();
 const config = {
   PORT: process.env.PORT || clOptions.port || 5050,
   MODE: clOptions.mode || "dev",
-  DIRNAME: url.fileURLToPath(new URL(".", import.meta.url)),
-  get UPLOAD_DIR() {
-    return `${this.DIRNAME}/public/img`;
-  },
+  DIRNAME: path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:\/)/, '$1')),
   MONGODB_URI: process.env.MONGODB_URI,
   MONGODB_ID_REGEX: /^[a-fA-F0-9]{24}$/,
   SECRET: process.env.SECRET,
