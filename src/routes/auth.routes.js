@@ -190,14 +190,20 @@ router.post(
 router.post(
   "/:uid/documents",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
-  userUploader.single("file"),
+  userUploader.any(),
   async (req, res, next) => {
     const uid = req.params.uid;
-    const file = req.file;
+    const file = req.files[0];
     try {
-      if (!file) throw new CustomError(errorsDictionary.INVALID_FILE);
+      if (
+        !file ||
+        !["profile", "id", "address", "account"].includes(file.fieldname)
+      )
+        throw new CustomError(errorsDictionary.INVALID_FILE);
       const user = await usersController.addDocument(uid, file);
-      res.status(200).send({ sepayload: user });
+      res
+        .status(200)
+        .send({ message: "Se a cergado nuevo documento", payload: user });
     } catch (error) {
       next();
     }

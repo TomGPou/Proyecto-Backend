@@ -13,19 +13,17 @@ const productStorage = multer.diskStorage({
 export const productUploader = multer({ storage: productStorage });
 
 const userStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    if (file.fieldname === "profile") {
-      cb(null, "src/public/img/profiles");
-    } else if (file.fieldname === "id" || file.fieldname === "address" || file.fieldname === "account") {
-      cb(null, "src/public/documents");
-    } else {
-      throw new CustomError(errorsDictionary.INVALID_FILE)
-    }
+  destination: function (req, file, cb) {
+    console.log(file);
+    // cb(null);
+    // if (file.fieldname === "profile") {
+    cb(null, "src/public/img/profile");
+    // } else {
+    //   cb(null, "src/public/documents");
+    // }
   },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname)
-  }
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
 });
-export  const userUploader = multer({ storage: userStorage });
-
-
+export const userUploader = multer({ storage: userStorage });

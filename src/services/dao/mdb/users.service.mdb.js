@@ -235,16 +235,24 @@ export default class UsersService {
   async addDocument(uid, file) {
     try {
       const user = await this.validateUser(uid);
-      const document = {
-        name: file.fieldname,
-        reference: file.path,
-      };
-      user.documents.push(document);
+      if (file.fieldname === "profile") {
+        const document = {
+          name: file.fieldname,
+          reference: `static/img/profile/${file.originalname}`,
+        };
+        user.documents.push(document);
+      } else {
+        const document = {
+          name: file.fieldname,
+          reference: `static/documents/${file.originalname}`,
+        };
+        user.documents.push(document);
+      }
       const updatedUser = await usersModel.findByIdAndUpdate(uid, user, {
         new: true,
       });
       return updatedUser;
-    } catch (error) {
+    } catch (err) {
       if (!(err instanceof CustomError)) {
         throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }
