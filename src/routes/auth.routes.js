@@ -8,7 +8,7 @@ import UserController, { UsersDTO } from "../controllers/users.controller.js";
 import { restoreMail } from "../services/utils/nodemailer.js";
 import CustomError from "../services/errors/CustomErrors.class.js";
 import errorsDictionary from "../services/errors/errrosDictionary.js";
-import { userUploader } from "../services/utils/uploader.js";
+import { uploader } from "../services/utils/uploader.js";
 
 //* INIT
 const router = Router();
@@ -190,7 +190,7 @@ router.post(
 router.post(
   "/:uid/documents",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
-  userUploader.fields([
+  uploader.fields([
     { name: "profile", maxCount: 1 },
     { name: "id", maxCount: 1 },
     { name: "address", maxCount: 1 },
