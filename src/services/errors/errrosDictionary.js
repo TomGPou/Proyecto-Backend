@@ -118,7 +118,7 @@ const errorsDictionary = {
     code: 20,
     status: 400,
     log: "warning",
-    message: "Faltan archivos obligatorios (id, address, account)",
+    message: "Falta cargar archivos obligatorios. Identificación (id), Comprobante de domicilio (address), comprobante de estado de cuenta (account)",
   }
 };
 

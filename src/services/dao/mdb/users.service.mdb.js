@@ -238,7 +238,7 @@ export default class UsersService {
       if (file.fieldname === "profile") {
         const document = {
           name: file.fieldname,
-          reference: `static/img/profile/${file.originalname}`,
+          reference: `static/profiles/${file.originalname}`,
         };
         user.documents.push(document);
       } else {

@@ -6,7 +6,7 @@ import {
   verifyMongoId,
   verifyReqBody,
 } from "../services/utils/utils.js";
-import { productUploader } from "../services/utils/uploader.js";
+import { uploader } from "../services/utils/uploader.js";
 
 //* INIT
 const router = Router();
@@ -49,14 +49,14 @@ router.get(
 router.post(
   "/",
   handlePolicies(["ADMIN", "PREMIUM"]),
-  productUploader.single("file"),
+  uploader.single("product"),
   verifyReqBody(["title", "description", "category", "code", "price", "stock"]),
   async (req, res, next) => {
     const io = req.app.get("io");
     const newProduct = req.body;
     newProduct.owner = req.user.role === "admin" ? "admin" : req.user.email;
     if (req.file)
-      newProduct.thumbnail = `static/img/products/${req.file.filename}`;
+      newProduct.thumbnail = `static/products/${req.file.filename}`;
 
     try {
       const product = await productController.add(newProduct);
