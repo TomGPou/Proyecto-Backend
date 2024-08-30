@@ -115,4 +115,13 @@ export default class UserController {
       throw error;
     }
   };
+
+  //* AGREGAR DOCUMENTO
+  addDocument = async (uid, file) => {
+    try {
+      return await usersService.addDocument(uid, file);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

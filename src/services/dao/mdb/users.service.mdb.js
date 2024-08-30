@@ -11,6 +11,13 @@ const cartService = new CartService();
 
 export default class UsersService {
   constructor() {}
+  // Validar usuario por id
+  async validateUser(uid) {
+    const user = await usersModel.findById(uid);
+    if (!user) throw new CustomError(errorsDictionary.USER_NOT_FOUND);
+    return user;
+  }
+
   // Obtener todos
   async getAll() {
     try {
@@ -27,8 +34,7 @@ export default class UsersService {
   // Obtener por id
   async getById(id) {
     try {
-      const user = await usersModel.findById(id);
-      if (!user) throw new CustomError(errorsDictionary.ID_NOT_FOUND);
+      const user = await this.validateUser(id);
       return user;
     } catch (err) {
       if (!(err instanceof CustomError)) {
@@ -106,8 +112,7 @@ export default class UsersService {
   // Eliminar
   async delete(uid) {
     try {
-      const user = await usersModel.findById(uid);
-      if (!user) throw new CustomError(errorsDictionary.USER_NOT_FOUND);
+      const user = await this.validateUser(uid);
       // eliminar carrito
       await cartService.delete(user.cart);
       const deletedUser = await usersModel.findByIdAndDelete(uid);
@@ -158,10 +163,18 @@ export default class UsersService {
   // Actualizar rol
   async changeRole(uid) {
     try {
-      const user = await usersModel.findById(uid);
-      if (!user) throw new CustomError(errorsDictionary.USER_NOT_FOUND);
-      if (user.role === "user") user.role = "premium";
-      else if (user.role === "premium") user.role = "user";
+      const user = await this.validateUser(uid);
+      if (user.role === "user") {
+        // verificar que el usuario tenga los documentos necesarios
+        const requiredDocuments = ["id", "address", "account"];
+        const hasRequiredDocuments = requiredDocuments.every((document) =>
+          user.documents.some((doc) => doc.name === document)
+        );
+        if (!hasRequiredDocuments)
+          throw new CustomError(errorsDictionary.FEW_FILES);
+
+        user.role = "premium";
+      } else if (user.role === "premium") user.role = "user";
       else throw new CustomError(errorsDictionary.INVALID_PARAMETER);
       const updatedUser = await usersModel.findByIdAndUpdate(uid, user, {
         new: true,
@@ -201,8 +214,7 @@ export default class UsersService {
   // Cambiar contraseña
   async changePassword(id, newPassword) {
     try {
-      const user = await usersModel.findById(id);
-      if (!user) throw new CustomError(errorsDictionary.USER_NOT_FOUND);
+      const user = await this.validateUser(id);
       // verificar que las contraseñas no sean iguales
       if (isValidPassword(newPassword, user.password))
         throw new CustomError(errorsDictionary.PASSWORD_ALREADY_EXISTS);
@@ -212,6 +224,27 @@ export default class UsersService {
       });
       return updatedUser;
     } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
+    }
+  }
+
+  // Agregar documento
+  async addDocument(uid, file) {
+    try {
+      const user = await this.validateUser(uid);
+      const document = {
+        name: file.fieldname,
+        reference: file.path,
+      };
+      user.documents.push(document);
+      const updatedUser = await usersModel.findByIdAndUpdate(uid, user, {
+        new: true,
+      });
+      return updatedUser;
+    } catch (error) {
       if (!(err instanceof CustomError)) {
         throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
       }

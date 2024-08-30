@@ -108,6 +108,18 @@ const errorsDictionary = {
     log: "error",
     message: "No encontrado",
   },
+  INVALID_FILE: {
+    code: 19,
+    status: 400,
+    log: "warning",
+    message: "Archivo no cargado o no válido  (debe ser: profile, id, address o account)",
+  },
+  FEW_FILES: {
+    code: 20,
+    status: 400,
+    log: "warning",
+    message: "Faltan archivos obligatorios (id, address, account)",
+  }
 };
 
 export default errorsDictionary;

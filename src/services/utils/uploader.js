@@ -1,4 +1,6 @@
 import multer from "multer";
+import CustomError from "../errors/CustomErrors.class.js";
+import errorsDictionary from "../errors/errrosDictionary.js";
 
 const productStorage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -10,22 +12,20 @@ const productStorage = multer.diskStorage({
 });
 export const productUploader = multer({ storage: productStorage });
 
-const profileStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "src/public/img/profiles");
+const userStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    if (file.fieldname === "profile") {
+      cb(null, "src/public/img/profiles");
+    } else if (file.fieldname === "id" || file.fieldname === "address" || file.fieldname === "account") {
+      cb(null, "src/public/documents");
+    } else {
+      throw new CustomError(errorsDictionary.INVALID_FILE)
+    }
   },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname)
+  }
 });
-export const profileUploader = multer({ storage: profileStorage });
+export  const userUploader = multer({ storage: userStorage });
 
-const documentStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "src/public/documents");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
-export const documentUploader = multer({ storage: documentStorage });
+

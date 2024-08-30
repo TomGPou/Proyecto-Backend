@@ -6,6 +6,9 @@ import { verifyReqBody, handlePolicies } from "../services/utils/utils.js";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
 import UserController, { UsersDTO } from "../controllers/users.controller.js";
 import { restoreMail } from "../services/utils/nodemailer.js";
+import CustomError from "../services/errors/CustomErrors.class.js";
+import errorsDictionary from "../services/errors/errrosDictionary.js";
+import { userUploader } from "../services/utils/uploader.js";
 
 //* INIT
 const router = Router();
@@ -179,6 +182,24 @@ router.post(
       res.redirect(`/login?error=${encodeURI("Contraseña actualizada")}`);
     } catch (err) {
       next(err);
+    }
+  }
+);
+
+// Carga de documentos
+router.post(
+  "/:uid/documents",
+  handlePolicies(["USER", "PREMIUM", "ADMIN"]),
+  userUploader.single("file"),
+  async (req, res, next) => {
+    const uid = req.params.uid;
+    const file = req.file;
+    try {
+      if (!file) throw new CustomError(errorsDictionary.INVALID_FILE);
+      const user = await usersController.addDocument(uid, file);
+      res.status(200).send({ sepayload: user });
+    } catch (error) {
+      next();
     }
   }
 );
