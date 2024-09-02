@@ -186,7 +186,7 @@ router.post(
   }
 );
 
-// Carga de documentos
+// Carga de documentos (field debe ser: profile, id, address o account)
 router.post(
   "/:uid/documents",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
@@ -219,7 +219,7 @@ router.post(
   }
 );
 
-// Cambio a rol premium
+// Cambio a rol premium (El usuario debe tener los documentos necesarios: id, address y account)
 router.put(
   "/premium/:uid",
   handlePolicies(["ADMIN"]),
