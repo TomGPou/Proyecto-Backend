@@ -1,6 +1,5 @@
 import * as url from "url";
 import { Command } from "commander";
-import path from "path";
 
 // CL Options
 const program = new Command();

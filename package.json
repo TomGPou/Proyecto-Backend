@@ -7,7 +7,8 @@
   "scripts": {
     "test": "mocha test/auth.test.js test/products.test.js test/carts.test.js",
     "dev": "node --env-file .env.dev --watch src/app.js --mode dev",
-    "prod": "node --env-file .env.prod --watch src/app.js --mode prod"
+    "prod": "node --env-file .env.prod --watch src/app.js --mode prod",
+    "start": "node src/app.js --mode prod"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +19,6 @@
     "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-compression": "^1.0.2",
     "express-handlebars": "^7.1.2",
@@ -44,6 +44,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "chai": "^5.1.1",
+    "dotenv": "^16.4.5",
     "mocha": "^10.7.3",
     "supertest": "^7.0.0"
   }
