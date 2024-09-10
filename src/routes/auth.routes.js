@@ -16,6 +16,20 @@ const usersController = new UserController();
 initAuthStrategies();
 
 //* ENDPOINTS (/api/auth)
+// All users
+router.get(
+  "/",
+  handlePolicies(["ADMIN", "PREMIUM"]),
+  async (req, res, next) => {
+    try {
+      const users = await usersController.getAll();
+      res.status(200).send({ payload: users });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 // Logout
 router.get("/logout", async (req, res, next) => {
   try {
@@ -234,5 +248,16 @@ router.put(
     }
   }
 );
+
+// Eliminar usuarios no usados
+router.delete("/", handlePolicies(["ADMIN"]), async (req, res, next) => {
+  try {
+    const users = await usersController.deleteUnused();
+    res.status(200).send({ payload: users });
+  } catch (err) {
+    next(err);
+  }
+});
+
 
 export default router;

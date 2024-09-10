@@ -35,3 +35,16 @@ export const restoreMail = async (link, email) => {
     `,
   });
 };
+
+export const deleteUserMail = async (email) => {
+  return await transport.sendMail({
+    from: `Proyecto Ecommerce <${config.GMAIL_APP_USER}>`,
+    to: email,
+    subject: `Usuario eliminado`,
+    html: `
+    <h1>Proyecto Ecommerce</h1>
+    <p>Su usuario ha sido eliminado por inactividad</p>
+    <p>Si lo desea puede registrarse nuevamente</p>
+    `,
+  });
+}

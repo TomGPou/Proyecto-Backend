@@ -6,6 +6,11 @@
 <form action="/cart/{{user.cart}}" method="get">
   <button type="submit" class="btn btn-success">Carrito</button>
 </form>
+{{#if isAdmin}}
+<form action="/admin" method="get">
+  <button type="submit" class="btn btn-success">Panel de administrador</button>
+</form>
+{{/if}}
 
 <h1 style="color: white;">Lista de productos</h1>
 <div class="container d-flex flex-row flex-wrap justify-content-evenly">

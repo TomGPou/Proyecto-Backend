@@ -124,4 +124,13 @@ export default class UserController {
       throw error;
     }
   }
+
+  //* ELIMINAR USUARIOS NO USADOS
+  deleteUnused = async () => {
+    try {
+      return await usersService.deleteUnused();
+    } catch (error) {
+      throw error;
+    }
+  }
 }

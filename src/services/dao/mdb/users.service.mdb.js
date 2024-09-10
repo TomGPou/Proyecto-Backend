@@ -5,6 +5,7 @@ import CustomError from "../../errors/CustomErrors.class.js";
 import errorsDictionary from "../../errors/errrosDictionary.js";
 import jwt from "jsonwebtoken";
 import config from "../../../config.js";
+import { deleteUserMail } from "../../utils/nodemailer.js";
 
 // INIT
 const cartService = new CartService();
@@ -21,7 +22,7 @@ export default class UsersService {
   // Obtener todos
   async getAll() {
     try {
-      const users = await usersModel.find();
+      const users = await usersModel.find({}, "-password -documents -__v");
       return users;
     } catch (err) {
       if (!(err instanceof CustomError)) {
@@ -252,6 +253,29 @@ export default class UsersService {
         new: true,
       });
       return updatedUser;
+    } catch (err) {
+      if (!(err instanceof CustomError)) {
+        throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
+      }
+      throw err;
+    }
+  }
+
+  // Eliminar usuarios no usuados
+  async deleteUnused() {
+    try {
+      const deleteDate = new Date();
+      deleteDate.setDate(deleteDate.getDate() - 2);
+      const users = await usersModel.find({
+        role: "user",
+        last_connection: { $lt: deleteDate },
+      });
+
+      for (const user of users) {
+        await deleteUserMail(user.email);
+        await this.delete(user._id);
+      }
+      return users;
     } catch (err) {
       if (!(err instanceof CustomError)) {
         throw new CustomError(errorsDictionary.UNHANDLED_ERROR);

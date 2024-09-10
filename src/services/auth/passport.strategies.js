@@ -71,7 +71,12 @@ const initAuthStrategies = () => {
           const email = profile._json?.email || null;
 
           if (email) {
-            const foundUser = await userController.getOne({ email: email });
+            let foundUser;
+            try {
+              foundUser = await userController.getOne({ email: email });
+            } catch (error) {
+              foundUser = null;
+            }
 
             if (!foundUser) {
               const user = {
@@ -79,6 +84,7 @@ const initAuthStrategies = () => {
                 last_name: profile._json.name.split(" ")[1],
                 email: email,
                 password: "none",
+                last_connection: new Date(),
               };
               const process = await userController.create(user);
 

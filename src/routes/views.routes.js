@@ -11,7 +11,7 @@ import {
 import ProductController from "../controllers/products.controller.js";
 import CartController from "../controllers/cart.controller.js";
 import MessagesController from "../controllers/messages.controller.js";
-import { UsersDTO } from "../controllers/users.controller.js";
+import UserController, { UsersDTO } from "../controllers/users.controller.js";
 import { generateFakeProducts } from "../services/utils/mocking.js";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
 import config from "../config.js";
@@ -24,6 +24,7 @@ router.use(compression({ brotli: { enabled: true }, zlib: {} }));
 
 //* CONTROLLERS
 const productController = new ProductController();
+const usersController = new UserController();
 const cartController = new CartController();
 const messagesController = new MessagesController();
 
@@ -42,6 +43,7 @@ router.get(
     const sort = req.query.sort || "asc";
 
     const user = req.session.user;
+    const isAdmin = req.session.user.role === "admin" ? true : false;
 
     try {
       const products = await productController.getPaginate(
@@ -51,7 +53,9 @@ router.get(
         inStock,
         sort
       );
-      res.status(200).render("home", { products: products, user: user });
+      res
+        .status(200)
+        .render("home", { products: products, user: user, isAdmin: isAdmin });
     } catch (err) {
       next(err);
     }
@@ -188,8 +192,19 @@ router.get(
 // Admin
 router.get("/admin", handlePolicies(["ADMIN"]), async (req, res, next) => {
   try {
-    const user = new UsersDTO(req.session.user);
-    res.render("profile", { user: user });
+    const users = await usersController.getAll();
+
+    const clonedUsers = users.map((user) => {
+      return {
+        id: user._id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        role: user.role,
+        cart: user.cart
+      };
+    });
+    res.render("admin", { users: clonedUsers });
   } catch (err) {
     next(err);
   }
