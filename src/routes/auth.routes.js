@@ -2,7 +2,7 @@
 import { Router } from "express";
 import passport from "passport";
 import config from "../config.js";
-import { verifyReqBody, handlePolicies } from "../services/utils/utils.js";
+import { verifyReqBody, handlePolicies, verifyMongoId } from "../services/utils/utils.js";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
 import UserController, { UsersDTO } from "../controllers/users.controller.js";
 import { restoreMail } from "../services/utils/nodemailer.js";
@@ -16,6 +16,7 @@ const usersController = new UserController();
 initAuthStrategies();
 
 //* ENDPOINTS (/api/auth)
+router.param("uid", verifyMongoId("uid"));
 // All users
 router.get(
   "/",
@@ -233,7 +234,7 @@ router.post(
   }
 );
 
-// Cambio a rol premium (El usuario debe tener los documentos necesarios: id, address y account)
+// Cambio de rol (El usuario debe tener los documentos necesarios: id, address y account)
 router.put(
   "/premium/:uid",
   handlePolicies(["ADMIN"]),
@@ -248,6 +249,17 @@ router.put(
     }
   }
 );
+
+// Eliminar usuario
+router.delete('/:uid', handlePolicies(['ADMIN']), async (req, res, next) =>{
+  const uid = req.params.uid;
+  try {
+    const user = await usersController.delete(uid);
+    res.status(200).send({ payload: user });
+  } catch (err) {
+    next(err);
+  }
+})
 
 // Eliminar usuarios no usados
 router.delete("/", handlePolicies(["ADMIN"]), async (req, res, next) => {

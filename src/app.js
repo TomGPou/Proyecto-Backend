@@ -28,10 +28,16 @@ import ticketRoutes from "./routes/ticket.routes.js";
 
 //* INIT AND CONFIG
 const app = express();
+const hbs = handlebars.create({
+  helpers: {
+    neq: (a, b) => a !== b
+  }
+});
+
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 app.use(express.urlencoded({ extended: true }));
-app.engine("handlebars", handlebars.engine());
+app.engine("handlebars", hbs.engine);
 // const fileStorage = FileStore(session);
 app.use(
   session({

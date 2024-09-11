@@ -116,6 +116,7 @@ export default class UsersService {
       const user = await this.validateUser(uid);
       // eliminar carrito
       await cartService.delete(user.cart);
+      await deleteUserMail(user.email);
       const deletedUser = await usersModel.findByIdAndDelete(uid);
       return deletedUser;
     } catch (err) {
@@ -272,7 +273,6 @@ export default class UsersService {
       });
 
       for (const user of users) {
-        await deleteUserMail(user.email);
         await this.delete(user._id);
       }
       return users;

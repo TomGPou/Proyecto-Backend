@@ -47,4 +47,16 @@ export const deleteUserMail = async (email) => {
     <p>Si lo desea puede registrarse nuevamente</p>
     `,
   });
+};
+
+export const deleteProductMail = async (email, product) => {
+  return await transport.sendMail({
+    from: `Proyecto Ecommerce <${config.GMAIL_APP_USER}>`,
+    to: email,
+    subject: `Producto eliminado`,
+    html: `
+    <h1>Proyecto Ecommerce</h1>
+    <p>El producto ${product} ha sido eliminado</p>
+    `,
+  });
 }

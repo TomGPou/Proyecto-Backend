@@ -1,6 +1,7 @@
 import productsModel from "./models/products.model.js";
 import CustomError from "../../errors/CustomErrors.class.js";
 import errorsDictionary from "../../errors/errrosDictionary.js";
+import { deleteProductMail } from "../../utils/nodemailer.js";
 
 export default class ProductService {
   constructor() {}
@@ -143,7 +144,10 @@ export default class ProductService {
         throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
       }
       // buscar y borrar
-      return await productsModel.findByIdAndDelete(pid);
+      const deletedProduct = await productsModel.findByIdAndDelete(pid);
+      //enviar mail a owner
+      if(exist.owner !== "admin") await deleteProductMail(exist.owner, exist.title);
+      return deletedProduct
     } catch (err) {
       if (!(err instanceof CustomError)) {
         throw new CustomError(errorsDictionary.UNHANDLED_ERROR);
