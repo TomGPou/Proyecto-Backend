@@ -3,11 +3,7 @@ import { Router } from "express";
 import compression from "express-compression";
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import {
-  handleError,
-  handlePolicies,
-  verifyMongoId,
-} from "../services/utils/utils.js";
+import { handlePolicies, verifyMongoId } from "../services/utils/utils.js";
 import ProductController from "../controllers/products.controller.js";
 import CartController from "../controllers/cart.controller.js";
 import MessagesController from "../controllers/messages.controller.js";
@@ -75,6 +71,11 @@ router.get(
 
     const user = req.session.user;
 
+    const serverAddress =
+      config.MODE === "prod"
+        ? "https://proyecto-backend-production-a5fd.up.railway.app"
+        : "ws://localhost:5050";
+
     try {
       const products = await productController.get(
         limit,
@@ -83,9 +84,11 @@ router.get(
         inStock,
         sort
       );
-      res
-        .status(200)
-        .render("realtimeproducts", { products: products, user: user });
+      res.status(200).render("realtimeproducts", {
+        products: products,
+        user: user,
+        serverAddress: serverAddress,
+      });
     } catch (err) {
       next(err);
     }
@@ -139,6 +142,11 @@ router.get(
   "/chat",
   handlePolicies(["USER", "PREMIUM", "ADMIN"]),
   async (req, res, next) => {
+    const serverAddress =
+      config.MODE === "prod"
+        ? "https://proyecto-backend-production-a5fd.up.railway.app"
+        : "ws://localhost:5050";
+
     try {
       const messages = { messages: await messagesController.getChat() };
       res.status(200).render("chat", messages);
@@ -201,7 +209,7 @@ router.get("/admin", handlePolicies(["ADMIN"]), async (req, res, next) => {
         last_name: user.last_name,
         email: user.email,
         role: user.role,
-        cart: user.cart
+        cart: user.cart,
       };
     });
     res.render("admin", { users: clonedUsers });

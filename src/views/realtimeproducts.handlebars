@@ -65,7 +65,7 @@
     }
   }
 
-  const serverAddress = 'ws://localhost:5050';
+  const serverAddress = {{serverAddress}};
   const socketClient = io(serverAddress);
   socketClient.on("products", data => {
   const productsList = document.getElementById("productsList");

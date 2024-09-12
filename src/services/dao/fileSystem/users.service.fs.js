@@ -196,7 +196,10 @@ export default class UsersService {
         exp: Math.floor(Date.now() / 1000) + 60 * 60,
       };
       const token = jwt.sign(payload, config.JWT_SECRET);
-      const link = `http://localhost:${config.PORT}/restore/${token}`;
+      const link =
+        config.MODE === "prod"
+          ? `https://proyecto-backend-production-a5fd.up.railway.app/restore/${token}`
+          : `http://localhost:${config.PORT}/restore/${token}`;
 
       return link;
     } catch (err) {

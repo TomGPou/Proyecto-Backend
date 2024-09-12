@@ -1,75 +1,80 @@
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css">
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css"
+/>
 
 <h1>Chat</h1>
 
 <form id="chatForm">
-    <input type="text" id="message" name="message" placeholder="Ingresar mensaje" style="width: 300px;">
-    <br /><br />
-    <button type="submit">Enviar</button>
+  <input
+    type="text"
+    id="message"
+    name="message"
+    placeholder="Ingresar mensaje"
+    style="width: 300px;"
+  />
+  <br /><br />
+  <button type="submit">Enviar</button>
 </form>
 
 <div>
-    <p id="chatList">
-        {{#each messages}}
-        {{user}}: {{message}}<br />
-        {{/each}}
-    </p>
+  <p id="chatList">
+    {{#each messages}}
+      {{user}}:
+      {{message}}<br />
+    {{/each}}
+  </p>
 </div>
 
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
-    integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
-    crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+<script
+  src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+  integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"
+></script>
 
 <script type="module">
-    const serverAddress = 'ws://localhost:5050';
-    const socketClient = io(serverAddress);
+  const serverAddress = {{serverAddress}}; 
+  const socketClient = io(serverAddress); 
+  const chatForm = document.getElementById('chatForm'); 
+  const chatList = document.getElementById('chatList'); 
+  const sendButton = document.getElementById('sendButton'); let user;
 
-    const chatForm = document.getElementById('chatForm');
-    const chatList = document.getElementById('chatList');
-    const sendButton = document.getElementById('sendButton');
-    let user;
+  {{! socket }}
+  socketClient.on('newMessage', data => { 
+    const chatLog = data.messages
+    chatList.innerHTML = "";
+    chatLog.forEach((message) => {
+      chatList.innerHTML += `${message.user}: ${message.message} <br />`; 
+    }) 
+  });
 
-    {{!-- socket --}}
-    socketClient.on('newMessage',  data => {
-        const chatLog = data.messages
-
-        chatList.innerHTML = "";
-
-        chatLog.forEach((message) => {
-            chatList.innerHTML += `${message.user}: ${message.message} <br />`;
-        })
+  {{! ingreso de usuario }}
+  const askForUser = async () => {
+    const {value: result} = await Swal.fire({
+      title: "Usuario",
+      input: "email",
+      inputLabel: "Tú dirección de email",
+      inputPlaceholder: "Ingresa tu dirección de email",
+      allowOutsideClick: false
     });
+    if (result) {
+      Swal.fire(`Entered email: ${result}`);
+      }
+    user = result; 
+  }
 
-    {{!-- ingreso de usuario --}}
-    const askForUser = async () => {
-        const {value: result} = await Swal.fire({
-            title: "Usuario",
-            input: "email",
-            inputLabel: "Tú dirección de email",
-            inputPlaceholder: "Ingresa tu dirección de email",
-            allowOutsideClick: false
-
+  {{! posteo de mensajes }}
+  chatForm.addEventListener('submit', async (evt) => {
+    evt.preventDefault();
+    const message = document.getElementById('message').value;
+    const process = await fetch('/api/chat', {
+      method: 'POST', headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({user: user, message: message})
         });
-        if (result) {
-            Swal.fire(`Entered email: ${result}`);
-        }
-        user = result;
-    }
-
-    {{!-- posteo de mensajes --}}
-    chatForm.addEventListener('submit', async (evt) => {
-        evt.preventDefault();
-
-        const message = document.getElementById('message').value;
-
-        const process = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({user: user, message: message})
-        });
-    })
-
-    // Flujo principal
-    await askForUser();
+  })
 </script>
