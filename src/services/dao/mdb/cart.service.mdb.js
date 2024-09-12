@@ -131,14 +131,10 @@ export default class CartService {
   }
 
   //* BORRAR PRODUCTO
-  async deleteProduct(cid, pid, user) {
+  async deleteProduct(cid, pid) {
     try {
       const cart = await this.validateCart(cid);
       const product = await this.validateProduct(pid);
-      // Validar owner del producto
-      if (user !== "admin" && user !== product.owner) {
-        throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
-      }
 
       // Buscar producto en array
       const productId = new mongoose.Types.ObjectId(pid);

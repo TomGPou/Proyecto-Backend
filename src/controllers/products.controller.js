@@ -65,7 +65,11 @@ export default class ProductController {
   //* ACTUALIZAR PRODUCTO
   update = async (pid, data, user) => {
     try {
-      return await productService.update(pid, data, user);
+      // verificar autorizacion para editar
+      if (user !== "admin" && user !== "premium") {
+        throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+      }
+      return await productService.update(pid, data);
     } catch (error) {
       throw error;
     }

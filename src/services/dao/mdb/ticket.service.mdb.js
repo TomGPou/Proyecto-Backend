@@ -48,16 +48,21 @@ export default class TicketService {
       // Validar ticket code
       let maxTries = 10;
       let tries = 0;
-      const exists = await this.getByCode(newTicket.code);
+      let exists = await ticketModel.findOne({ code: newTicket.code });
+
       while (exists && tries < maxTries) {
         newTicket.code = generateCode();
+        exists = await ticketModel.findOne({ code: newTicket.code });
         tries++;
       }
+
       if (tries === maxTries) {
         throw new CustomError(errorsDictionary.RECORD_CREATION_ERROR);
       }
       // Crear
       const ticket = await ticketModel.create(newTicket);
+      console.log(ticket);
+
       await purchaseMail(ticket);
       return ticket;
     } catch (err) {

@@ -98,15 +98,12 @@ export default class ProductService {
   }
 
   // ACTUALIZAR PRODUCTO
-  async update(pid, data, user) {
+  async update(pid, data) {
     try {
       // validar si existe el ID
       const exist = await productsModel.findById(pid);
       if (!exist) throw new CustomError(errorsDictionary.ID_NOT_FOUND);
-      // verificar autorizacion para editar
-      if (user !== "admin" && user !== "premium") {
-        throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
-      }
+
       //si existe owner, eliminar
       if (data.owner) delete data.owner;
       // validar si el código ya existe
@@ -146,8 +143,9 @@ export default class ProductService {
       // buscar y borrar
       const deletedProduct = await productsModel.findByIdAndDelete(pid);
       //enviar mail a owner
-      if(exist.owner !== "admin") await deleteProductMail(exist.owner, exist.title);
-      return deletedProduct
+      if (exist.owner !== "admin")
+        await deleteProductMail(exist.owner, exist.title);
+      return deletedProduct;
     } catch (err) {
       if (!(err instanceof CustomError)) {
         throw new CustomError(errorsDictionary.UNHANDLED_ERROR);

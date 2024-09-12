@@ -55,6 +55,10 @@ export default class CartController {
   //* BORRAR PRODUCTO
   deleteProduct = async (cid, pid) => {
     try {
+      // Validar owner del producto
+      if (user !== "admin" && user !== product.owner) {
+        throw new CustomError(errorsDictionary.USER_NOT_AUTHORIZED);
+      }
       return await cartService.deleteProduct(cid, pid);
     } catch (error) {
       throw error;
