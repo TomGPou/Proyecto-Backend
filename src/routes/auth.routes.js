@@ -2,7 +2,11 @@
 import { Router } from "express";
 import passport from "passport";
 import config from "../config.js";
-import { verifyReqBody, handlePolicies, verifyMongoId } from "../services/utils/utils.js";
+import {
+  verifyReqBody,
+  handlePolicies,
+  verifyMongoId,
+} from "../services/utils/utils.js";
 import initAuthStrategies from "../services/auth/passport.strategies.js";
 import UserController, { UsersDTO } from "../controllers/users.controller.js";
 import { restoreMail } from "../services/utils/nodemailer.js";
@@ -213,21 +217,22 @@ router.post(
   ]),
   async (req, res, next) => {
     const uid = req.params.uid;
-    let file;
-
-    for (const fieldname in req.files) {
-      if (req.files[fieldname].length > 0) {
-        file = req.files[fieldname][0];
-        break;
-      }
-    }
+    let files = {};
 
     try {
-      if (!file) throw new CustomError(errorsDictionary.INVALID_FILE);
-      const user = await usersController.addDocument(uid, file);
+      for (const fieldname in req.files) {
+        if (req.files[fieldname].length > 0) {
+          files[fieldname] = req.files[fieldname];
+        }
+      }
+      // si no hay archivos, lanza error
+      if (Object.keys(files).length === 0)
+        throw new CustomError(errorsDictionary.INVALID_FILE);
+
+      const user = await usersController.addDocument(uid, files);
       res
         .status(200)
-        .send({ message: "Se a cergado nuevo documento", payload: user });
+        .send({ message: "Se a cargado nuevos documentos", payload: user });
     } catch (error) {
       next();
     }
@@ -251,7 +256,7 @@ router.put(
 );
 
 // Eliminar usuario
-router.delete('/:uid', handlePolicies(['ADMIN']), async (req, res, next) =>{
+router.delete("/:uid", handlePolicies(["ADMIN"]), async (req, res, next) => {
   const uid = req.params.uid;
   try {
     const user = await usersController.delete(uid);
@@ -259,7 +264,7 @@ router.delete('/:uid', handlePolicies(['ADMIN']), async (req, res, next) =>{
   } catch (err) {
     next(err);
   }
-})
+});
 
 // Eliminar usuarios no usados
 router.delete("/", handlePolicies(["ADMIN"]), async (req, res, next) => {
@@ -270,6 +275,5 @@ router.delete("/", handlePolicies(["ADMIN"]), async (req, res, next) => {
     next(err);
   }
 });
-
 
 export default router;

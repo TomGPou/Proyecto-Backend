@@ -117,13 +117,13 @@ export default class UserController {
   };
 
   //* AGREGAR DOCUMENTO
-  addDocument = async (uid, file) => {
+  addDocument = async (uid, files) => {
     try {
-      return await usersService.addDocument(uid, file);
+      return await usersService.addDocument(uid, files);
     } catch (error) {
       throw error;
     }
-  }
+  };
 
   //* ELIMINAR USUARIOS NO USADOS
   deleteUnused = async () => {
@@ -132,5 +132,5 @@ export default class UserController {
     } catch (error) {
       throw error;
     }
-  }
+  };
 }

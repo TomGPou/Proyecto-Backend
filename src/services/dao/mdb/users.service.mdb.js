@@ -234,22 +234,24 @@ export default class UsersService {
   }
 
   // Agregar documento
-  async addDocument(uid, file) {
+  async addDocument(uid, files) {
     try {
       const user = await this.validateUser(uid);
-      if (file.fieldname === "profile") {
-        const document = {
-          name: file.fieldname,
-          reference: `static/profiles/${file.originalname}`,
-        };
-        user.documents.push(document);
-      } else {
-        const document = {
-          name: file.fieldname,
-          reference: `static/documents/${file.originalname}`,
-        };
-        user.documents.push(document);
+      for (const fieldname in files) {
+        const fileArray = files[fieldname];
+
+        for (const file of fileArray) {
+          const document = {
+            name: fieldname,
+            reference:
+              fieldname === "profile"
+                ? `static/profiles/${file.originalname}`
+                : `static/documents/${file.originalname}`,
+          };
+          user.documents.push(document);
+        }
       }
+
       const updatedUser = await usersModel.findByIdAndUpdate(uid, user, {
         new: true,
       });
